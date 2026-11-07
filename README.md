@@ -1,0 +1,1 @@
+# Haci-Omer-Usluer-Ozel-Egitim-Meslek-Okulu
