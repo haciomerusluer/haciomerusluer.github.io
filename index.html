@@ -108,7 +108,7 @@
     .list-item {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       padding: 0.75rem 0;
       border-bottom: 1px solid var(--border);
     }
@@ -116,11 +116,10 @@
     .list-title { font-weight: 600; font-size: 0.88rem; color: #1e293b; }
     .list-subtitle { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
 
-    .badge { padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: right; }
+    .badge { padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
     .badge-blue { background: #dbeafe; color: #1e40af; }
     .badge-red { background: #fee2e2; color: #991b1b; }
     .badge-amber { background: #fef3c7; color: #92400e; }
-    .badge-gray { background: #f1f5f9; color: #475569; }
 
     .btn {
       background: var(--primary-light);
@@ -131,10 +130,10 @@
       font-size: 0.85rem;
       cursor: pointer;
     }
-    .btn-sm { padding: 0.3rem 0.5rem; font-size: 0.75rem; }
+    .btn-sm { padding: 0.35rem 0.6rem; font-size: 0.75rem; border-radius: 6px; }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
     .btn-success { background: var(--success); }
-    .btn-danger { background: var(--danger); }
+    .btn-danger { background: var(--danger); color: white; border: none; }
 
     .input-group { margin-bottom: 0.8rem; }
     .input-group label { display: block; font-size: 0.8rem; margin-bottom: 4px; color: var(--text-muted); }
@@ -147,6 +146,7 @@
     }
 
     .status-btns { display: flex; gap: 5px; }
+    .izin-action { display: flex; align-items: center; gap: 8px; }
   </style>
 </head>
 <body>
@@ -169,9 +169,7 @@
           <span>🛡️ Nöbet Görev Dağılımı</span>
           <span id="nobet-tarih-etiket" style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);"></span>
         </h2>
-        <div id="nobet-listesi">
-          <!-- Otomatik doldurulacak -->
-        </div>
+        <div id="nobet-listesi"></div>
       </div>
 
       <div class="card">
@@ -189,9 +187,7 @@
     <section id="izinler" class="tab-content">
       <div class="card">
         <h2>📅 İzinli / Raporlu Personel</h2>
-        <div id="izin-listesi">
-          <p style="font-size: 0.85rem; color: var(--text-muted);">Kayıtlı izinli/raporlu personel bulunmuyor.</p>
-        </div>
+        <div id="izin-listesi"></div>
       </div>
 
       <div class="card">
@@ -294,26 +290,22 @@
   </nav>
 
   <script>
-    // Kasım ve Aralık 2026 Resmi Nöbet Veritabanı
     const nobetVeritabani = {
       "2026-11-02": { my: "RESUL ŞAHİNER", s1: "ABDULKADİR KAPLAN", s2: "FURKAN EROĞLU", s3: "SERDAR SAÇLI", z: "TUĞBA ESKİN / NURAY AKKAN", k1: "SULTAN BARUT" },
       "2026-11-03": { my: "ŞEVKİ BARAN", s1: "İSA BAYAR", s2: "SEDA KIZMAZ", s3: "SERAP YILMAZ", z: "RESUL DEMİR", k1: "DİLEK EROĞLU" },
       "2026-11-04": { my: "İBRAHİM İPEK", s1: "GÜLÇİN GÜLER GÜR", s2: "SELMANİ FAHRİSİ AKMAN", s3: "BÜŞRA TEMEL TURHAN", z: "GÜLAY ULUDAĞ", k1: "AYTEN GÖKTAŞ" },
       "2026-11-05": { my: "METİN YONCALIK", s1: "BANU ÜNLÜ", s2: "YUSUF ERTUĞRUL DURU", s3: "ŞEHNAZ AKTAŞ", z: "MUSTAFA AKBAL", k1: "MERVE UĞUR" },
       "2026-11-06": { my: "RESUL ŞAHİNER", s1: "HİLAL EŞ DEMİR", s2: "SULTAN ERMİŞ", s3: "BELKIZ ÖLMEZ", z: "SEVİLAY ELMAS / RAYİHA SANCAR", k1: "BETÜL ORUÇ" },
-      
       "2026-11-09": { my: "ŞEVKİ BARAN", s1: "SULTAN BARUT", s2: "ABDULKADİR KAPLAN", s3: "FURKAN EROĞLU", z: "TUĞBA ESKİN / SERDAR SAÇLI", k1: "NURAY AKKAN" },
       "2026-11-10": { my: "RESUL ŞAHİNER", s1: "DİLEK EROĞLU", s2: "İSA BAYAR", s3: "SEDA KIZMAZ", z: "SERAP YILMAZ", k1: "RESUL DEMİR" },
       "2026-11-11": { my: "METİN YONCALIK", s1: "AYTEN GÖKTAŞ", s2: "GÜLÇİN GÜLER GÜR", s3: "SELMANİ FAHRİSİ AKMAN", z: "BÜŞRA TEMEL TURHAN", k1: "GÜLAY ULUDAĞ" },
       "2026-11-12": { my: "İBRAHİM İPEK", s1: "MERVE UĞUR", s2: "BANU ÜNLÜ", s3: "YUSUF ERTUĞRUL DURU", z: "ŞEHNAZ AKTAŞ", k1: "MUSTAFA AKBAL" },
       "2026-11-13": { my: "ŞEVKİ BARAN", s1: "BETÜL ORUÇ", s2: "HİLAL EŞ DEMİR", s3: "SULTAN ERMİŞ", z: "BELKIZ ÖLMEZ / RAYİHA SANCAR", k1: "SEVİLAY ELMAS" },
-      
       "2026-11-23": { my: "İBRAHİM İPEK", s1: "NURAY AKKAN", s2: "SULTAN BARUT", s3: "ABDULKADİR KAPLAN", z: "FURKAN EROĞLU / SERDAR SAÇLI", k1: "TUĞBA ESKİN" },
       "2026-11-24": { my: "ŞEVKİ BARAN", s1: "RESUL DEMİR", s2: "DİLEK EROĞLU", s3: "İSA BAYAR", z: "SEDA KIZMAZ", k1: "SERAP YILMAZ" },
       "2026-11-25": { my: "RESUL ŞAHİNER", s1: "GÜLAY ULUDAĞ", s2: "AYTEN GÖKTAŞ", s3: "GÜLÇİN GÜLER GÜR", z: "SELMANİ FAHRİSİ AKMAN", k1: "BÜŞRA TEMEL TURHAN" },
       "2026-11-26": { my: "METİN YONCALIK", s1: "MUSTAFA AKBAL", s2: "MERVE UĞUR", s3: "BANU ÜNLÜ", z: "YUSUF ERTUĞRUL DURU", k1: "ŞEHNAZ AKTAŞ" },
       "2026-11-27": { my: "İBRAHİM İPEK", s1: "SEVİLAY ELMAS", s2: "BETÜL ORUÇ", s3: "HİLAL EŞ DEMİR", z: "SULTAN ERMİŞ / BELKIZ ÖLMEZ", k1: "RAYİHA SANCAR" },
-      
       "2026-11-30": { my: "METİN YONCALIK", s1: "TUĞBA ESKİN", s2: "NURAY AKKAN", s3: "SULTAN BARUT", z: "ABDULKADİR KAPLAN / FURKAN EROĞLU", k1: "SERDAR SAÇLI" },
       "2026-12-01": { my: "İBRAHİM İPEK", s1: "SERAP YILMAZ", s2: "RESUL DEMİR", s3: "DİLEK EROĞLU", z: "İSA BAYAR", k1: "SEDA KIZMAZ" },
       "2026-12-02": { my: "ŞEVKİ BARAN", s1: "BÜŞRA TEMEL TURHAN", s2: "GÜLAY ULUDAĞ", s3: "AYTEN GÖKTAŞ", z: "GÜLÇİN GÜLER GÜR", k1: "SELMANİ FAHRİSİ AKMAN" },
@@ -324,68 +316,22 @@
     function tariheGoreNobetYukle(tarihStr) {
       const container = document.getElementById('nobet-listesi');
       const etiket = document.getElementById('nobet-tarih-etiket');
-      
       const d = new Date(tarihStr);
       etiket.innerText = d.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-
       const veri = nobetVeritabani[tarihStr];
 
       if (!veri) {
-        container.innerHTML = `
-          <div style="padding: 1.5rem 0; text-align: center; color: var(--text-muted); font-size: 0.88rem;">
-            Bu tarih için planlanmış nöbet kaydı bulunmamaktadır.<br>(Hafta sonu veya ara tatil)
-          </div>`;
+        container.innerHTML = <div style="padding: 1.5rem 0; text-align: center; color: var(--text-muted); font-size: 0.88rem;">Bu tarih için planlanmış nöbet kaydı bulunmamaktadır.<br>(Hafta sonu veya ara tatil)</div>;
         return;
       }
 
       container.innerHTML = `
-        <div class="list-item">
-          <div>
-            <div class="list-title">Nöbetçi Müdür Yrd.</div>
-            <div class="list-subtitle">Genel İdari ve Okul Düzeni</div>
-          </div>
-          <span class="badge badge-blue">${veri.my}</span>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Servis Nöbeti & Bahçe</div>
-            <div class="list-subtitle">Öğrenci İniş / Biniş ve Çevre Güvenliği</div>
-          </div>
-          <span class="badge badge-blue">${veri.s1}</span>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Okul Bahçesi-2 / Bodrum Kat</div>
-            <div class="list-subtitle">Öğle Arası Bodrum Kat Nöbeti</div>
-          </div>
-          <span class="badge badge-blue">${veri.s2}</span>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Bodrum Kat / Yemekhane</div>
-            <div class="list-subtitle">Öğle Arası Yemekhane Nöbeti & Yemek Kontrolü</div>
-          </div>
-          <span class="badge badge-blue">${veri.s3}</span>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Zemin Kat (Kuzey & Güney)</div>
-            <div class="list-subtitle">Giriş ve Zemin Kat Koridorları</div>
-          </div>
-          <span class="badge badge-blue">${veri.z}</span>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">1. Kat Nöbetçisi</div>
-            <div class="list-subtitle">1. Kat Derslik ve Atölye Katı</div>
-          </div>
-          <span class="badge badge-blue">${veri.k1}</span>
-        </div>
+        <div class="list-item"><div><div class="list-title">Nöbetçi Müdür Yrd.</div><div class="list-subtitle">Genel İdari ve Okul Düzeni</div></div><span class="badge badge-blue">${veri.my}</span></div>
+        <div class="list-item"><div><div class="list-title">Servis Nöbeti & Bahçe</div><div class="list-subtitle">Öğrenci İniş / Biniş ve Çevre Güvenliği</div></div><span class="badge badge-blue">${veri.s1}</span></div>
+        <div class="list-item"><div><div class="list-title">Okul Bahçesi-2 / Bodrum Kat</div><div class="list-subtitle">Öğle Arası Bodrum Kat Nöbeti</div></div><span class="badge badge-blue">${veri.s2}</span></div>
+        <div class="list-item"><div><div class="list-title">Bodrum Kat / Yemekhane</div><div class="list-subtitle">Öğle Arası Yemekhane Nöbeti & Yemek Kontrolü</div></div><span class="badge badge-blue">${veri.s3}</span></div>
+        <div class="list-item"><div><div class="list-title">Zemin Kat (Kuzey & Güney)</div><div class="list-subtitle">Giriş ve Zemin Kat Koridorları</div></div><span class="badge badge-blue">${veri.z}</span></div>
+        <div class="list-item"><div><div class="list-title">1. Kat Nöbetçisi</div><div class="list-subtitle">1. Kat Derslik ve Atölye Katı</div></div><span class="badge badge-blue">${veri.k1}</span></div>
       `;
     }
 
@@ -396,20 +342,51 @@
       btn.classList.add('active');
     }
 
+    // İZİN YÖNETİMİ (Kalıcı ve Silinebilir)
+    function izinleriGetir() {
+      return JSON.parse(localStorage.getItem('okul_izinler') || '[]');
+    }
+
+    function izinleriGoster() {
+      const izinler = izinleriGetir();
+      const liste = document.getElementById('izin-listesi');
+      if (izinler.length === 0) {
+        liste.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted);">Kayıtlı izinli/raporlu personel bulunmuyor.</p>';
+        return;
+      }
+      liste.innerHTML = '';
+      izinler.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'list-item';
+        row.innerHTML = `
+          <div><div class="list-title">${item.ad}</div></div>
+          <div class="izin-action">
+            <span class="badge badge-red">${item.tip}</span>
+            <button class="btn btn-sm btn-danger" onclick="izinSil(${index})">Sil</button>
+          </div>
+        `;
+        liste.appendChild(row);
+      });
+    }
+
     function izinEkle() {
-      const ad = document.getElementById('izin-ad').value;
+      const ad = document.getElementById('izin-ad').value.trim();
       const tip = document.getElementById('izin-tip').value;
       if (!ad) return alert('Lütfen personel adını girin.');
 
-      const liste = document.getElementById('izin-listesi');
-      if (liste.innerText.includes('bulunmuyor')) liste.innerHTML = '';
-
-      const item = document.createElement('div');
-      item.className = 'list-item';
-      item.innerHTML = `<div><div class="list-title">${ad}</div></div><span class="badge badge-red">${tip}</span>`;
-      liste.appendChild(item);
+      const izinler = izinleriGetir();
+      izinler.push({ ad, tip });
+      localStorage.setItem('okul_izinler', JSON.stringify(izinler));
 
       document.getElementById('izin-ad').value = '';
+      izinleriGoster();
+    }
+
+    function izinSil(index) {
+      const izinler = izinleriGetir();
+      izinler.splice(index, 1);
+      localStorage.setItem('okul_izinler', JSON.stringify(izinler));
+      izinleriGoster();
     }
 
     const ogrenciler = [
@@ -427,46 +404,3 @@
         row.className = 'list-item';
         row.innerHTML = `
           <div>
-            <div class="list-title">${ogr.no} - ${ogr.ad}</div>
-            <div id="st-${index}" style="font-size:0.8rem; margin-top:2px; font-weight:600; color:${ogr.durum === 'Geldi' ? 'var(--success)' : 'var(--danger)'}">${ogr.durum}</div>
-          </div>
-          <div class="status-btns">
-            <button class="btn btn-sm btn-success" onclick="durumGuncelle(${index}, 'Geldi')">G</button>
-            <button class="btn btn-sm btn-danger" onclick="durumGuncelle(${index}, 'Yok')">Y</button>
-            <button class="btn btn-sm btn-outline" onclick="durumGuncelle(${index}, 'İzinli')">İ</button>
-          </div>
-        `;
-        liste.appendChild(row);
-      });
-    }
-
-    function durumGuncelle(index, durum) {
-      ogrenciler[index].durum = durum;
-      const st = document.getElementById(`st-${index}`);
-      st.innerText = durum;
-      st.style.color = durum === 'Geldi' ? 'var(--success)' : (durum === 'Yok' ? 'var(--danger)' : 'var(--warning)');
-    }
-
-    window.onload = function() {
-      // Cihazın bugünkü tarihini al ve GG/AA/YYYY formatına ayarla
-      const bugun = new Date();
-      const yil = bugun.getFullYear();
-      const ay = String(bugun.getMonth() + 1).padStart(2, '0');
-      const gun = String(bugun.getDate()).padStart(2, '0');
-      const bugunStr = `${yil}-${ay}-${gun}`;
-
-      const secici = document.getElementById('nobet-tarih-secici');
-      secici.value = bugunStr;
-      
-      // Bugünün nöbetini otomatik getir
-      tariheGoreNobetYukle(bugunStr);
-
-      ogrencileriYukle();
-
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdmZXRjaCcsIGZ1bmN0aW9uKGV2ZW50KSB7fSk7');
-      }
-    };
-  </script>
-</body>
-</html>
