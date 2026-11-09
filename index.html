@@ -194,19 +194,20 @@
     .list-item {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       padding: 0.75rem 0;
       border-bottom: 1px solid var(--border);
     }
     .list-item:last-child { border-bottom: none; }
     .list-title { font-weight: 600; font-size: 0.88rem; color: #1e293b; }
-    .list-subtitle { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .list-subtitle { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; line-height: 1.35; }
 
-    .badge { padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: right; }
+    .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; text-align: right; }
     .badge-blue { background: #dbeafe; color: #1e40af; }
     .badge-red { background: #fee2e2; color: #991b1b; }
     .badge-amber { background: #fef3c7; color: #92400e; }
     .badge-pink { background: #fce7f3; color: #be185d; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; }
     .badge-alert {
       display: inline-block;
       margin-top: 4px;
@@ -289,6 +290,7 @@
 </head>
 <body>
 
+  <!-- PWA YÜKLEME KUTUSU -->
   <div id="install-banner">
     <div>
       <span style="font-size:1.1rem; margin-right: 5px;">📲</span>
@@ -297,6 +299,7 @@
     <button id="btn-install-pwa" onclick="anaEkranaYukle()">Yükle</button>
   </div>
 
+  <!-- GİRİŞ MODALI -->
   <div id="login-overlay">
     <div class="login-box">
       <div style="font-size: 2.2rem; margin-bottom: 8px;">🏫</div>
@@ -327,6 +330,7 @@
   </header>
 
   <div class="container">
+    <!-- TAB 1: NÖBET -->
     <section id="nobet" class="tab-content active">
       <div class="date-selector-bar">
         <label for="nobet-tarih-secici" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Tarih Seç:</label>
@@ -371,6 +375,7 @@
       </div>
     </section>
 
+    <!-- TAB 2: TATİLLER & İZİNLİLER -->
     <section id="izinler" class="tab-content">
       <div class="card">
         <h2>📅 İzinli / Raporlu Personel</h2>
@@ -424,6 +429,7 @@
       </div>
     </section>
 
+    <!-- TAB 3: DEVAMSIZLIK -->
     <section id="devamsizlik" class="tab-content">
       <div class="card">
         <h2>👥 Günlük Öğrenci Yoklaması</h2>
@@ -511,6 +517,7 @@
       </div>
     </section>
 
+    <!-- TAB 4: DOĞUM GÜNLERİ -->
     <section id="dogumgunu" class="tab-content">
       <div id="bugun-dogumgunu-alani"></div>
 
@@ -525,26 +532,205 @@
       </div>
     </section>
 
+    <!-- TAB 5: AJANDA, BELİRLİ GÜNLER & KULÜPLER -->
     <section id="ajanda" class="tab-content">
+      <!-- SOSYAL ETKİNLİKLER KURULU KARTI -->
+      <div class="card" style="border: 1px solid #c7d2fe; background: #fdfefe;">
+        <h2>
+          <span>🏛️ Sosyal Etkinlikler Kurulu</span>
+          <span class="badge badge-blue">2026-2027</span>
+        </h2>
+        <div style="font-size: 0.8rem; line-height: 1.5; color: #334155;">
+          <p><strong>Kurul Başkanı:</strong> Metin YONCALIK (Müdür Yrd.)</p>
+          <p><strong>Danışman Öğretmenler:</strong> Rayiha SANCAR, İsa BAYAR, Selmani Fahrisi AKMAN</p>
+          <p><strong>Öğrenci Temsilcileri:</strong> Osman KILIÇASLAN, İbrahim EROĞLU</p>
+          <p><strong>Okul Aile Birliği:</strong> Sevil ŞENSOY</p>
+          <p style="margin-top: 4px; font-size: 0.75rem; color: var(--text-muted);"><strong>Onay:</strong> İbrahim AKDERE (Okul Müdürü)</p>
+        </div>
+      </div>
+
+      <!-- KULÜPLER VE DANIŞMAN ÖĞRETMENLER LİSTESİ -->
       <div class="card">
-        <h2>🎖️ Belirli Gün ve Haftalar</h2>
+        <h2>
+          <span>👥 Öğrenci Kulüpleri ve Danışman Öğretmenler</span>
+          <span class="badge badge-purple">8 Kulüp</span>
+        </h2>
+        
         <div class="list-item">
-          <div><strong>10 Kasım Atatürk'ü Anma Günü ve Haftası</strong><div class="list-subtitle">10 - 16 Kasım</div></div>
+          <div>
+            <div class="list-title">Tabiat ve Yaşanabilir Çevre Kulübü</div>
+            <div class="list-subtitle">Doğa - Çevre - Toplum Alanı</div>
+          </div>
+          <span class="badge badge-blue">İsa BAYAR</span>
         </div>
+
         <div class="list-item">
-          <div><strong>Öğretmenler Günü</strong><div class="list-subtitle">24 Kasım</div></div>
+          <div>
+            <div class="list-title">Beyazay Kulübü</div>
+            <div class="list-subtitle">Kültür Dünyamız & Farkındalık Alanı</div>
+          </div>
+          <span class="badge badge-blue">Büşra TEMEL TURHAN</span>
         </div>
+
         <div class="list-item">
-          <div><strong>Dünya Engelliler Günü</strong><div class="list-subtitle">3 Aralık</div></div>
+          <div>
+            <div class="list-title">Yeşilay Kulübü</div>
+            <div class="list-subtitle">Doğa - Çevre - Sağlık Alanı</div>
+          </div>
+          <span class="badge badge-blue">Nuray AKKAN</span>
         </div>
+
         <div class="list-item">
-          <div><strong>İstiklal Marşı'nın Kabulü</strong><div class="list-subtitle">12 Mart</div></div>
+          <div>
+            <div class="list-title">Siberay Kulübü</div>
+            <div class="list-subtitle">Bilim ve Dijital Yetkinlik Alanı</div>
+          </div>
+          <span class="badge badge-blue">Mustafa AKBAL / Serdar SAÇLI</span>
         </div>
+
         <div class="list-item">
-          <div><strong>Otizm Farkındalık Günü</strong><div class="list-subtitle">2 Nisan</div></div>
+          <div>
+            <div class="list-title">Kızılay Kulübü</div>
+            <div class="list-subtitle">Sosyal Sorumluluk & Yardım Alanı</div>
+          </div>
+          <span class="badge badge-blue">Rayiha SANCAR</span>
         </div>
+
         <div class="list-item">
-          <div><strong>Engelliler Haftası</strong><div class="list-subtitle">10 - 16 Mayıs</div></div>
+          <div>
+            <div class="list-title">Tarih ve Kültürel Miras Kulübü</div>
+            <div class="list-subtitle">Milli Kültür & Değerler Alanı</div>
+          </div>
+          <span class="badge badge-blue">Dilek EROĞLU</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü</div>
+            <div class="list-subtitle">Spor ve Kapsayıcı Yaşam Alanı</div>
+          </div>
+          <span class="badge badge-blue">Abdulkadir KAPLAN</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Yaşam Becerileri Kulübü</div>
+            <div class="list-subtitle">Sosyal Yaşam & Güvenlik Alanı</div>
+          </div>
+          <span class="badge badge-blue">Belkız ÖLMEZ</span>
+        </div>
+      </div>
+
+      <!-- BELİRLİ GÜNLER VE GÖREVLİ ÖĞRETMEN ÇİZELGESİ -->
+      <div class="card">
+        <h2>
+          <span>🎖️ Belirli Günler ve Görevli Öğretmenler</span>
+          <span class="badge badge-amber">Takvim</span>
+        </h2>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Cumhuriyet Bayramı (29 Ekim)</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü<br><strong>Görevliler:</strong> Dilek EROĞLU, Tuğba ESKİN, Sultan BARUT, Hilal EŞ DEMİR</div>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Kızılay Haftası (29 Ekim - 4 Kasım)</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Kızılay Kulübü<br><strong>Görevliler:</strong> Rayiha SANCAR, Ayten GÖKTAŞ, Seda KIZMAZ, Mustafa AKBAL</div>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Atatürk Haftası (10 - 16 Kasım)</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Gülçin GÜLER GÜR, Serap YILMAZ, Merve UĞUR</div>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Afet Eğitimi ve Hazırlık Günü (12 Kasım)</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tabiat ve Yaşanabilir Çevre (Tatbikat Yapılacak)<br><strong>Görevliler:</strong> İsa BAYAR, Resul DEMİR, Yusuf Ertuğrul DURU</div>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Öğretmenler Günü (24 Kasım)</div>
+            <div class="list-subtitle">Okul Kutlama Programı</div>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Dünya Engelliler Günü (3 Aralık)</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır</div>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Sağlıklı Yaşam Farkındalık Haftası (Şubat)</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Selmani Fahrisi AKMAN, Gülay ULUDAĞ, Nuray AKKAN</div>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Yeşilay Haftası (1 Mart Haftası)</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Yeşilay Kulübü<br><strong>Görevliler:</strong> Nuray AKKAN, Banu ÜNLÜ, Hilal EŞ DEMİR, Rayiha SANCAR</div>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Dünya Down Sendromu Günü (21 Mart)</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Ayten GÖKTAŞ, Yusuf Ertuğrul DURU, Selmani Fahrisi AKMAN</div>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Dünya Otizm Farkındalık Günü (2 Nisan)</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü<br><strong>Görevliler:</strong> Dilek EROĞLU, Serap YILMAZ, Sümeyra CANPOLAT, Merve UĞUR, Gülçin GÜLER GÜR, Sevilay ELMAS, Betül ORUÇ, Furkan EROĞLU, Sultan ERMİŞ</div>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Bilim ve Problem Çözme Günü (Nisan)</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü<br><strong>Görevliler:</strong> Mustafa AKBAL, Serdar SAÇLI, Aysun KARACAER, Sultan ERMİŞ</div>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Trafik ve İlkyardım Haftası (Mayıs İlk Hafta)</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü<br><strong>Görevliler:</strong> Belkız ÖLMEZ, Şehnaz AKTAŞ, Aysun KARACAER, Serdar SAÇLI</div>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Engelliler Haftası (10 - 16 Mayıs)</div>
+            <div class="list-subtitle"><strong>Sorumlular:</strong> İsa BAYAR, Gülay ULUDAĞ, Banu ÜNLÜ, Sultan BARUT, Sümeyra CANPOLAT, Şehnaz AKTAŞ (Tüm Öğretmenler Görev Alır)</div>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">19 Mayıs Atatürk'ü Anma Gençlik ve Spor Bayramı</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam Kulübü<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Resul DEMİR, Tuğba ESKİN, Furkan EROĞLU, Belkız ÖLMEZ, Seda KIZMAZ</div>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Mezuniyet Programı (Haziran)</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır</div>
+          </div>
         </div>
       </div>
     </section>
@@ -595,7 +781,7 @@
       }
     }
 
-    // PERSONEL LİSTESİ VE KİMLİK VERİLERİ (Giriş sorununun yaşanmaması için net eşleştirme)
+    // PERSONEL LİSTESİ VE KİMLİK DOĞRULAMA VERİLERİ
     const KULLANICILAR = {
       "abdulkadirkaplan": { ad: "Abdulkadir KAPLAN", tc: "17564124752" },
       "aysunkaracaer": { ad: "Aysun KARACAER", tc: "27386558970" },
@@ -978,7 +1164,7 @@
       ]
     };
 
-    const VERI_VERSIYONU = "v11_kesin_calisan_giris";
+    const VERI_VERSIYONU = "v12_kulupler_ve_ajanda";
     let kayitliVersiyon = localStorage.getItem('okul_ogrenciler_versiyon');
     
     if (kayitliVersiyon !== VERI_VERSIYONU) {
