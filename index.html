@@ -1,1 +1,382 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hacı Ömer Usluer ÖEMO Portalı</title>
+  <meta name="theme-color" content="#1e3a8a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Okul Portalı">
 
+  <!-- Dahili Manifest (PWA) -->
+  <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiSMOhY8SxIMOIbWVyIFVzbHVlciDDlsVFTU8iLCJzaG9ydF9uYW1lIjoiT2t1bFBvcnRhbCIsInN0YXJ0X3VybCI6Ii4vaW5kZXguaHRtbCIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmOGZheGZhIiwidGhlbWVfY29sb3IiOiIjMWUzYThhIn0=">
+
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #2563eb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #d97706;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 75px; }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      padding: 1.2rem 1rem;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    header h1 { font-size: 1.1rem; font-weight: 700; }
+    header p { font-size: 0.8rem; opacity: 0.9; margin-top: 3px; }
+
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--card-bg);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 100;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      flex: 1;
+      padding: 6px 0;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+    .nav-item.active { color: var(--primary-light); font-weight: 600; }
+    .nav-icon { font-size: 1.3rem; margin-bottom: 2px; }
+
+    .container { padding: 1rem; max-width: 600px; margin: auto; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .card h2 { font-size: 1rem; color: var(--primary); margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center; }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .list-item:last-child { border-bottom: none; }
+    .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-amber { background: #fef3c7; color: #92400e; }
+
+    .btn {
+      background: var(--primary-light);
+      color: white;
+      border: none;
+      padding: 0.5rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .btn-sm { padding: 0.3rem 0.5rem; font-size: 0.75rem; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-success { background: var(--success); }
+    .btn-danger { background: var(--danger); }
+
+    .input-group { margin-bottom: 0.8rem; }
+    .input-group label { display: block; font-size: 0.8rem; margin-bottom: 4px; color: var(--text-muted); }
+    .input-group input, .input-group select {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .status-btns { display: flex; gap: 5px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Hacı Ömer Usluer ÖEMO</h1>
+    <p>Okul Yönetim & Takip Portalı</p>
+  </header>
+
+  <div class="container">
+    <!-- TAB 1: NÖBET LİSTESİ -->
+    <section id="nobet" class="tab-content active">
+      <div class="card">
+        <h2>🛡️ Günün Nöbetçileri</h2>
+        <div id="nobet-listesi">
+          <div class="list-item">
+            <div><strong>Nöbetçi Md. Yrd.</strong><div style="font-size: 0.85rem; color: var(--text-muted);">İdari Kat</div></div>
+            <span class="badge badge-blue">İbrahim İPEK</span>
+          </div>
+          <div class="list-item">
+            <div><strong>Bahçe & Giriş</strong><div style="font-size: 0.85rem; color: var(--text-muted);">Giriş Güvenlik</div></div>
+            <span class="badge badge-blue">Metin YONCALIK</span>
+          </div>
+          <div class="list-item">
+            <div><strong>Kat Nöbetçisi</strong><div style="font-size: 0.85rem; color: var(--text-muted);">Atölyeler Katı</div></div>
+            <span class="badge badge-blue">İbrahim AKDERE</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>➕ Nöbetçi Personel Ekle</h2>
+        <div class="input-group">
+          <label>Nöbet Yeri / Görev</label>
+          <input type="text" id="nobet-gorev" placeholder="Örn: 1. Kat Koridoru">
+        </div>
+        <div class="input-group">
+          <label>Personel Adı Soyadı</label>
+          <input type="text" id="nobet-personel" placeholder="Örn: Öğretmen Adı">
+        </div>
+        <button class="btn" style="width: 100%;" onclick="nobetEkle()">Listeye Kaydet</button>
+      </div>
+    </section>
+
+    <!-- TAB 2: TATİLLER & İZİNLİLER -->
+    <section id="izinler" class="tab-content">
+      <div class="card">
+        <h2>📅 İzinli / Raporlu Personel</h2>
+        <div id="izin-listesi">
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Kayıtlı izinli personel bulunmuyor.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>➕ İzin / Rapor Kaydı Aç</h2>
+        <div class="input-group">
+          <label>Personel Adı</label>
+          <input type="text" id="izin-ad" placeholder="Ad Soyad">
+        </div>
+        <div class="input-group">
+          <label>Durum Tipi</label>
+          <select id="izin-tip">
+            <option value="Raporlu">Raporlu</option>
+            <option value="Mazeret İzni">Mazeret İzni</option>
+            <option value="İdari İzinli">İdari İzinli</option>
+            <option value="Görevli / İzinli">Görevli / İzinli</option>
+          </select>
+        </div>
+        <button class="btn" style="width: 100%;" onclick="izinEkle()">İzin Kaydet</button>
+      </div>
+
+      <div class="card">
+        <h2>📌 Resmi Tatiller & Ara Tatiller</h2>
+        <div class="list-item">
+          <div><strong>1 Ocak</strong><div style="font-size: 0.8rem; color: var(--text-muted);">Yılbaşı Tatili</div></div>
+          <span class="badge badge-amber">1 Gün</span>
+        </div>
+        <div class="list-item">
+          <div><strong>23 Nisan</strong><div style="font-size: 0.8rem; color: var(--text-muted);">Ulusal Egemenlik ve Çocuk Bayramı</div></div>
+          <span class="badge badge-amber">1 Gün</span>
+        </div>
+        <div class="list-item">
+          <div><strong>1 Mayıs</strong><div style="font-size: 0.8rem; color: var(--text-muted);">Emek ve Dayanışma Günü</div></div>
+          <span class="badge badge-amber">1 Gün</span>
+        </div>
+        <div class="list-item">
+          <div><strong>19 Mayıs</strong><div style="font-size: 0.8rem; color: var(--text-muted);">Gençlik ve Spor Bayramı</div></div>
+          <span class="badge badge-amber">1 Gün</span>
+        </div>
+        <div class="list-item">
+          <div><strong>29 Ekim</strong><div style="font-size: 0.8rem; color: var(--text-muted);">Cumhuriyet Bayramı</div></div>
+          <span class="badge badge-amber">1.5 Gün</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: DEVAMSIZLIK -->
+    <section id="devamsizlik" class="tab-content">
+      <div class="card">
+        <h2>👥 Günlük Öğrenci Yoklaması</h2>
+        <div class="input-group">
+          <label>Sınıf / Şube</label>
+          <select id="sinif-sec" onchange="ogrencileriYukle()">
+            <option value="9-A">9-A Özel Eğitim</option>
+            <option value="10-A">10-A El Sanatları</option>
+            <option value="11-A">11-A Yiyecek İçecek</option>
+            <option value="12-A">12-A Konaklama</option>
+          </select>
+        </div>
+
+        <div id="ogrenci-listesi" style="margin-top: 1rem;">
+          <!-- Dinamik Liste -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: BELİRLİ GÜN VE HAFTALAR -->
+    <section id="ajanda" class="tab-content">
+      <div class="card">
+        <h2>🎖️ MEB Belirli Gün ve Haftalar</h2>
+        <div class="list-item">
+          <div><strong>İlköğretim Haftası</strong><div style="font-size: 0.8rem; color: var(--text-muted);">Eylül ayının 3. haftası</div></div>
+        </div>
+        <div class="list-item">
+          <div><strong>Kızılay Haftası</strong><div style="font-size: 0.8rem; color: var(--text-muted);">29 Ekim - 4 Kasım</div></div>
+        </div>
+        <div class="list-item">
+          <div><strong>10 Kasım Atatürk'ü Anma</strong><div style="font-size: 0.8rem; color: var(--text-muted);">10 - 16 Kasım</div></div>
+        </div>
+        <div class="list-item">
+          <div><strong>Öğretmenler Günü</strong><div style="font-size: 0.8rem; color: var(--text-muted);">24 Kasım</div></div>
+        </div>
+        <div class="list-item">
+          <div><strong>Dünya Engelliler Günü</strong><div style="font-size: 0.8rem; color: var(--text-muted);">3 Aralık</div></div>
+        </div>
+        <div class="list-item">
+          <div><strong>İstiklal Marşı'nın Kabulü</strong><div style="font-size: 0.8rem; color: var(--text-muted);">12 Mart</div></div>
+        </div>
+        <div class="list-item">
+          <div><strong>Otizm Farkındalık Günü</strong><div style="font-size: 0.8rem; color: var(--text-muted);">2 Nisan</div></div>
+        </div>
+        <div class="list-item">
+          <div><strong>Engelliler Haftası</strong><div style="font-size: 0.8rem; color: var(--text-muted);">10 - 16 Mayıs</div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ALT MENÜ -->
+  <nav class="nav-bar">
+    <button class="nav-item active" onclick="tabDegistir('nobet', this)">
+      <span class="nav-icon">🛡️</span>
+      <span>Nöbet</span>
+    </button>
+    <button class="nav-item" onclick="tabDegistir('izinler', this)">
+      <span class="nav-icon">📅</span>
+      <span>Tatil/İzin</span>
+    </button>
+    <button class="nav-item" onclick="tabDegistir('devamsizlik', this)">
+      <span class="nav-icon">👥</span>
+      <span>Yoklama</span>
+    </button>
+    <button class="nav-item" onclick="tabDegistir('ajanda', this)">
+      <span class="nav-icon">🎖️</span>
+      <span>Belirli Günler</span>
+    </button>
+  </nav>
+
+  <script>
+    // Tab Yönetimi
+    function tabDegistir(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // Nöbet Listesi İşlemleri
+    function nobetEkle() {
+      const gorev = document.getElementById('nobet-gorev').value;
+      const personel = document.getElementById('nobet-personel').value;
+      if (!gorev || !personel) return alert('Lütfen bilgileri doldurun.');
+
+      const liste = document.getElementById('nobet-listesi');
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `<div><strong>${gorev}</strong></div><span class="badge badge-blue">${personel}</span>`;
+      liste.appendChild(item);
+
+      document.getElementById('nobet-gorev').value = '';
+      document.getElementById('nobet-personel').value = '';
+    }
+
+    // İzin Listesi İşlemleri
+    function izinEkle() {
+      const ad = document.getElementById('izin-ad').value;
+      const tip = document.getElementById('izin-tip').value;
+      if (!ad) return alert('Lütfen personel adını girin.');
+
+      const liste = document.getElementById('izin-listesi');
+      if (liste.innerText.includes('bulunmuyor')) liste.innerHTML = '';
+
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `<div><strong>${ad}</strong></div><span class="badge badge-red">${tip}</span>`;
+      liste.appendChild(item);
+
+      document.getElementById('izin-ad').value = '';
+    }
+
+    // Örnek Öğrenci Yoklama Verileri
+    const ogrenciler = [
+      { no: '101', ad: 'Ali Kaya', durum: 'Geldi' },
+      { no: '102', ad: 'Ayşe Demir', durum: 'Geldi' },
+      { no: '103', ad: 'Mehmet Çelik', durum: 'Geldi' },
+      { no: '104', ad: 'Fatma Şahin', durum: 'Geldi' }
+    ];
+
+    function ogrencileriYukle() {
+      const liste = document.getElementById('ogrenci-listesi');
+      liste.innerHTML = '';
+      ogrenciler.forEach((ogr, index) => {
+        const row = document.createElement('div');
+        row.className = 'list-item';
+        row.innerHTML = `
+          <div>
+            <strong>${ogr.no} - ${ogr.ad}</strong>
+            <div id="st-${index}" style="font-size:0.8rem; color:${ogr.durum === 'Geldi' ? 'var(--success)' : 'var(--danger)'}">${ogr.durum}</div>
+          </div>
+          <div class="status-btns">
+            <button class="btn btn-sm btn-success" onclick="durumGuncelle(${index}, 'Geldi')">G</button>
+            <button class="btn btn-sm btn-danger" onclick="durumGuncelle(${index}, 'Yok')">Y</button>
+            <button class="btn btn-sm btn-outline" onclick="durumGuncelle(${index}, 'İzinli')">İ</button>
+          </div>
+        `;
+        liste.appendChild(row);
+      });
+    }
+
+    function durumGuncelle(index, durum) {
+      ogrenciler[index].durum = durum;
+      const st = document.getElementById(`st-${index}`);
+      st.innerText = durum;
+      st.style.color = durum === 'Geldi' ? 'var(--success)' : (durum === 'Yok' ? 'var(--danger)' : 'var(--warning)');
+    }
+
+    // Sayfa Yüklendiğinde
+    window.onload = function() {
+      ogrencileriYukle();
+      // PWA Service Worker Kaydı
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdmZXRjaCcsIGZ1bmN0aW9uKGV2ZW50KSB7fSk7');
+      }
+    };
+  </script>
+</body>
+</html>
