@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Hacı Ömer Usluer ÖEMO Portalı</title>
+  <title>Hacı Ömer Usluer ÖEMO</title>
   <meta name="theme-color" content="#1e3a8a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Okul Portalı">
 
-  <!-- Dahili Manifest (PWA) -->
+  <!-- Dahili PWA Manifest -->
   <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiSMOhY8SxIMOIbWVyIFVzbHVlciDDlsVFTU8iLCJzaG9ydF9uYW1lIjoiT2t1bFBvcnRhbCIsInN0YXJ0X3VybCI6Ii4vaW5kZXguaHRtbCIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmOGZheGZhIiwidGhlbWVfY29sb3IiOiIjMWUzYThhIn0=">
 
   <style>
@@ -39,7 +39,7 @@
       z-index: 10;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    header h1 { font-size: 1.1rem; font-weight: 700; }
+    header h1 { font-size: 1.05rem; font-weight: 700; }
     header p { font-size: 0.8rem; opacity: 0.9; margin-top: 3px; }
 
     .nav-bar {
@@ -61,7 +61,7 @@
       align-items: center;
       text-decoration: none;
       color: var(--text-muted);
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       flex: 1;
       padding: 6px 0;
       cursor: pointer;
@@ -83,20 +83,44 @@
       border: 1px solid var(--border);
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
-    .card h2 { font-size: 1rem; color: var(--primary); margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center; }
+    .card h2 { font-size: 0.95rem; color: var(--primary); margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center; }
+
+    .date-selector-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 1rem;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .date-selector-bar input {
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      flex: 1;
+      color: var(--primary);
+      font-weight: 600;
+    }
 
     .list-item {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      padding: 0.7rem 0;
+      align-items: flex-start;
+      padding: 0.75rem 0;
       border-bottom: 1px solid var(--border);
     }
     .list-item:last-child { border-bottom: none; }
-    .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+    .list-title { font-weight: 600; font-size: 0.88rem; color: #1e293b; }
+    .list-subtitle { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+    .badge { padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: right; }
     .badge-blue { background: #dbeafe; color: #1e40af; }
     .badge-red { background: #fee2e2; color: #991b1b; }
     .badge-amber { background: #fef3c7; color: #92400e; }
+    .badge-gray { background: #f1f5f9; color: #475569; }
 
     .btn {
       background: var(--primary-light);
@@ -133,37 +157,31 @@
   </header>
 
   <div class="container">
-    <!-- TAB 1: NÖBET LİSTESİ -->
+    <!-- TAB 1: GÜNLÜK NÖBET ÇİZELGESİ -->
     <section id="nobet" class="tab-content active">
+      <div class="date-selector-bar">
+        <label for="nobet-tarih-secici" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Tarih Seç:</label>
+        <input type="date" id="nobet-tarih-secici" onchange="tariheGoreNobetYukle(this.value)">
+      </div>
+
       <div class="card">
-        <h2>🛡️ Günün Nöbetçileri</h2>
+        <h2>
+          <span>🛡️ Nöbet Görev Dağılımı</span>
+          <span id="nobet-tarih-etiket" style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);"></span>
+        </h2>
         <div id="nobet-listesi">
-          <div class="list-item">
-            <div><strong>Nöbetçi Md. Yrd.</strong><div style="font-size: 0.85rem; color: var(--text-muted);">İdari Kat</div></div>
-            <span class="badge badge-blue">İbrahim İPEK</span>
-          </div>
-          <div class="list-item">
-            <div><strong>Bahçe & Giriş</strong><div style="font-size: 0.85rem; color: var(--text-muted);">Giriş Güvenlik</div></div>
-            <span class="badge badge-blue">Metin YONCALIK</span>
-          </div>
-          <div class="list-item">
-            <div><strong>Kat Nöbetçisi</strong><div style="font-size: 0.85rem; color: var(--text-muted);">Atölyeler Katı</div></div>
-            <span class="badge badge-blue">İbrahim AKDERE</span>
-          </div>
+          <!-- Otomatik doldurulacak -->
         </div>
       </div>
 
       <div class="card">
-        <h2>➕ Nöbetçi Personel Ekle</h2>
-        <div class="input-group">
-          <label>Nöbet Yeri / Görev</label>
-          <input type="text" id="nobet-gorev" placeholder="Örn: 1. Kat Koridoru">
-        </div>
-        <div class="input-group">
-          <label>Personel Adı Soyadı</label>
-          <input type="text" id="nobet-personel" placeholder="Örn: Öğretmen Adı">
-        </div>
-        <button class="btn" style="width: 100%;" onclick="nobetEkle()">Listeye Kaydet</button>
+        <h2>📌 Nöbetçi Öğretmen Görev Hatırlatması</h2>
+        <ul style="padding-left: 1.2rem; font-size: 0.8rem; color: #475569; line-height: 1.45;">
+          <li>Ders başlamadan 30 dk önce hazır bulunur, bitiminden 30 dk sonra kontrolleri tamamlar.</li>
+          <li>Taşımalı servis öğrencilerini iniş/biniş listelerine göre teslim alır ve teslim eder.</li>
+          <li>Öğle yemeği kontrolü ve yemekhane düzenini sağlar, çizelgeyi işler.</li>
+          <li>Nöbet defterini nöbet başında ve bitiminde mutlaka imzalar.</li>
+        </ul>
       </div>
     </section>
 
@@ -172,15 +190,15 @@
       <div class="card">
         <h2>📅 İzinli / Raporlu Personel</h2>
         <div id="izin-listesi">
-          <p style="font-size: 0.85rem; color: var(--text-muted);">Kayıtlı izinli personel bulunmuyor.</p>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Kayıtlı izinli/raporlu personel bulunmuyor.</p>
         </div>
       </div>
 
       <div class="card">
         <h2>➕ İzin / Rapor Kaydı Aç</h2>
         <div class="input-group">
-          <label>Personel Adı</label>
-          <input type="text" id="izin-ad" placeholder="Ad Soyad">
+          <label>Personel Adı Soyadı</label>
+          <input type="text" id="izin-ad" placeholder="Örn: Ayten GÖKTAŞ">
         </div>
         <div class="input-group">
           <label>Durum Tipi</label>
@@ -195,26 +213,18 @@
       </div>
 
       <div class="card">
-        <h2>📌 Resmi Tatiller & Ara Tatiller</h2>
+        <h2>📌 2026-2027 MEB Tatil Takvimi</h2>
         <div class="list-item">
-          <div><strong>1 Ocak</strong><div style="font-size: 0.8rem; color: var(--text-muted);">Yılbaşı Tatili</div></div>
+          <div><strong>1. Dönem Ara Tatili</strong><div class="list-subtitle">16 - 20 Kasım 2026</div></div>
+          <span class="badge badge-amber">1 Hafta</span>
+        </div>
+        <div class="list-item">
+          <div><strong>Yılbaşı Tatili</strong><div class="list-subtitle">1 Ocak 2027</div></div>
           <span class="badge badge-amber">1 Gün</span>
         </div>
         <div class="list-item">
-          <div><strong>23 Nisan</strong><div style="font-size: 0.8rem; color: var(--text-muted);">Ulusal Egemenlik ve Çocuk Bayramı</div></div>
-          <span class="badge badge-amber">1 Gün</span>
-        </div>
-        <div class="list-item">
-          <div><strong>1 Mayıs</strong><div style="font-size: 0.8rem; color: var(--text-muted);">Emek ve Dayanışma Günü</div></div>
-          <span class="badge badge-amber">1 Gün</span>
-        </div>
-        <div class="list-item">
-          <div><strong>19 Mayıs</strong><div style="font-size: 0.8rem; color: var(--text-muted);">Gençlik ve Spor Bayramı</div></div>
-          <span class="badge badge-amber">1 Gün</span>
-        </div>
-        <div class="list-item">
-          <div><strong>29 Ekim</strong><div style="font-size: 0.8rem; color: var(--text-muted);">Cumhuriyet Bayramı</div></div>
-          <span class="badge badge-amber">1.5 Gün</span>
+          <div><strong>Yarıyıl Tatili (15 Tatil)</strong><div class="list-subtitle">25 Ocak - 5 Şubat 2027</div></div>
+          <span class="badge badge-amber">2 Hafta</span>
         </div>
       </div>
     </section>
@@ -233,39 +243,31 @@
           </select>
         </div>
 
-        <div id="ogrenci-listesi" style="margin-top: 1rem;">
-          <!-- Dinamik Liste -->
-        </div>
+        <div id="ogrenci-listesi" style="margin-top: 1rem;"></div>
       </div>
     </section>
 
     <!-- TAB 4: BELİRLİ GÜN VE HAFTALAR -->
     <section id="ajanda" class="tab-content">
       <div class="card">
-        <h2>🎖️ MEB Belirli Gün ve Haftalar</h2>
+        <h2>🎖️ Belirli Gün ve Haftalar</h2>
         <div class="list-item">
-          <div><strong>İlköğretim Haftası</strong><div style="font-size: 0.8rem; color: var(--text-muted);">Eylül ayının 3. haftası</div></div>
+          <div><strong>10 Kasım Atatürk'ü Anma Günü ve Haftası</strong><div class="list-subtitle">10 - 16 Kasım</div></div>
         </div>
         <div class="list-item">
-          <div><strong>Kızılay Haftası</strong><div style="font-size: 0.8rem; color: var(--text-muted);">29 Ekim - 4 Kasım</div></div>
+          <div><strong>Öğretmenler Günü</strong><div class="list-subtitle">24 Kasım</div></div>
         </div>
         <div class="list-item">
-          <div><strong>10 Kasım Atatürk'ü Anma</strong><div style="font-size: 0.8rem; color: var(--text-muted);">10 - 16 Kasım</div></div>
+          <div><strong>Dünya Engelliler Günü</strong><div class="list-subtitle">3 Aralık</div></div>
         </div>
         <div class="list-item">
-          <div><strong>Öğretmenler Günü</strong><div style="font-size: 0.8rem; color: var(--text-muted);">24 Kasım</div></div>
+          <div><strong>İstiklal Marşı'nın Kabulü ve M. Âkif ERSOY'u Anma</strong><div class="list-subtitle">12 Mart</div></div>
         </div>
         <div class="list-item">
-          <div><strong>Dünya Engelliler Günü</strong><div style="font-size: 0.8rem; color: var(--text-muted);">3 Aralık</div></div>
+          <div><strong>Otizm Farkındalık Günü</strong><div class="list-subtitle">2 Nisan</div></div>
         </div>
         <div class="list-item">
-          <div><strong>İstiklal Marşı'nın Kabulü</strong><div style="font-size: 0.8rem; color: var(--text-muted);">12 Mart</div></div>
-        </div>
-        <div class="list-item">
-          <div><strong>Otizm Farkındalık Günü</strong><div style="font-size: 0.8rem; color: var(--text-muted);">2 Nisan</div></div>
-        </div>
-        <div class="list-item">
-          <div><strong>Engelliler Haftası</strong><div style="font-size: 0.8rem; color: var(--text-muted);">10 - 16 Mayıs</div></div>
+          <div><strong>Engelliler Haftası</strong><div class="list-subtitle">10 - 16 Mayıs</div></div>
         </div>
       </div>
     </section>
@@ -292,7 +294,101 @@
   </nav>
 
   <script>
-    // Tab Yönetimi
+    // Kasım ve Aralık 2026 Resmi Nöbet Veritabanı
+    const nobetVeritabani = {
+      "2026-11-02": { my: "RESUL ŞAHİNER", s1: "ABDULKADİR KAPLAN", s2: "FURKAN EROĞLU", s3: "SERDAR SAÇLI", z: "TUĞBA ESKİN / NURAY AKKAN", k1: "SULTAN BARUT" },
+      "2026-11-03": { my: "ŞEVKİ BARAN", s1: "İSA BAYAR", s2: "SEDA KIZMAZ", s3: "SERAP YILMAZ", z: "RESUL DEMİR", k1: "DİLEK EROĞLU" },
+      "2026-11-04": { my: "İBRAHİM İPEK", s1: "GÜLÇİN GÜLER GÜR", s2: "SELMANİ FAHRİSİ AKMAN", s3: "BÜŞRA TEMEL TURHAN", z: "GÜLAY ULUDAĞ", k1: "AYTEN GÖKTAŞ" },
+      "2026-11-05": { my: "METİN YONCALIK", s1: "BANU ÜNLÜ", s2: "YUSUF ERTUĞRUL DURU", s3: "ŞEHNAZ AKTAŞ", z: "MUSTAFA AKBAL", k1: "MERVE UĞUR" },
+      "2026-11-06": { my: "RESUL ŞAHİNER", s1: "HİLAL EŞ DEMİR", s2: "SULTAN ERMİŞ", s3: "BELKIZ ÖLMEZ", z: "SEVİLAY ELMAS / RAYİHA SANCAR", k1: "BETÜL ORUÇ" },
+      
+      "2026-11-09": { my: "ŞEVKİ BARAN", s1: "SULTAN BARUT", s2: "ABDULKADİR KAPLAN", s3: "FURKAN EROĞLU", z: "TUĞBA ESKİN / SERDAR SAÇLI", k1: "NURAY AKKAN" },
+      "2026-11-10": { my: "RESUL ŞAHİNER", s1: "DİLEK EROĞLU", s2: "İSA BAYAR", s3: "SEDA KIZMAZ", z: "SERAP YILMAZ", k1: "RESUL DEMİR" },
+      "2026-11-11": { my: "METİN YONCALIK", s1: "AYTEN GÖKTAŞ", s2: "GÜLÇİN GÜLER GÜR", s3: "SELMANİ FAHRİSİ AKMAN", z: "BÜŞRA TEMEL TURHAN", k1: "GÜLAY ULUDAĞ" },
+      "2026-11-12": { my: "İBRAHİM İPEK", s1: "MERVE UĞUR", s2: "BANU ÜNLÜ", s3: "YUSUF ERTUĞRUL DURU", z: "ŞEHNAZ AKTAŞ", k1: "MUSTAFA AKBAL" },
+      "2026-11-13": { my: "ŞEVKİ BARAN", s1: "BETÜL ORUÇ", s2: "HİLAL EŞ DEMİR", s3: "SULTAN ERMİŞ", z: "BELKIZ ÖLMEZ / RAYİHA SANCAR", k1: "SEVİLAY ELMAS" },
+      
+      "2026-11-23": { my: "İBRAHİM İPEK", s1: "NURAY AKKAN", s2: "SULTAN BARUT", s3: "ABDULKADİR KAPLAN", z: "FURKAN EROĞLU / SERDAR SAÇLI", k1: "TUĞBA ESKİN" },
+      "2026-11-24": { my: "ŞEVKİ BARAN", s1: "RESUL DEMİR", s2: "DİLEK EROĞLU", s3: "İSA BAYAR", z: "SEDA KIZMAZ", k1: "SERAP YILMAZ" },
+      "2026-11-25": { my: "RESUL ŞAHİNER", s1: "GÜLAY ULUDAĞ", s2: "AYTEN GÖKTAŞ", s3: "GÜLÇİN GÜLER GÜR", z: "SELMANİ FAHRİSİ AKMAN", k1: "BÜŞRA TEMEL TURHAN" },
+      "2026-11-26": { my: "METİN YONCALIK", s1: "MUSTAFA AKBAL", s2: "MERVE UĞUR", s3: "BANU ÜNLÜ", z: "YUSUF ERTUĞRUL DURU", k1: "ŞEHNAZ AKTAŞ" },
+      "2026-11-27": { my: "İBRAHİM İPEK", s1: "SEVİLAY ELMAS", s2: "BETÜL ORUÇ", s3: "HİLAL EŞ DEMİR", z: "SULTAN ERMİŞ / BELKIZ ÖLMEZ", k1: "RAYİHA SANCAR" },
+      
+      "2026-11-30": { my: "METİN YONCALIK", s1: "TUĞBA ESKİN", s2: "NURAY AKKAN", s3: "SULTAN BARUT", z: "ABDULKADİR KAPLAN / FURKAN EROĞLU", k1: "SERDAR SAÇLI" },
+      "2026-12-01": { my: "İBRAHİM İPEK", s1: "SERAP YILMAZ", s2: "RESUL DEMİR", s3: "DİLEK EROĞLU", z: "İSA BAYAR", k1: "SEDA KIZMAZ" },
+      "2026-12-02": { my: "ŞEVKİ BARAN", s1: "BÜŞRA TEMEL TURHAN", s2: "GÜLAY ULUDAĞ", s3: "AYTEN GÖKTAŞ", z: "GÜLÇİN GÜLER GÜR", k1: "SELMANİ FAHRİSİ AKMAN" },
+      "2026-12-03": { my: "RESUL ŞAHİNER", s1: "ŞEHNAZ AKTAŞ", s2: "MUSTAFA AKBAL", s3: "MERVE UĞUR", z: "BANU ÜNLÜ", k1: "YUSUF ERTUĞRUL DURU" },
+      "2026-12-04": { my: "METİN YONCALIK", s1: "RAYİHA SANCAR", s2: "SEVİLAY ELMAS", s3: "BETÜL ORUÇ", z: "HİLAL EŞ DEMİR / SULTAN ERMİŞ", k1: "BELKIZ ÖLMEZ" }
+    };
+
+    function tariheGoreNobetYukle(tarihStr) {
+      const container = document.getElementById('nobet-listesi');
+      const etiket = document.getElementById('nobet-tarih-etiket');
+      
+      const d = new Date(tarihStr);
+      etiket.innerText = d.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+      const veri = nobetVeritabani[tarihStr];
+
+      if (!veri) {
+        container.innerHTML = `
+          <div style="padding: 1.5rem 0; text-align: center; color: var(--text-muted); font-size: 0.88rem;">
+            Bu tarih için planlanmış nöbet kaydı bulunmamaktadır.<br>(Hafta sonu veya ara tatil)
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="list-item">
+          <div>
+            <div class="list-title">Nöbetçi Müdür Yrd.</div>
+            <div class="list-subtitle">Genel İdari ve Okul Düzeni</div>
+          </div>
+          <span class="badge badge-blue">${veri.my}</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Servis Nöbeti & Bahçe</div>
+            <div class="list-subtitle">Öğrenci İniş / Biniş ve Çevre Güvenliği</div>
+          </div>
+          <span class="badge badge-blue">${veri.s1}</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Okul Bahçesi-2 / Bodrum Kat</div>
+            <div class="list-subtitle">Öğle Arası Bodrum Kat Nöbeti</div>
+          </div>
+          <span class="badge badge-blue">${veri.s2}</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Bodrum Kat / Yemekhane</div>
+            <div class="list-subtitle">Öğle Arası Yemekhane Nöbeti & Yemek Kontrolü</div>
+          </div>
+          <span class="badge badge-blue">${veri.s3}</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">Zemin Kat (Kuzey & Güney)</div>
+            <div class="list-subtitle">Giriş ve Zemin Kat Koridorları</div>
+          </div>
+          <span class="badge badge-blue">${veri.z}</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">1. Kat Nöbetçisi</div>
+            <div class="list-subtitle">1. Kat Derslik ve Atölye Katı</div>
+          </div>
+          <span class="badge badge-blue">${veri.k1}</span>
+        </div>
+      `;
+    }
+
     function tabDegistir(tabId, btn) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
@@ -300,23 +396,6 @@
       btn.classList.add('active');
     }
 
-    // Nöbet Listesi İşlemleri
-    function nobetEkle() {
-      const gorev = document.getElementById('nobet-gorev').value;
-      const personel = document.getElementById('nobet-personel').value;
-      if (!gorev || !personel) return alert('Lütfen bilgileri doldurun.');
-
-      const liste = document.getElementById('nobet-listesi');
-      const item = document.createElement('div');
-      item.className = 'list-item';
-      item.innerHTML = `<div><strong>${gorev}</strong></div><span class="badge badge-blue">${personel}</span>`;
-      liste.appendChild(item);
-
-      document.getElementById('nobet-gorev').value = '';
-      document.getElementById('nobet-personel').value = '';
-    }
-
-    // İzin Listesi İşlemleri
     function izinEkle() {
       const ad = document.getElementById('izin-ad').value;
       const tip = document.getElementById('izin-tip').value;
@@ -327,13 +406,12 @@
 
       const item = document.createElement('div');
       item.className = 'list-item';
-      item.innerHTML = `<div><strong>${ad}</strong></div><span class="badge badge-red">${tip}</span>`;
+      item.innerHTML = `<div><div class="list-title">${ad}</div></div><span class="badge badge-red">${tip}</span>`;
       liste.appendChild(item);
 
       document.getElementById('izin-ad').value = '';
     }
 
-    // Örnek Öğrenci Yoklama Verileri
     const ogrenciler = [
       { no: '101', ad: 'Ali Kaya', durum: 'Geldi' },
       { no: '102', ad: 'Ayşe Demir', durum: 'Geldi' },
@@ -349,8 +427,8 @@
         row.className = 'list-item';
         row.innerHTML = `
           <div>
-            <strong>${ogr.no} - ${ogr.ad}</strong>
-            <div id="st-${index}" style="font-size:0.8rem; color:${ogr.durum === 'Geldi' ? 'var(--success)' : 'var(--danger)'}">${ogr.durum}</div>
+            <div class="list-title">${ogr.no} - ${ogr.ad}</div>
+            <div id="st-${index}" style="font-size:0.8rem; margin-top:2px; font-weight:600; color:${ogr.durum === 'Geldi' ? 'var(--success)' : 'var(--danger)'}">${ogr.durum}</div>
           </div>
           <div class="status-btns">
             <button class="btn btn-sm btn-success" onclick="durumGuncelle(${index}, 'Geldi')">G</button>
@@ -369,10 +447,22 @@
       st.style.color = durum === 'Geldi' ? 'var(--success)' : (durum === 'Yok' ? 'var(--danger)' : 'var(--warning)');
     }
 
-    // Sayfa Yüklendiğinde
     window.onload = function() {
+      // Cihazın bugünkü tarihini al ve GG/AA/YYYY formatına ayarla
+      const bugun = new Date();
+      const yil = bugun.getFullYear();
+      const ay = String(bugun.getMonth() + 1).padStart(2, '0');
+      const gun = String(bugun.getDate()).padStart(2, '0');
+      const bugunStr = `${yil}-${ay}-${gun}`;
+
+      const secici = document.getElementById('nobet-tarih-secici');
+      secici.value = bugunStr;
+      
+      // Bugünün nöbetini otomatik getir
+      tariheGoreNobetYukle(bugunStr);
+
       ogrencileriYukle();
-      // PWA Service Worker Kaydı
+
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdmZXRjaCcsIGZ1bmN0aW9uKGV2ZW50KSB7fSk7');
       }
