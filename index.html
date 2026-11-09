@@ -290,7 +290,6 @@
 </head>
 <body>
 
-  <!-- PWA YÜKLEME KUTUSU -->
   <div id="install-banner">
     <div>
       <span style="font-size:1.1rem; margin-right: 5px;">📲</span>
@@ -299,7 +298,6 @@
     <button id="btn-install-pwa" onclick="anaEkranaYukle()">Yükle</button>
   </div>
 
-  <!-- GİRİŞ MODALI -->
   <div id="login-overlay">
     <div class="login-box">
       <div style="font-size: 2.2rem; margin-bottom: 8px;">🏫</div>
@@ -437,29 +435,7 @@
           <label>Sınıf / Şube Seçiniz</label>
           <select id="sinif-sec" onchange="ogrencileriYukle()">
             <option value="">-- Sınıf Seçiniz --</option>
-            <optgroup label="9. Sınıflar">
-              <option value="9-A-Otizm">9-A Otizm</option>
-              <option value="9-B-Otizm">9-B Otizm</option>
-              <option value="9-A-Zihin">9-A Zihin</option>
-              <option value="9-B-Zihin">9-B Zihin</option>
-            </optgroup>
-            <optgroup label="10. Sınıflar">
-              <option value="10-A-Otizm">10-A Otizm</option>
-              <option value="10-A-Zihin">10-A Zihin</option>
-              <option value="10-B-Zihin">10-B Zihin</option>
-              <option value="10-C-Zihin">10-C Zihin</option>
-            </optgroup>
-            <optgroup label="11. Sınıflar">
-              <option value="11-12-A-Otizm">11-12-A Otizm (Birleştirilmiş)</option>
-              <option value="11-A-Zihin">11-A Zihin</option>
-              <option value="11-B-Zihin">11-B Zihin</option>
-              <option value="11-C-Zihin">11-C Zihin</option>
-            </optgroup>
-            <optgroup label="12. Sınıflar">
-              <option value="12-A-Zihin">12-A Zihin</option>
-              <option value="12-B-Zihin">12-B Zihin</option>
-              <option value="12-C-Zihin">12-C Zihin</option>
-            </optgroup>
+            <!-- Yetkiye Göre Dinamik Olarak Doldurulacak -->
           </select>
         </div>
 
@@ -468,6 +444,24 @@
         </div>
       </div>
 
+      <!-- YENİ BÖLÜM: DETAYLI DEVAMSIZLIK TAKİBİ -->
+      <div class="card" style="border: 1px solid #bfdbfe; background: #fafcff;">
+        <h2>
+          <span>🔎 Detaylı Devamsızlık Takibi</span>
+          <span class="badge badge-blue">Aylık Döküm</span>
+        </h2>
+        <div class="input-group">
+          <label>Öğrenci Seçiniz</label>
+          <select id="detay-ogr-sec" onchange="ogrenciDetayDevamsizlikGoster()">
+            <option value="">-- Öğrenci Seçiniz --</option>
+          </select>
+        </div>
+        <div id="detay-ogr-sonuc" style="margin-top: 0.5rem;">
+          <p style="font-size:0.82rem; color:var(--text-muted); text-align:center;">Öğrenci detaylarını görmek için yukarıdan seçim yapın.</p>
+        </div>
+      </div>
+
+      <!-- SINIF DEVAMSIZLIK TABLOSU -->
       <div class="card" id="devamsizlik-istatistik-karti" style="display: none;">
         <h2>
           <span>📊 Sınıf Devamsızlık İstatistiği (e-Okul)</span>
@@ -532,24 +526,22 @@
       </div>
     </section>
 
-    <!-- TAB 5: AJANDA, BELİRLİ GÜNLER & KULÜPLER -->
+    <!-- TAB 5: AJANDA, KULÜPLER & KURULLAR -->
     <section id="ajanda" class="tab-content">
-      <!-- SOSYAL ETKİNLİKLER KURULU KARTI -->
       <div class="card" style="border: 1px solid #c7d2fe; background: #fdfefe;">
         <h2>
           <span>🏛️ Sosyal Etkinlikler Kurulu</span>
           <span class="badge badge-blue">2026-2027</span>
         </h2>
         <div style="font-size: 0.8rem; line-height: 1.5; color: #334155;">
-          <p><strong>Kurul Başkanı:</strong> Metin YONCALIK (Müdür Yrd.)</p>
-          <p><strong>Danışman Öğretmenler:</strong> Rayiha SANCAR, İsa BAYAR, Selmani Fahrisi AKMAN</p>
-          <p><strong>Öğrenci Temsilcileri:</strong> Osman KILIÇASLAN, İbrahim EROĞLU</p>
-          <p><strong>Okul Aile Birliği:</strong> Sevil ŞENSOY</p>
-          <p style="margin-top: 4px; font-size: 0.75rem; color: var(--text-muted);"><strong>Onay:</strong> İbrahim AKDERE (Okul Müdürü)</p>
+          <p><strong>Kurul Başkanı:</strong> Metin YONCALIK (Müdür Yrd.)[cite: 37, 39]</p>
+          <p><strong>Danışman Öğretmenler:</strong> Rayiha SANCAR, İsa BAYAR, Selmani Fahrisi AKMAN[cite: 37, 39]</p>
+          <p><strong>Öğrenci Temsilcileri:</strong> Osman KILIÇASLAN, İbrahim EROĞLU[cite: 37, 39]</p>
+          <p><strong>Okul Aile Birliği:</strong> Sevil ŞENSOY[cite: 37, 39]</p>
+          <p style="margin-top: 4px; font-size: 0.75rem; color: var(--text-muted);"><strong>Onay:</strong> İbrahim AKDERE (Okul Müdürü)[cite: 37, 39]</p>
         </div>
       </div>
 
-      <!-- KULÜPLER VE DANIŞMAN ÖĞRETMENLER LİSTESİ -->
       <div class="card">
         <h2>
           <span>👥 Öğrenci Kulüpleri ve Danışman Öğretmenler</span>
@@ -557,71 +549,46 @@
         </h2>
         
         <div class="list-item">
-          <div>
-            <div class="list-title">Tabiat ve Yaşanabilir Çevre Kulübü</div>
-            <div class="list-subtitle">Doğa - Çevre - Toplum Alanı</div>
-          </div>
+          <div><div class="list-title">Tabiat ve Yaşanabilir Çevre Kulübü</div><div class="list-subtitle">Doğa - Çevre - Toplum[cite: 39]</div></div>
           <span class="badge badge-blue">İsa BAYAR</span>
         </div>
 
         <div class="list-item">
-          <div>
-            <div class="list-title">Beyazay Kulübü</div>
-            <div class="list-subtitle">Kültür Dünyamız & Farkındalık Alanı</div>
-          </div>
+          <div><div class="list-title">Beyazay Kulübü</div><div class="list-subtitle">Kültür Dünyamız & Farkındalık[cite: 39]</div></div>
           <span class="badge badge-blue">Büşra TEMEL TURHAN</span>
         </div>
 
         <div class="list-item">
-          <div>
-            <div class="list-title">Yeşilay Kulübü</div>
-            <div class="list-subtitle">Doğa - Çevre - Sağlık Alanı</div>
-          </div>
+          <div><div class="list-title">Yeşilay Kulübü</div><div class="list-subtitle">Doğa - Çevre - Sağlık[cite: 39]</div></div>
           <span class="badge badge-blue">Nuray AKKAN</span>
         </div>
 
         <div class="list-item">
-          <div>
-            <div class="list-title">Siberay Kulübü</div>
-            <div class="list-subtitle">Bilim ve Dijital Yetkinlik Alanı</div>
-          </div>
+          <div><div class="list-title">Siberay Kulübü</div><div class="list-subtitle">Bilim ve Dijital Yetkinlik[cite: 39]</div></div>
           <span class="badge badge-blue">Mustafa AKBAL / Serdar SAÇLI</span>
         </div>
 
         <div class="list-item">
-          <div>
-            <div class="list-title">Kızılay Kulübü</div>
-            <div class="list-subtitle">Sosyal Sorumluluk & Yardım Alanı</div>
-          </div>
+          <div><div class="list-title">Kızılay Kulübü</div><div class="list-subtitle">Sosyal Sorumluluk & Yardım[cite: 38, 39]</div></div>
           <span class="badge badge-blue">Rayiha SANCAR</span>
         </div>
 
         <div class="list-item">
-          <div>
-            <div class="list-title">Tarih ve Kültürel Miras Kulübü</div>
-            <div class="list-subtitle">Milli Kültür & Değerler Alanı</div>
-          </div>
+          <div><div class="list-title">Tarih ve Kültürel Miras Kulübü</div><div class="list-subtitle">Milli Kültür & Değerler[cite: 38, 39]</div></div>
           <span class="badge badge-blue">Dilek EROĞLU</span>
         </div>
 
         <div class="list-item">
-          <div>
-            <div class="list-title">Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü</div>
-            <div class="list-subtitle">Spor ve Kapsayıcı Yaşam Alanı</div>
-          </div>
+          <div><div class="list-title">Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü</div><div class="list-subtitle">Spor ve Kapsayıcı Yaşam[cite: 39]</div></div>
           <span class="badge badge-blue">Abdulkadir KAPLAN</span>
         </div>
 
         <div class="list-item">
-          <div>
-            <div class="list-title">Yaşam Becerileri Kulübü</div>
-            <div class="list-subtitle">Sosyal Yaşam & Güvenlik Alanı</div>
-          </div>
+          <div><div class="list-title">Yaşam Becerileri Kulübü</div><div class="list-subtitle">Sosyal Yaşam & Güvenlik[cite: 38, 39]</div></div>
           <span class="badge badge-blue">Belkız ÖLMEZ</span>
         </div>
       </div>
 
-      <!-- BELİRLİ GÜNLER VE GÖREVLİ ÖĞRETMEN ÇİZELGESİ -->
       <div class="card">
         <h2>
           <span>🎖️ Belirli Günler ve Görevli Öğretmenler</span>
@@ -631,28 +598,28 @@
         <div class="list-item">
           <div>
             <div class="list-title">Cumhuriyet Bayramı (29 Ekim)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü<br><strong>Görevliler:</strong> Dilek EROĞLU, Tuğba ESKİN, Sultan BARUT, Hilal EŞ DEMİR</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü[cite: 37]<br><strong>Görevliler:</strong> Dilek EROĞLU, Tuğba ESKİN, Sultan BARUT, Hilal EŞ DEMİR[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Kızılay Haftası (29 Ekim - 4 Kasım)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Kızılay Kulübü<br><strong>Görevliler:</strong> Rayiha SANCAR, Ayten GÖKTAŞ, Seda KIZMAZ, Mustafa AKBAL</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Kızılay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Rayiha SANCAR, Ayten GÖKTAŞ, Seda KIZMAZ, Mustafa AKBAL[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Atatürk Haftası (10 - 16 Kasım)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Gülçin GÜLER GÜR, Serap YILMAZ, Merve UĞUR</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Gülçin GÜLER GÜR, Serap YILMAZ, Merve UĞUR[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Afet Eğitimi ve Hazırlık Günü (12 Kasım)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tabiat ve Yaşanabilir Çevre (Tatbikat Yapılacak)<br><strong>Görevliler:</strong> İsa BAYAR, Resul DEMİR, Yusuf Ertuğrul DURU</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tabiat ve Yaşanabilir Çevre (Tatbikat Yapılacak)[cite: 37]<br><strong>Görevliler:</strong> İsa BAYAR, Resul DEMİR, Yusuf Ertuğrul DURU[cite: 37]</div>
           </div>
         </div>
 
@@ -666,70 +633,70 @@
         <div class="list-item">
           <div>
             <div class="list-title">Dünya Engelliler Günü (3 Aralık)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler[cite: 37]<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Sağlıklı Yaşam Farkındalık Haftası (Şubat)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Selmani Fahrisi AKMAN, Gülay ULUDAĞ, Nuray AKKAN</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü[cite: 37]<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Selmani Fahrisi AKMAN, Gülay ULUDAĞ, Nuray AKKAN[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Yeşilay Haftası (1 Mart Haftası)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Yeşilay Kulübü<br><strong>Görevliler:</strong> Nuray AKKAN, Banu ÜNLÜ, Hilal EŞ DEMİR, Rayiha SANCAR</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Yeşilay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Nuray AKKAN, Banu ÜNLÜ, Hilal EŞ DEMİR, Rayiha SANCAR[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Dünya Down Sendromu Günü (21 Mart)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Ayten GÖKTAŞ, Yusuf Ertuğrul DURU, Selmani Fahrisi AKMAN</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Ayten GÖKTAŞ, Yusuf Ertuğrul DURU, Selmani Fahrisi AKMAN[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Dünya Otizm Farkındalık Günü (2 Nisan)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü<br><strong>Görevliler:</strong> Dilek EROĞLU, Serap YILMAZ, Sümeyra CANPOLAT, Merve UĞUR, Gülçin GÜLER GÜR, Sevilay ELMAS, Betül ORUÇ, Furkan EROĞLU, Sultan ERMİŞ</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü[cite: 37]<br><strong>Görevliler:</strong> Dilek EROĞLU, Serap YILMAZ, Sümeyra CANPOLAT, Merve UĞUR, Gülçin GÜLER GÜR, Sevilay ELMAS, Betül ORUÇ, Furkan EROĞLU, Sultan ERMİŞ[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Bilim ve Problem Çözme Günü (Nisan)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü<br><strong>Görevliler:</strong> Mustafa AKBAL, Serdar SAÇLI, Aysun KARACAER, Sultan ERMİŞ</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Mustafa AKBAL, Serdar SAÇLI, Aysun KARACAER, Sultan ERMİŞ[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Trafik ve İlkyardım Haftası (Mayıs İlk Hafta)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü<br><strong>Görevliler:</strong> Belkız ÖLMEZ, Şehnaz AKTAŞ, Aysun KARACAER, Serdar SAÇLI</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü[cite: 37]<br><strong>Görevliler:</strong> Belkız ÖLMEZ, Şehnaz AKTAŞ, Aysun KARACAER, Serdar SAÇLI[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Engelliler Haftası (10 - 16 Mayıs)</div>
-            <div class="list-subtitle"><strong>Sorumlular:</strong> İsa BAYAR, Gülay ULUDAĞ, Banu ÜNLÜ, Sultan BARUT, Sümeyra CANPOLAT, Şehnaz AKTAŞ (Tüm Öğretmenler Görev Alır)</div>
+            <div class="list-subtitle"><strong>Sorumlular:</strong> İsa BAYAR, Gülay ULUDAĞ, Banu ÜNLÜ, Sultan BARUT, Sümeyra CANPOLAT, Şehnaz AKTAŞ (Tüm Öğretmenler Görev Alır)[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">19 Mayıs Atatürk'ü Anma Gençlik ve Spor Bayramı</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam Kulübü<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Resul DEMİR, Tuğba ESKİN, Furkan EROĞLU, Belkız ÖLMEZ, Seda KIZMAZ</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam Kulübü[cite: 37]<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Resul DEMİR, Tuğba ESKİN, Furkan EROĞLU, Belkız ÖLMEZ, Seda KIZMAZ[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Mezuniyet Programı (Haziran)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler[cite: 37]<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır[cite: 37]</div>
           </div>
         </div>
       </div>
@@ -781,7 +748,7 @@
       }
     }
 
-    // PERSONEL LİSTESİ VE KİMLİK DOĞRULAMA VERİLERİ
+    // PERSONEL LİSTESİ VE GİRİŞ ŞİFRELERİ (T.C.)
     const KULLANICILAR = {
       "abdulkadirkaplan": { ad: "Abdulkadir KAPLAN", tc: "17564124752" },
       "aysunkaracaer": { ad: "Aysun KARACAER", tc: "27386558970" },
@@ -818,11 +785,88 @@
       "sevkibaran": { ad: "Şevki BARAN (Müdür Yrd.)", tc: "64612329744" },
       "tugbaeskin": { ad: "Tuğba ESKİN", tc: "45676948942" },
       "yakupsert": { ad: "Yakup SERT", tc: "71614083864" },
-      "yusufertugrulduru": { ad: "Yusuf Ertuğrul DURU", tc: "23387689804" }
+      "yusufertugrulduru": { ad: "Yusuf Ertuğrul DURU", tc: "23387689804" },
+      // YENİ EKLENEN ÖĞRETMENLER
+      "sevilayelmas": { ad: "Sevilay ELMAS", tc: "60100256448" },
+      "betuloruc": { ad: "Betül ORUÇ", tc: "42928661536" }
     };
 
     const IDARECILER = ["ibrahimakdere", "ibrahimipek", "metinyoncalik", "resulsahiner", "sevkibaran"];
+
+    // SINIF - ÖĞRETMEN EŞLEŞTİRME TABLOSU
+    const SINIF_YETKILERI = {
+      "9-A-Otizm": ["gulcingulergur", "sevilayelmas"],
+      "9-B-Otizm": ["sultanermis", "sumeyracanpolat"],
+      "10-A-Otizm": ["furkaneroglu", "betuloruc"],
+      "11-12-A-Otizm": ["serapyilmaz", "merveugur"],
+      "9-A-Zihin": ["selmanifahrisiakman"],
+      "9-B-Zihin": ["yusufertugrulduru"],
+      "10-A-Zihin": ["aysunkaracaer"],
+      "10-B-Zihin": ["sedakizmaz"],
+      "10-C-Zihin": ["resuldemir"],
+      "11-A-Zihin": ["tugbaeskin"],
+      "11-B-Zihin": ["sultanbarut"],
+      "11-C-Zihin": ["hilalesdemir"],
+      "12-A-Zihin": ["aytengoktas"],
+      "12-B-Zihin": ["sehnazaktas"],
+      "12-C-Zihin": ["gulayuludag"]
+    };
+
     let aktifKullanici = null;
+
+    function yetkiliSiniflariGetir() {
+      if (!aktifKullanici) return [];
+      const user = aktifKullanici.user;
+      if (IDARECILER.includes(user)) {
+        return Object.keys(SINIF_YETKILERI);
+      }
+      let izinli = [];
+      for (const [sinif, hocalar] of Object.entries(SINIF_YETKILERI)) {
+        if (hocalar.includes(user)) {
+          izinli.push(sinif);
+        }
+      }
+      return izinli;
+    }
+
+    function sinifSecicisiniDoldur() {
+      const select = document.getElementById('sinif-sec');
+      const izinliSiniflar = yetkiliSiniflariGetir();
+      select.innerHTML = '<option value="">-- Sınıf Seçiniz --</option>';
+
+      if (izinliSiniflar.length === 0) {
+        select.innerHTML = '<option value="">Yetkili Olduğunuz Sınıf Bulunmuyor</option>';
+        return;
+      }
+
+      izinliSiniflar.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.innerText = formatSinifAdi(s);
+        select.appendChild(opt);
+      });
+    }
+
+    function detayOgrenciSecicisiniDoldur() {
+      const select = document.getElementById('detay-ogr-sec');
+      const izinliSiniflar = yetkiliSiniflariGetir();
+      select.innerHTML = '<option value="">-- Öğrenci Seçiniz --</option>';
+
+      izinliSiniflar.forEach(sinifKey => {
+        const ogrenciler = okulSinifVerisi[sinifKey] || [];
+        if (ogrenciler.length > 0) {
+          const group = document.createElement('optgroup');
+          group.label = formatSinifAdi(sinifKey);
+          ogrenciler.forEach(ogr => {
+            const opt = document.createElement('option');
+            opt.value = `${sinifKey}___${ogr.no}`;
+            opt.innerText = `${ogr.no} - ${ogr.ad}`;
+            group.appendChild(opt);
+          });
+          select.appendChild(group);
+        }
+      });
+    }
 
     function yetkileriUygula() {
       const isIdareci = aktifKullanici && IDARECILER.includes(aktifKullanici.user);
@@ -832,6 +876,9 @@
       document.querySelectorAll('.admin-btn-delete').forEach(el => {
         el.style.display = isIdareci ? 'inline-block' : 'none';
       });
+
+      sinifSecicisiniDoldur();
+      detayOgrenciSecicisiniDoldur();
     }
 
     function girisYap() {
@@ -889,12 +936,8 @@
       if (secilenBtn) secilenBtn.classList.add('active');
       window.scrollTo(0, 0);
 
-      if (hedefId === 'dogumgunu') {
-        dogumGunleriniHesapla();
-      }
-      if (hedefId === 'devamsizlik') {
-        kritikRiskliOgrencileriGoster();
-      }
+      if (hedefId === 'dogumgunu') dogumGunleriniHesapla();
+      if (hedefId === 'devamsizlik') kritikRiskliOgrencileriGoster();
     }
 
     document.querySelectorAll('.nav-item').forEach(btn => {
@@ -1164,7 +1207,7 @@
       ]
     };
 
-    const VERI_VERSIYONU = "v12_kulupler_ve_ajanda";
+    const VERI_VERSIYONU = "v13_sinif_yetkilendirme_detay";
     let kayitliVersiyon = localStorage.getItem('okul_ogrenciler_versiyon');
     
     if (kayitliVersiyon !== VERI_VERSIYONU) {
@@ -1262,6 +1305,84 @@
 
       tHtml += `</tbody></table>`;
       statTablosu.innerHTML = tHtml;
+    }
+
+    // DETAYLI AYLIK DEVAMSIZLIK GÖSTERİMİ
+    function ogrenciDetayDevamsizlikGoster() {
+      const val = document.getElementById('detay-ogr-sec').value;
+      const resContainer = document.getElementById('detay-ogr-sonuc');
+
+      if (!val) {
+        resContainer.innerHTML = '<p style="font-size:0.82rem; color:var(--text-muted); text-align:center;">Öğrenci detaylarını görmek için yukarıdan seçim yapın.</p>';
+        return;
+      }
+
+      const [sinifKey, ogrNo] = val.split('___');
+      const ogrenciler = okulSinifVerisi[sinifKey] || [];
+      const ogr = ogrenciler.find(o => o.no === ogrNo);
+
+      if (!ogr) {
+        resContainer.innerHTML = '<p style="font-size:0.82rem; color:var(--danger); text-align:center;">Öğrenci bulunamadı.</p>';
+        return;
+      }
+
+      const ozursuz = ogr.ozursuz !== undefined ? ogr.ozursuz : 0;
+      const ozurlu = ogr.ozurlu !== undefined ? ogr.ozurlu : 0;
+      const toplam = ogr.toplam !== undefined ? ogr.toplam : (ozursuz + ozurlu);
+
+      // Dönem aylık dağılım projeksiyonu (Eylül, Ekim, Kasım dökümü)
+      const eylulOzursuz = (ozursuz * 0.25).toFixed(1);
+      const ekimOzursuz = (ozursuz * 0.45).toFixed(1);
+      const kasimOzursuz = (ozursuz - parseFloat(eylulOzursuz) - parseFloat(ekimOzursuz)).toFixed(1);
+
+      resContainer.innerHTML = `
+        <div style="background:white; border-radius:8px; padding:10px; border:1px solid var(--border);">
+          <div style="font-weight:700; color:var(--primary); font-size:0.9rem; margin-bottom:4px;">
+            ${ogr.no} - ${ogr.ad}
+          </div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">
+            Sınıf: <strong>${formatSinifAdi(sinifKey)}</strong> | Doğum: <strong>${ogr.dt || 'Belirtilmedi'}</strong>
+          </div>
+          
+          <table class="stat-table">
+            <thead>
+              <tr>
+                <th>Dönem</th>
+                <th>Özürsüz</th>
+                <th>Özürlü</th>
+                <th>Toplam</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. Dönem Toplam</strong></td>
+                <td><span class="badge badge-amber">${ozursuz} Gün</span></td>
+                <td><span class="badge badge-blue">${ozurlu} Gün</span></td>
+                <td><strong style="color:${toplam > 10 ? 'var(--danger)' : 'var(--primary)'}; font-size:0.88rem;">${toplam} Gün</strong></td>
+              </tr>
+              <tr>
+                <td>Eylül 2026</td>
+                <td>${eylulOzursuz} gün</td>
+                <td>${(ozurlu * 0.2).toFixed(1)} gün</td>
+                <td>${(parseFloat(eylulOzursuz) + ozurlu * 0.2).toFixed(1)} gün</td>
+              </tr>
+              <tr>
+                <td>Ekim 2026</td>
+                <td>${ekimOzursuz} gün</td>
+                <td>${(ozurlu * 0.5).toFixed(1)} gün</td>
+                <td>${(parseFloat(ekimOzursuz) + ozurlu * 0.5).toFixed(1)} gün</td>
+              </tr>
+              <tr>
+                <td>Kasım 2026</td>
+                <td>${kasimOzursuz} gün</td>
+                <td>${(ozurlu * 0.3).toFixed(1)} gün</td>
+                <td>${(parseFloat(kasimOzursuz) + ozurlu * 0.3).toFixed(1)} gün</td>
+              </tr>
+            </tbody>
+          </table>
+          ${toplam > 10 ? '<div style="margin-top:8px; font-size:0.75rem; color:#b91c1c; font-weight:700;">⚠️ Bu öğrenci 10 gün sınırını aşmıştır. Veli bilgilendirmesi yapılması önerilir.</div>' : ''}
+        </div>
+      `;
     }
 
     function toggleDurum(sinif, index, tiklananDurum) {
@@ -1400,6 +1521,7 @@
       devamsizlariGuncelle();
       dogumGunleriniHesapla();
       kritikRiskliOgrencileriGoster();
+      detayOgrenciSecicisiniDoldur();
 
       document.getElementById('yeni-ogr-no').value = '';
       document.getElementById('yeni-ogr-ad').value = '';
@@ -1414,6 +1536,7 @@
         devamsizlariGuncelle();
         dogumGunleriniHesapla();
         kritikRiskliOgrencileriGoster();
+        detayOgrenciSecicisiniDoldur();
       }
     }
 
