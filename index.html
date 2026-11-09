@@ -27,7 +27,7 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: var(--bg); color: var(--text); padding-bottom: 90px; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 95px; }
 
     header {
       background: linear-gradient(135deg, var(--primary), var(--primary-light));
@@ -114,7 +114,7 @@
     .list-item {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       padding: 0.75rem 0;
       border-bottom: 1px solid var(--border);
     }
@@ -126,6 +126,16 @@
     .badge-blue { background: #dbeafe; color: #1e40af; }
     .badge-red { background: #fee2e2; color: #991b1b; }
     .badge-amber { background: #fef3c7; color: #92400e; }
+    .badge-alert {
+      display: inline-block;
+      margin-top: 4px;
+      background: #dc2626;
+      color: #ffffff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
 
     .btn {
       background: var(--primary-light);
@@ -136,10 +146,23 @@
       font-size: 0.85rem;
       cursor: pointer;
     }
-    .btn-sm { padding: 0.3rem 0.5rem; font-size: 0.75rem; }
+    .btn-sm { padding: 0.35rem 0.6rem; font-size: 0.75rem; }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
     .btn-success { background: var(--success); }
     .btn-danger { background: var(--danger); }
+
+    .btn-delete {
+      background: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fca5a5;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    .btn-delete:active { background: #fecaca; }
 
     .input-group { margin-bottom: 0.8rem; }
     .input-group label { display: block; font-size: 0.8rem; margin-bottom: 4px; color: var(--text-muted); }
@@ -150,8 +173,10 @@
       border-radius: 6px;
       font-size: 0.9rem;
     }
+    .row-2 { display: flex; gap: 8px; }
+    .row-2 > div { flex: 1; }
 
-    .status-btns { display: flex; gap: 5px; }
+    .status-btns { display: flex; gap: 4px; align-items: center; }
   </style>
 </head>
 <body>
@@ -180,10 +205,29 @@
       <div class="card">
         <h2>📌 Nöbetçi Öğretmen Görev Hatırlatması</h2>
         <ul style="padding-left: 1.2rem; font-size: 0.8rem; color: #475569; line-height: 1.45;">
-          <li>Ders başlamadan 30 dk önce hazır bulunur, bitiminden 30 dk sonra kontrolleri tamamlar.[cite: 7]</li>
-          <li>Taşımalı servis öğrencilerini iniş/biniş listelerine göre teslim alır ve teslim eder.[cite: 7]</li>
-          <li>Öğle yemeği kontrolü ve yemekhane düzenini sağlar, çizelgeyi işler.[cite: 7]</li>
-          <li>Nöbet defterini nöbet başında ve bitiminde mutlaka imzalar.[cite: 7]</li>
+          <li>Nöbetler, okul idaresi tarafından hazırlanan nöbet çizelgelerine uygun olarak tutulur. Bu çizelgelerde okul idaresinin bilgisi dışında değişiklik yapılamaz.[cite: 7]</li>
+          <li>Okulda ilk ders başlamadan 30 dakika önce hazır bulunur, okulun genel kontrolünü yapar, eksikleri okul yönetimine bildirir ve son ders bitiminden 30 dakika sonra gerekli kontrolleri yaparak nöbet görevini tamamlar.[cite: 7]</li>
+          <li>Nöbetçi öğretmenler nöbet saatleri içerisinde nöbet yerinde bulunur. Ani ve benzeri mazeretin meydana gelmesi halinde, yetkili amirin müsaadesi ile nöbeti kendisinden sonra gelene devredebilir.[cite: 7]</li>
+          <li>Sabah gelindiğinde; nöbet/görev bölgesi kontrol ederek nöbet defterini imzalamak. Nöbeti sonunda nöbet defterine nöbeti süresi içindeki önemli olayları ve aldığı önlemleri belirten raporu yazmak ve imzalamak. Ayrıca tutanak tutulması gereken durumlarda tutanak tutar.[cite: 7]</li>
+          <li>Nöbet bölgesinde öğrencileri gözetlemek, öğrenciler arasında oluşabilecek kavga tartışma gibi durumları önlemek, gerektiğinde nöbetçi müdür yardımcısına bilgi vermek.[cite: 7]</li>
+          <li>Teneffüs anında yaralanan öğrencilere ilk yardım yapmak, acil durumlarda nöbetçi müdür yardımcısına bildirmek ve daha acil durumlarda hemen 112 acil yardım numarasını aramak.[cite: 7]</li>
+          <li>Teneffüslerde öğrencilerin derslere zamanında ve güvenli şekilde giriş-çıkışları için gerekli tedbirleri almak ve nöbet bölgesindeki tüm öğrenciler sınıflara girmeden nöbet bölgesini terk etmemek.[cite: 7]</li>
+          <li>Ders zili çaldıktan sonra tüm öğretmenlerle birlikte derse girerler. Sigara ve çay içmek için ayrıca beklemezler.[cite: 7]</li>
+          <li>Ders zili çaldığında, öğretmenleri derse girmeleri için uyarmak, derse zamanında girmeyenleri, girmemekte ısrar edenleri nöbet defterine yazmak ve okul yönetimine bildirmek.[cite: 7]</li>
+          <li>Raporlu/izinli olan öğretmenlerin durumlarını nöbetçi müdür yardımcısının önerileri doğrultusunda nöbet defterine ve sınıf defterine işlemek.[cite: 7]</li>
+          <li>Bahçe nöbet görevini yerine getiren öğretmenler ön ana giriş kapısının olduğu bölgede trafikle ilgili tedbirleri almak.[cite: 7]</li>
+          <li>Velilerin katlara çıkmamasını, sınıflara girmemesini sağlamak, gerekli durumda velilere ve ziyaretçilere rehberlik etmek.[cite: 7]</li>
+          <li>Sabah ilk girişte öğrencilerin düzenli olarak sınıflara girmelerini sağlamak, son ders çıkışında öğrencilerin okulu boşaltmalarını organize etmek, kapıda ve koridorlarda yığılmaları önlemek.[cite: 7]</li>
+          <li>Öğrencilerin okul bahçesi dışına çıkmamasını sağlamak, çıkanları tespit edip okul idaresine bildirmek.[cite: 7]</li>
+          <li>Yağmurlu ve karlı havalarda gerekli önlemler almak.[cite: 7]</li>
+          <li>Okulun günlük havalandırma, ısıtma ve temizlik işlerinin zamanında yapılıp yapılmadığını kontrol eder, eksiklerin giderilmesi için gerekli tedbirleri alır.[cite: 7]</li>
+          <li>Bayrak törenlerinin zamanında gereken önemin verilerek yapılmasını sağlar.[cite: 7]</li>
+          <li>Okulun eğitim, öğretim ve disiplin gibi işlerinin düzenli olarak yürütülmesinde, okul yöneticilerine yardımcı olur.[cite: 7]</li>
+          <li>Taşımalı okul servis araçları ile okula gelen çocukların iniş ve binişte isim listelerine göre kontrol etmek.[cite: 7]</li>
+          <li>Taşıma araçlarının ve şoförlerin araç takip çizelgesine uygun olup olmadığını kontrol eder.[cite: 7]</li>
+          <li>Öğrencilerinin öğle yemeklerini düzenli şekilde yiyebilmeleri için gerekli tedbirleri almak.[cite: 7]</li>
+          <li>Yemekleri kontrol ederek çizelgeye işlemek, yemeklerin sağlıksız ve eksik olması halinde okul idaresine bilgi vermek.[cite: 7]</li>
+          <li>Olumsuz herhangi bir durumda Nöbetçi Müdür Yardımcısına haber verir ve durumu kayıt altına alır.[cite: 7]</li>
         </ul>
       </div>
     </section>
@@ -212,6 +256,16 @@
             <option value="Görevli / İzinli">Görevli / İzinli</option>
           </select>
         </div>
+        <div class="row-2">
+          <div class="input-group">
+            <label>Başlangıç Tarihi</label>
+            <input type="date" id="izin-baslangic">
+          </div>
+          <div class="input-group">
+            <label>Bitiş Tarihi</label>
+            <input type="date" id="izin-bitis">
+          </div>
+        </div>
         <button class="btn" style="width: 100%;" onclick="izinEkle()">İzin Kaydet</button>
       </div>
 
@@ -232,21 +286,59 @@
       </div>
     </section>
 
-    <!-- TAB 3: DEVAMSIZLIK -->
+    <!-- TAB 3: DEVAMSIZLIK & ÖĞRENCİ YÖNETİMİ -->
     <section id="devamsizlik" class="tab-content">
       <div class="card">
         <h2>👥 Günlük Öğrenci Yoklaması</h2>
         <div class="input-group">
-          <label>Sınıf / Şube</label>
+          <label>Sınıf / Şube Seçin</label>
           <select id="sinif-sec" onchange="ogrencileriYukle()">
-            <option value="9-A">9-A Özel Eğitim</option>
-            <option value="10-A">10-A El Sanatları</option>
-            <option value="11-A">11-A Yiyecek İçecek</option>
-            <option value="12-A">12-A Konaklama</option>
+            <!-- 9. Sınıflar -->
+            <optgroup label="9. Sınıflar">
+              <option value="9-A-Otizm">9-A Otizm</option>
+              <option value="9-B-Otizm">9-B Otizm</option>
+              <option value="9-A-Zihin">9-A Zihin</option>
+              <option value="9-B-Zihin">9-B Zihin</option>
+            </optgroup>
+            <!-- 10. Sınıflar -->
+            <optgroup label="10. Sınıflar">
+              <option value="10-A-Otizm">10-A Otizm</option>
+              <option value="10-A-Zihin">10-A Zihin</option>
+              <option value="10-B-Zihin">10-B Zihin</option>
+              <option value="10-C-Zihin">10-C Zihin</option>
+            </optgroup>
+            <!-- 11. Sınıflar -->
+            <optgroup label="11. Sınıflar">
+              <option value="11-12-A-Otizm">11-12-A Otizm (Birleştirilmiş)</option>
+              <option value="11-A-Zihin">11-A Zihin</option>
+              <option value="11-B-Zihin">11-B Zihin</option>
+              <option value="11-C-Zihin">11-C Zihin</option>
+            </optgroup>
+            <!-- 12. Sınıflar -->
+            <optgroup label="12. Sınıflar">
+              <option value="12-A-Zihin">12-A Zihin</option>
+              <option value="12-B-Zihin">12-B Zihin</option>
+              <option value="12-C-Zihin">12-C Zihin</option>
+            </optgroup>
           </select>
         </div>
 
         <div id="ogrenci-listesi" style="margin-top: 1rem;"></div>
+      </div>
+
+      <div class="card">
+        <h2>➕ Seçili Sınıfa Öğrenci Ekle</h2>
+        <div class="row-2">
+          <div class="input-group">
+            <label>Öğrenci No</label>
+            <input type="text" id="yeni-ogr-no" placeholder="Örn: 105">
+          </div>
+          <div class="input-group">
+            <label>Ad Soyad</label>
+            <input type="text" id="yeni-ogr-ad" placeholder="Örn: Ahmet YILMAZ">
+          </div>
+        </div>
+        <button class="btn btn-outline" style="width: 100%;" onclick="yeniOgrenciEkle()">Öğrenciyi Sınıfa Kaydet</button>
       </div>
     </section>
 
@@ -310,7 +402,6 @@
       window.scrollTo(0, 0);
     }
 
-    // Buton Dinleyicilerini Kur
     document.querySelectorAll('.nav-item').forEach(btn => {
       btn.addEventListener('click', function(e) {
         e.preventDefault();
@@ -343,6 +434,35 @@
       "2026-12-04": { my: "METİN YONCALIK", s1: "RAYİHA SANCAR", s2: "SEVİLAY ELMAS", s3: "BETÜL ORUÇ", z: "HİLAL EŞ DEMİR / SULTAN ERMİŞ", k1: "BELKIZ ÖLMEZ" }
     };
 
+    // İZİN YÖNETİMİ
+    let izinler = JSON.parse(localStorage.getItem('okul_izinler') || '[]');
+
+    function isimIzinliMi(adSoyad, tarihStr) {
+      if (!adSoyad || !tarihStr) return false;
+      const t = new Date(tarihStr).getTime();
+      
+      return izinler.some(izin => {
+        const bas = new Date(izin.baslangic).getTime();
+        const bit = new Date(izin.bitis).getTime();
+        const isimEslesiyor = adSoyad.toLocaleLowerCase('tr-TR').includes(izin.ad.toLocaleLowerCase('tr-TR'));
+        return isimEslesiyor && (t >= bas && t <= bit);
+      });
+    }
+
+    function nobetBadgeHazirla(isimMetni, tarihStr) {
+      const parcalar = isimMetni.split('/').map(p => p.trim());
+      let html = '';
+      parcalar.forEach((ad, i) => {
+        const izinli = isimIzinliMi(ad, tarihStr);
+        if (i > 0) html += ' / ';
+        html += `<span class="badge ${izinli ? 'badge-red' : 'badge-blue'}">${ad}</span>`;
+        if (izinli) {
+          html += ` <span class="badge-alert">⚠️ İZİNLİ/RAPORLU</span>`;
+        }
+      });
+      return html;
+    }
+
     function tariheGoreNobetYukle(tarihStr) {
       const container = document.getElementById('nobet-listesi');
       const etiket = document.getElementById('nobet-tarih-etiket');
@@ -363,81 +483,179 @@
       container.innerHTML = `
         <div class="list-item">
           <div><div class="list-title">Nöbetçi Müdür Yrd.</div><div class="list-subtitle">Genel İdari ve Okul Düzeni</div></div>
-          <span class="badge badge-blue">${veri.my}</span>
+          <div>${nobetBadgeHazirla(veri.my, tarihStr)}</div>
         </div>
         <div class="list-item">
           <div><div class="list-title">Servis Nöbeti & Bahçe</div><div class="list-subtitle">Öğrenci İniş / Biniş ve Çevre Güvenliği</div></div>
-          <span class="badge badge-blue">${veri.s1}</span>
+          <div>${nobetBadgeHazirla(veri.s1, tarihStr)}</div>
         </div>
         <div class="list-item">
           <div><div class="list-title">Okul Bahçesi-2 / Bodrum Kat</div><div class="list-subtitle">Öğle Arası Bodrum Kat Nöbeti</div></div>
-          <span class="badge badge-blue">${veri.s2}</span>
+          <div>${nobetBadgeHazirla(veri.s2, tarihStr)}</div>
         </div>
         <div class="list-item">
           <div><div class="list-title">Bodrum Kat / Yemekhane</div><div class="list-subtitle">Öğle Arası Yemekhane & Kontrol</div></div>
-          <span class="badge badge-blue">${veri.s3}</span>
+          <div>${nobetBadgeHazirla(veri.s3, tarihStr)}</div>
         </div>
         <div class="list-item">
           <div><div class="list-title">Zemin Kat (Kuzey & Güney)</div><div class="list-subtitle">Giriş ve Zemin Kat Koridorları</div></div>
-          <span class="badge badge-blue">${veri.z}</span>
+          <div>${nobetBadgeHazirla(veri.z, tarihStr)}</div>
         </div>
         <div class="list-item">
           <div><div class="list-title">1. Kat Nöbetçisi</div><div class="list-subtitle">1. Kat Derslik ve Atölye Katı</div></div>
-          <span class="badge badge-blue">${veri.k1}</span>
+          <div>${nobetBadgeHazirla(veri.k1, tarihStr)}</div>
         </div>
       `;
     }
 
-    function izinEkle() {
-      const ad = document.getElementById('izin-ad').value;
-      const tip = document.getElementById('izin-tip').value;
-      if (!ad) return alert('Lütfen personel adını girin.');
-
+    function izinleriGoster() {
       const liste = document.getElementById('izin-listesi');
-      if (liste.innerText.includes('bulunmuyor')) liste.innerHTML = '';
+      if (izinler.length === 0) {
+        liste.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted);">Kayıtlı izinli/raporlu personel bulunmuyor.</p>';
+        return;
+      }
 
-      const item = document.createElement('div');
-      item.className = 'list-item';
-      item.innerHTML = `<div><div class="list-title">${ad}</div></div><span class="badge badge-red">${tip}</span>`;
-      liste.appendChild(item);
-
-      document.getElementById('izin-ad').value = '';
-    }
-
-    const ogrenciler = [
-      { no: '101', ad: 'Ali Kaya', durum: 'Geldi' },
-      { no: '102', ad: 'Ayşe Demir', durum: 'Geldi' },
-      { no: '103', ad: 'Mehmet Çelik', durum: 'Geldi' },
-      { no: '104', ad: 'Fatma Şahin', durum: 'Geldi' }
-    ];
-
-    function ogrencileriYukle() {
-      const liste = document.getElementById('ogrenci-listesi');
-      if (!liste) return;
       liste.innerHTML = '';
-      ogrenciler.forEach((ogr, index) => {
+      izinler.forEach((item, index) => {
         const row = document.createElement('div');
         row.className = 'list-item';
         row.innerHTML = `
           <div>
-            <div class="list-title">${ogr.no} - ${ogr.ad}</div>
-            <div id="st-${index}" style="font-size:0.8rem; margin-top:2px; font-weight:600; color:${ogr.durum === 'Geldi' ? 'var(--success)' : 'var(--danger)'}">${ogr.durum}</div>
+            <div class="list-title">${item.ad}</div>
+            <div class="list-subtitle">🗓️ ${item.baslangic} - ${item.bitis}</div>
           </div>
-          <div class="status-btns">
-            <button class="btn btn-sm btn-success" onclick="durumGuncelle(${index}, 'Geldi')">G</button>
-            <button class="btn btn-sm btn-danger" onclick="durumGuncelle(${index}, 'Yok')">Y</button>
-            <button class="btn btn-sm btn-outline" onclick="durumGuncelle(${index}, 'İzinli')">İ</button>
+          <div style="display: flex; align-items: center;">
+            <span class="badge badge-red">${item.tip}</span>
+            <button class="btn-delete" onclick="izinSil(${index})">Sil</button>
           </div>
         `;
         liste.appendChild(row);
       });
     }
 
-    function durumGuncelle(index, durum) {
-      ogrenciler[index].durum = durum;
-      const st = document.getElementById(`st-${index}`);
-      st.innerText = durum;
-      st.style.color = durum === 'Geldi' ? 'var(--success)' : (durum === 'Yok' ? 'var(--danger)' : 'var(--warning)');
+    function izinEkle() {
+      const ad = document.getElementById('izin-ad').value.trim();
+      const tip = document.getElementById('izin-tip').value;
+      const baslangic = document.getElementById('izin-baslangic').value;
+      const bitis = document.getElementById('izin-bitis').value;
+
+      if (!ad) return alert('Lütfen personel adını girin.');
+      if (!baslangic || !bitis) return alert('Lütfen başlangıç ve bitiş tarihlerini seçin.');
+
+      izinler.push({ ad, tip, baslangic, bitis });
+      localStorage.setItem('okul_izinler', JSON.stringify(izinler));
+      izinleriGoster();
+
+      // Nöbet ekranında uyarıyı güncelle
+      const seciliTarih = document.getElementById('nobet-tarih-secici').value;
+      if (seciliTarih) tariheGoreNobetYukle(seciliTarih);
+
+      document.getElementById('izin-ad').value = '';
+    }
+
+    function izinSil(index) {
+      if (confirm('Bu izin kaydını silmek istediğinize emin misiniz?')) {
+        izinler.splice(index, 1);
+        localStorage.setItem('okul_izinler', JSON.stringify(izinler));
+        izinleriGoster();
+
+        const seciliTarih = document.getElementById('nobet-tarih-secici').value;
+        if (seciliTarih) tariheGoreNobetYukle(seciliTarih);
+      }
+    }
+
+    // SINIF VE ÖĞRENCİ DEVAMSIZLIK SİSTEMİ
+    const varsayilanSiniflar = {
+      "9-A-Otizm": [{ no: "101", ad: "Mehmet Demir", durum: "Geldi" }],
+      "9-B-Otizm": [{ no: "102", ad: "Caner Korkmaz", durum: "Geldi" }],
+      "9-A-Zihin": [{ no: "103", ad: "Ahmet Yıldız", durum: "Geldi" }],
+      "9-B-Zihin": [{ no: "104", ad: "Elif Aydın", durum: "Geldi" }],
+      "10-A-Otizm": [{ no: "201", ad: "Burak Taş", durum: "Geldi" }],
+      "10-A-Zihin": [{ no: "202", ad: "Zeynep Çelik", durum: "Geldi" }],
+      "10-B-Zihin": [{ no: "203", ad: "Mustafa Şahin", durum: "Geldi" }],
+      "10-C-Zihin": [{ no: "204", ad: "Emre Güler", durum: "Geldi" }],
+      "11-12-A-Otizm": [{ no: "301", ad: "Fatih Erdem", durum: "Geldi" }],
+      "11-A-Zihin": [{ no: "302", ad: "Büşra Koç", durum: "Geldi" }],
+      "11-B-Zihin": [{ no: "303", ad: "Kemal Doğan", durum: "Geldi" }],
+      "11-C-Zihin": [{ no: "304", ad: "Ayşe Özdemir", durum: "Geldi" }],
+      "12-A-Zihin": [{ no: "401", ad: "Serkan Yaman", durum: "Geldi" }],
+      "12-B-Zihin": [{ no: "402", ad: "Selin Çetin", durum: "Geldi" }],
+      "12-C-Zihin": [{ no: "403", ad: "Onur Kurt", durum: "Geldi" }]
+    };
+
+    let okulSinifVerisi = JSON.parse(localStorage.getItem('okul_ogrenciler')) || varsayilanSiniflar;
+
+    function ogrencileriYukle() {
+      const seciliSinif = document.getElementById('sinif-sec').value;
+      const liste = document.getElementById('ogrenci-listesi');
+      liste.innerHTML = '';
+
+      if (!okulSinifVerisi[seciliSinif]) {
+        okulSinifVerisi[seciliSinif] = [];
+      }
+
+      const ogrenciler = okulSinifVerisi[seciliSinif];
+
+      if (ogrenciler.length === 0) {
+        liste.innerHTML = '<p style="font-size:0.85rem; color:var(--text-muted); padding: 0.5rem 0;">Bu sınıfta henüz kayıtlı öğrenci bulunmuyor.</p>';
+        return;
+      }
+
+      ogrenciler.forEach((ogr, index) => {
+        const row = document.createElement('div');
+        row.className = 'list-item';
+        row.innerHTML = `
+          <div>
+            <div class="list-title">${ogr.no} - ${ogr.ad}</div>
+            <div id="st-${seciliSinif}-${index}" style="font-size:0.8rem; margin-top:2px; font-weight:600; color:${ogr.durum === 'Geldi' ? 'var(--success)' : (ogr.durum === 'Yok' ? 'var(--danger)' : 'var(--warning)')}">
+              ${ogr.durum}
+            </div>
+          </div>
+          <div class="status-btns">
+            <button class="btn btn-sm btn-success" onclick="durumGuncelle('${seciliSinif}', ${index}, 'Geldi')">G</button>
+            <button class="btn btn-sm btn-danger" onclick="durumGuncelle('${seciliSinif}', ${index}, 'Yok')">Y</button>
+            <button class="btn btn-sm btn-outline" onclick="durumGuncelle('${seciliSinif}', ${index}, 'İzinli')">İ</button>
+            <button class="btn-delete" style="margin-left:4px;" onclick="ogrenciSil('${seciliSinif}', ${index})">✕</button>
+          </div>
+        `;
+        liste.appendChild(row);
+      });
+    }
+
+    function durumGuncelle(sinif, index, yeniDurum) {
+      okulSinifVerisi[sinif][index].durum = yeniDurum;
+      localStorage.setItem('okul_ogrenciler', JSON.stringify(okulSinifVerisi));
+      
+      const st = document.getElementById(`st-${sinif}-${index}`);
+      if (st) {
+        st.innerText = yeniDurum;
+        st.style.color = yeniDurum === 'Geldi' ? 'var(--success)' : (yeniDurum === 'Yok' ? 'var(--danger)' : 'var(--warning)');
+      }
+    }
+
+    function yeniOgrenciEkle() {
+      const seciliSinif = document.getElementById('sinif-sec').value;
+      const no = document.getElementById('yeni-ogr-no').value.trim();
+      const ad = document.getElementById('yeni-ogr-ad').value.trim();
+
+      if (!no || !ad) return alert('Lütfen öğrenci no ve ad soyad alanlarını doldurun.');
+
+      if (!okulSinifVerisi[seciliSinif]) okulSinifVerisi[seciliSinif] = [];
+
+      okulSinifVerisi[seciliSinif].push({ no, ad, durum: 'Geldi' });
+      localStorage.setItem('okul_ogrenciler', JSON.stringify(okulSinifVerisi));
+      ogrencileriYukle();
+
+      document.getElementById('yeni-ogr-no').value = '';
+      document.getElementById('yeni-ogr-ad').value = '';
+    }
+
+    function ogrenciSil(sinif, index) {
+      if (confirm('Bu öğrenciyi sınıftan silmek istediğinize emin misiniz?')) {
+        okulSinifVerisi[sinif].splice(index, 1);
+        localStorage.setItem('okul_ogrenciler', JSON.stringify(okulSinifVerisi));
+        ogrencileriYukle();
+      }
     }
 
     window.onload = function() {
@@ -453,6 +671,14 @@
         tariheGoreNobetYukle(bugunStr);
       }
 
+      const izinBas = document.getElementById('izin-baslangic');
+      const izinBit = document.getElementById('izin-bitis');
+      if (izinBas && izinBit) {
+        izinBas.value = bugunStr;
+        izinBit.value = bugunStr;
+      }
+
+      izinleriGoster();
       ogrencileriYukle();
 
       if ('serviceWorker' in navigator) {
