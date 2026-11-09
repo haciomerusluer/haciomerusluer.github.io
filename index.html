@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Hacı Ömer Usluer ÖEMO</title>
   <meta name="theme-color" content="#1e3a8a">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -26,8 +26,8 @@
       --warning: #d97706;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding-bottom: 75px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 90px; }
 
     header {
       background: linear-gradient(135deg, var(--primary), var(--primary-light));
@@ -47,29 +47,35 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 60px;
-      background: var(--card-bg);
+      height: 65px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: #ffffff;
       border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-around;
       align-items: center;
-      z-index: 100;
+      z-index: 9999;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
     }
     .nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       text-decoration: none;
       color: var(--text-muted);
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       flex: 1;
-      padding: 6px 0;
+      height: 100%;
       cursor: pointer;
       border: none;
-      background: none;
+      background: transparent;
+      user-select: none;
+      touch-action: manipulation;
     }
-    .nav-item.active { color: var(--primary-light); font-weight: 600; }
-    .nav-icon { font-size: 1.3rem; margin-bottom: 2px; }
+    .nav-item.active { color: var(--primary-light); font-weight: 700; }
+    .nav-icon { font-size: 1.3rem; margin-bottom: 3px; pointer-events: none; }
+    .nav-item span { pointer-events: none; }
 
     .container { padding: 1rem; max-width: 600px; margin: auto; }
     .tab-content { display: none; }
@@ -108,7 +114,7 @@
     .list-item {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       padding: 0.75rem 0;
       border-bottom: 1px solid var(--border);
     }
@@ -116,7 +122,7 @@
     .list-title { font-weight: 600; font-size: 0.88rem; color: #1e293b; }
     .list-subtitle { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
 
-    .badge { padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
+    .badge { padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: right; }
     .badge-blue { background: #dbeafe; color: #1e40af; }
     .badge-red { background: #fee2e2; color: #991b1b; }
     .badge-amber { background: #fef3c7; color: #92400e; }
@@ -130,10 +136,10 @@
       font-size: 0.85rem;
       cursor: pointer;
     }
-    .btn-sm { padding: 0.35rem 0.6rem; font-size: 0.75rem; border-radius: 6px; }
+    .btn-sm { padding: 0.3rem 0.5rem; font-size: 0.75rem; }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
     .btn-success { background: var(--success); }
-    .btn-danger { background: var(--danger); color: white; border: none; }
+    .btn-danger { background: var(--danger); }
 
     .input-group { margin-bottom: 0.8rem; }
     .input-group label { display: block; font-size: 0.8rem; margin-bottom: 4px; color: var(--text-muted); }
@@ -146,7 +152,6 @@
     }
 
     .status-btns { display: flex; gap: 5px; }
-    .izin-action { display: flex; align-items: center; gap: 8px; }
   </style>
 </head>
 <body>
@@ -175,10 +180,10 @@
       <div class="card">
         <h2>📌 Nöbetçi Öğretmen Görev Hatırlatması</h2>
         <ul style="padding-left: 1.2rem; font-size: 0.8rem; color: #475569; line-height: 1.45;">
-          <li>Ders başlamadan 30 dk önce hazır bulunur, bitiminden 30 dk sonra kontrolleri tamamlar.</li>
-          <li>Taşımalı servis öğrencilerini iniş/biniş listelerine göre teslim alır ve teslim eder.</li>
-          <li>Öğle yemeği kontrolü ve yemekhane düzenini sağlar, çizelgeyi işler.</li>
-          <li>Nöbet defterini nöbet başında ve bitiminde mutlaka imzalar.</li>
+          <li>Ders başlamadan 30 dk önce hazır bulunur, bitiminden 30 dk sonra kontrolleri tamamlar.[cite: 7]</li>
+          <li>Taşımalı servis öğrencilerini iniş/biniş listelerine göre teslim alır ve teslim eder.[cite: 7]</li>
+          <li>Öğle yemeği kontrolü ve yemekhane düzenini sağlar, çizelgeyi işler.[cite: 7]</li>
+          <li>Nöbet defterini nöbet başında ve bitiminde mutlaka imzalar.[cite: 7]</li>
         </ul>
       </div>
     </section>
@@ -187,7 +192,9 @@
     <section id="izinler" class="tab-content">
       <div class="card">
         <h2>📅 İzinli / Raporlu Personel</h2>
-        <div id="izin-listesi"></div>
+        <div id="izin-listesi">
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Kayıtlı izinli/raporlu personel bulunmuyor.</p>
+        </div>
       </div>
 
       <div class="card">
@@ -257,7 +264,7 @@
           <div><strong>Dünya Engelliler Günü</strong><div class="list-subtitle">3 Aralık</div></div>
         </div>
         <div class="list-item">
-          <div><strong>İstiklal Marşı'nın Kabulü ve M. Âkif ERSOY'u Anma</strong><div class="list-subtitle">12 Mart</div></div>
+          <div><strong>İstiklal Marşı'nın Kabulü</strong><div class="list-subtitle">12 Mart</div></div>
         </div>
         <div class="list-item">
           <div><strong>Otizm Farkındalık Günü</strong><div class="list-subtitle">2 Nisan</div></div>
@@ -271,25 +278,48 @@
 
   <!-- ALT MENÜ -->
   <nav class="nav-bar">
-    <button class="nav-item active" onclick="tabDegistir('nobet', this)">
+    <button type="button" class="nav-item active" data-target="nobet">
       <span class="nav-icon">🛡️</span>
       <span>Nöbet</span>
     </button>
-    <button class="nav-item" onclick="tabDegistir('izinler', this)">
+    <button type="button" class="nav-item" data-target="izinler">
       <span class="nav-icon">📅</span>
       <span>Tatil/İzin</span>
     </button>
-    <button class="nav-item" onclick="tabDegistir('devamsizlik', this)">
+    <button type="button" class="nav-item" data-target="devamsizlik">
       <span class="nav-icon">👥</span>
       <span>Yoklama</span>
     </button>
-    <button class="nav-item" onclick="tabDegistir('ajanda', this)">
+    <button type="button" class="nav-item" data-target="ajanda">
       <span class="nav-icon">🎖️</span>
       <span>Belirli Günler</span>
     </button>
   </nav>
 
   <script>
+    // Sekme Değiştirme
+    function sekmeDegistir(hedefId) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      
+      const secilenTab = document.getElementById(hedefId);
+      const secilenBtn = document.querySelector(`.nav-item[data-target="${hedefId}"]`);
+      
+      if (secilenTab) secilenTab.classList.add('active');
+      if (secilenBtn) secilenBtn.classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    // Buton Dinleyicilerini Kur
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const hedef = this.getAttribute('data-target');
+        sekmeDegistir(hedef);
+      });
+    });
+
+    // Nöbet Veritabanı
     const nobetVeritabani = {
       "2026-11-02": { my: "RESUL ŞAHİNER", s1: "ABDULKADİR KAPLAN", s2: "FURKAN EROĞLU", s3: "SERDAR SAÇLI", z: "TUĞBA ESKİN / NURAY AKKAN", k1: "SULTAN BARUT" },
       "2026-11-03": { my: "ŞEVKİ BARAN", s1: "İSA BAYAR", s2: "SEDA KIZMAZ", s3: "SERAP YILMAZ", z: "RESUL DEMİR", k1: "DİLEK EROĞLU" },
@@ -316,77 +346,62 @@
     function tariheGoreNobetYukle(tarihStr) {
       const container = document.getElementById('nobet-listesi');
       const etiket = document.getElementById('nobet-tarih-etiket');
+      
       const d = new Date(tarihStr);
       etiket.innerText = d.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
       const veri = nobetVeritabani[tarihStr];
 
       if (!veri) {
-        container.innerHTML = <div style="padding: 1.5rem 0; text-align: center; color: var(--text-muted); font-size: 0.88rem;">Bu tarih için planlanmış nöbet kaydı bulunmamaktadır.<br>(Hafta sonu veya ara tatil)</div>;
+        container.innerHTML = `
+          <div style="padding: 1.5rem 0; text-align: center; color: var(--text-muted); font-size: 0.88rem;">
+            Bu tarih için planlanmış nöbet kaydı bulunmamaktadır.<br>(Hafta sonu veya ara tatil)
+          </div>`;
         return;
       }
 
       container.innerHTML = `
-        <div class="list-item"><div><div class="list-title">Nöbetçi Müdür Yrd.</div><div class="list-subtitle">Genel İdari ve Okul Düzeni</div></div><span class="badge badge-blue">${veri.my}</span></div>
-        <div class="list-item"><div><div class="list-title">Servis Nöbeti & Bahçe</div><div class="list-subtitle">Öğrenci İniş / Biniş ve Çevre Güvenliği</div></div><span class="badge badge-blue">${veri.s1}</span></div>
-        <div class="list-item"><div><div class="list-title">Okul Bahçesi-2 / Bodrum Kat</div><div class="list-subtitle">Öğle Arası Bodrum Kat Nöbeti</div></div><span class="badge badge-blue">${veri.s2}</span></div>
-        <div class="list-item"><div><div class="list-title">Bodrum Kat / Yemekhane</div><div class="list-subtitle">Öğle Arası Yemekhane Nöbeti & Yemek Kontrolü</div></div><span class="badge badge-blue">${veri.s3}</span></div>
-        <div class="list-item"><div><div class="list-title">Zemin Kat (Kuzey & Güney)</div><div class="list-subtitle">Giriş ve Zemin Kat Koridorları</div></div><span class="badge badge-blue">${veri.z}</span></div>
-        <div class="list-item"><div><div class="list-title">1. Kat Nöbetçisi</div><div class="list-subtitle">1. Kat Derslik ve Atölye Katı</div></div><span class="badge badge-blue">${veri.k1}</span></div>
+        <div class="list-item">
+          <div><div class="list-title">Nöbetçi Müdür Yrd.</div><div class="list-subtitle">Genel İdari ve Okul Düzeni</div></div>
+          <span class="badge badge-blue">${veri.my}</span>
+        </div>
+        <div class="list-item">
+          <div><div class="list-title">Servis Nöbeti & Bahçe</div><div class="list-subtitle">Öğrenci İniş / Biniş ve Çevre Güvenliği</div></div>
+          <span class="badge badge-blue">${veri.s1}</span>
+        </div>
+        <div class="list-item">
+          <div><div class="list-title">Okul Bahçesi-2 / Bodrum Kat</div><div class="list-subtitle">Öğle Arası Bodrum Kat Nöbeti</div></div>
+          <span class="badge badge-blue">${veri.s2}</span>
+        </div>
+        <div class="list-item">
+          <div><div class="list-title">Bodrum Kat / Yemekhane</div><div class="list-subtitle">Öğle Arası Yemekhane & Kontrol</div></div>
+          <span class="badge badge-blue">${veri.s3}</span>
+        </div>
+        <div class="list-item">
+          <div><div class="list-title">Zemin Kat (Kuzey & Güney)</div><div class="list-subtitle">Giriş ve Zemin Kat Koridorları</div></div>
+          <span class="badge badge-blue">${veri.z}</span>
+        </div>
+        <div class="list-item">
+          <div><div class="list-title">1. Kat Nöbetçisi</div><div class="list-subtitle">1. Kat Derslik ve Atölye Katı</div></div>
+          <span class="badge badge-blue">${veri.k1}</span>
+        </div>
       `;
     }
 
-    function tabDegistir(tabId, btn) {
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      btn.classList.add('active');
-    }
-
-    // İZİN YÖNETİMİ (Kalıcı ve Silinebilir)
-    function izinleriGetir() {
-      return JSON.parse(localStorage.getItem('okul_izinler') || '[]');
-    }
-
-    function izinleriGoster() {
-      const izinler = izinleriGetir();
-      const liste = document.getElementById('izin-listesi');
-      if (izinler.length === 0) {
-        liste.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted);">Kayıtlı izinli/raporlu personel bulunmuyor.</p>';
-        return;
-      }
-      liste.innerHTML = '';
-      izinler.forEach((item, index) => {
-        const row = document.createElement('div');
-        row.className = 'list-item';
-        row.innerHTML = `
-          <div><div class="list-title">${item.ad}</div></div>
-          <div class="izin-action">
-            <span class="badge badge-red">${item.tip}</span>
-            <button class="btn btn-sm btn-danger" onclick="izinSil(${index})">Sil</button>
-          </div>
-        `;
-        liste.appendChild(row);
-      });
-    }
-
     function izinEkle() {
-      const ad = document.getElementById('izin-ad').value.trim();
+      const ad = document.getElementById('izin-ad').value;
       const tip = document.getElementById('izin-tip').value;
       if (!ad) return alert('Lütfen personel adını girin.');
 
-      const izinler = izinleriGetir();
-      izinler.push({ ad, tip });
-      localStorage.setItem('okul_izinler', JSON.stringify(izinler));
+      const liste = document.getElementById('izin-listesi');
+      if (liste.innerText.includes('bulunmuyor')) liste.innerHTML = '';
+
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `<div><div class="list-title">${ad}</div></div><span class="badge badge-red">${tip}</span>`;
+      liste.appendChild(item);
 
       document.getElementById('izin-ad').value = '';
-      izinleriGoster();
-    }
-
-    function izinSil(index) {
-      const izinler = izinleriGetir();
-      izinler.splice(index, 1);
-      localStorage.setItem('okul_izinler', JSON.stringify(izinler));
-      izinleriGoster();
     }
 
     const ogrenciler = [
@@ -398,9 +413,52 @@
 
     function ogrencileriYukle() {
       const liste = document.getElementById('ogrenci-listesi');
+      if (!liste) return;
       liste.innerHTML = '';
       ogrenciler.forEach((ogr, index) => {
         const row = document.createElement('div');
         row.className = 'list-item';
         row.innerHTML = `
           <div>
+            <div class="list-title">${ogr.no} - ${ogr.ad}</div>
+            <div id="st-${index}" style="font-size:0.8rem; margin-top:2px; font-weight:600; color:${ogr.durum === 'Geldi' ? 'var(--success)' : 'var(--danger)'}">${ogr.durum}</div>
+          </div>
+          <div class="status-btns">
+            <button class="btn btn-sm btn-success" onclick="durumGuncelle(${index}, 'Geldi')">G</button>
+            <button class="btn btn-sm btn-danger" onclick="durumGuncelle(${index}, 'Yok')">Y</button>
+            <button class="btn btn-sm btn-outline" onclick="durumGuncelle(${index}, 'İzinli')">İ</button>
+          </div>
+        `;
+        liste.appendChild(row);
+      });
+    }
+
+    function durumGuncelle(index, durum) {
+      ogrenciler[index].durum = durum;
+      const st = document.getElementById(`st-${index}`);
+      st.innerText = durum;
+      st.style.color = durum === 'Geldi' ? 'var(--success)' : (durum === 'Yok' ? 'var(--danger)' : 'var(--warning)');
+    }
+
+    window.onload = function() {
+      const bugun = new Date();
+      const yil = bugun.getFullYear();
+      const ay = String(bugun.getMonth() + 1).padStart(2, '0');
+      const gun = String(bugun.getDate()).padStart(2, '0');
+      const bugunStr = `${yil}-${ay}-${gun}`;
+
+      const secici = document.getElementById('nobet-tarih-secici');
+      if (secici) {
+        secici.value = bugunStr;
+        tariheGoreNobetYukle(bugunStr);
+      }
+
+      ogrencileriYukle();
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdmZXRjaCcsIGZ1bmN0aW9uKGV2ZW50KSB7fSk7');
+      }
+    };
+  </script>
+</body>
+</html>
