@@ -30,7 +30,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: var(--bg); color: var(--text); padding-bottom: 95px; }
 
-    /* SABİT ÜST YÜKLEME ÇUBUĞU (WINDOWS & ANDROID & IOS) */
     #pwa-top-bar {
       display: none;
       background: linear-gradient(135deg, #1e3a8a, #2563eb);
@@ -52,7 +51,6 @@
       cursor: pointer;
     }
 
-    /* PWA KURULUM POP-UP MODAL */
     #pwa-modal-overlay {
       display: none;
       position: fixed;
@@ -94,7 +92,6 @@
     .btn-pwa-install { background: var(--primary); color: white; }
     .btn-pwa-dismiss { background: #f1f5f9; color: var(--text-muted); }
 
-    /* GİRİŞ EKRANI */
     #login-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -189,7 +186,49 @@
       border: 1px solid var(--border);
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
-    .card h2 { font-size: 0.95rem; color: var(--primary); margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center; }
+    .card h2 { 
+      font-size: 0.95rem; 
+      color: var(--primary); 
+      margin-bottom: 0.8rem; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    /* SAĞ ÜST YAZDIR/PDF VE WORD BUTONLARI */
+    .export-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-export {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      padding: 3px 7px;
+      border-radius: 5px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      transition: background 0.15s;
+    }
+    .btn-export:hover {
+      background: #e2e8f0;
+      color: var(--primary);
+    }
+    .btn-export-word {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }
+    .btn-export-word:hover {
+      background: #dbeafe;
+    }
 
     .card-danger { border: 1px solid #fca5a5; background: #fffdfd; }
     .card-danger h2 { color: #b91c1c; }
@@ -278,6 +317,7 @@
       cursor: pointer;
       font-weight: 600;
     }
+    .btn-sm { padding: 0.35rem 0.6rem; font-size: 0.75rem; }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
 
     .btn-status {
@@ -335,6 +375,17 @@
     }
     .stat-table th { background: #f8fafc; color: var(--text-muted); font-weight: 600; }
     .stat-table tr:last-child td { border-bottom: none; }
+
+    /* YAZDIRMA (PRINT / PDF) STİLLERİ */
+    @media print {
+      body { background: white; color: black; padding: 0; }
+      #pwa-top-bar, #pwa-modal-overlay, #login-overlay, header, .nav-bar, .date-selector-bar, .export-actions, .status-btns, .btn, .btn-sm {
+        display: none !important;
+      }
+      .tab-content { display: none !important; }
+      .tab-content.active { display: block !important; }
+      .card { border: 1px solid #ccc; box-shadow: none; page-break-inside: avoid; }
+    }
   </style>
 </head>
 <body>
@@ -348,7 +399,7 @@
     <button type="button" onclick="anaEkranaYukle()">Yükle</button>
   </div>
 
-  <!-- AÇILIR KURULUM PENCERESİ (WINDOWS, ANDROID, IOS) -->
+  <!-- AÇILIR KURULUM PENCERESİ -->
   <div id="pwa-modal-overlay">
     <div class="pwa-modal">
       <div class="pwa-modal-icon">📲</div>
@@ -394,23 +445,62 @@
   </header>
 
   <div class="container">
-    <!-- TAB 1: NÖBET -->
+    <!-- TAB 1: NÖBET & SERVİS KONTROL -->
     <section id="nobet" class="tab-content active">
       <div class="date-selector-bar">
         <label for="nobet-tarih-secici" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Tarih Seç:</label>
         <input type="date" id="nobet-tarih-secici" onchange="tariheGoreNobetYukle(this.value)">
       </div>
 
-      <div class="card">
+      <div class="card" id="card-nobet-dagilim">
         <h2>
-          <span>🛡️ Nöbet Görev Dağılımı</span>
-          <span id="nobet-tarih-etiket" style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);"></span>
+          <span>🛡️ Nöbet Görev Dağılımı <span id="nobet-tarih-etiket" style="font-size: 0.78rem; font-weight: 500; color: var(--text-muted);"></span></span>
+          <div class="export-actions">
+            <button class="btn-export" onclick="modulYazdir('card-nobet-dagilim', 'Nobet_Gorev_Dagilimi')">🖨️ PDF/Yazdır</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-nobet-dagilim', 'Nobet_Gorev_Dagilimi')">📄 Word</button>
+          </div>
         </h2>
         <div id="nobet-listesi"></div>
       </div>
 
-      <div class="card">
-        <h2>📌 Nöbetçi Öğretmen Görev Hatırlatması</h2>
+      <!-- SABAH SERVİS KONTROL ÇİZELGESİ -->
+      <div class="card" id="card-servis-kontrol">
+        <h2>
+          <span>🚌 Sabah Servis Kontrol Çizelgesi</span>
+          <div class="export-actions">
+            <button class="btn btn-sm btn-outline" onclick="toggleServisListesi()">Göster/Gizle</button>
+            <button class="btn-export" onclick="modulYazdir('card-servis-kontrol', 'Sabah_Servis_Cizelgesi')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-servis-kontrol', 'Sabah_Servis_Cizelgesi')">📄 Word</button>
+          </div>
+        </h2>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.6rem;">
+          Taşımalı servis araçları kontrol listesi (17 Güzergah). Nöbetçi öğretmen sabah inişlerde kontrol eder.
+        </p>
+        <div id="servis-listesi-alani" style="display: none; overflow-x: auto;">
+          <table class="stat-table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Güzergah</th>
+                <th>Plaka</th>
+                <th>Şoför</th>
+                <th>Rehber Personel</th>
+                <th>Yüklenici</th>
+              </tr>
+            </thead>
+            <tbody id="servis-tablo-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" id="card-nobet-talimat">
+        <h2>
+          <span>📌 Nöbetçi Öğretmen Görev Hatırlatması</span>
+          <div class="export-actions">
+            <button class="btn-export" onclick="modulYazdir('card-nobet-talimat', 'Nobet_Gorev_Talimati')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-nobet-talimat', 'Nobet_Gorev_Talimati')">📄 Word</button>
+          </div>
+        </h2>
         <ul style="padding-left: 1.2rem; font-size: 0.8rem; color: #475569; line-height: 1.45;">
           <li>Nöbetler, okul idaresi tarafından hazırlanan nöbet çizelgelerine uygun olarak tutulur. Bu çizelgelerde okul idaresinin bilgisi dışında değişiklik yapılamaz.</li>
           <li>Okulda ilk ders başlamadan 30 dakika önce hazır bulunur, okulun genel kontrolünü yapar, eksikleri okul yönetimine bildirir ve son ders bitiminden 30 dakika sonra gerekli kontrolleri yaparak nöbet görevini tamamlar.</li>
@@ -439,10 +529,30 @@
       </div>
     </section>
 
-    <!-- TAB 2: TATİLLER & İZİNLİLER -->
+    <!-- TAB 2: TATİLLER, İZİNLİLER & REHABİLİTASYON TAKİBİ -->
     <section id="izinler" class="tab-content">
-      <div class="card">
-        <h2>📅 İzinli / Raporlu Personel</h2>
+      <div class="card" id="card-rehab-takip" style="border: 1px solid #bbf7d0; background: #fdfefe;">
+        <h2>
+          <span>🏥 Rehabilitasyon Takip Çizelgesi</span>
+          <div class="export-actions">
+            <button class="btn-export" onclick="modulYazdir('card-rehab-takip', 'Rehabilitasyon_Takip_Cizelgesi')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-rehab-takip', 'Rehabilitasyon_Takip_Cizelgesi')">📄 Word</button>
+          </div>
+        </h2>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.8rem;">
+          Özel eğitim rehabilitasyon merkezlerine izinli giden öğrencilerin sabit gün ve saat takip listesi.
+        </p>
+        <div id="rehab-listesi-alani"></div>
+      </div>
+
+      <div class="card" id="card-personel-izin">
+        <h2>
+          <span>📅 İzinli / Raporlu Personel</span>
+          <div class="export-actions">
+            <button class="btn-export" onclick="modulYazdir('card-personel-izin', 'Izinli_Personel_Listesi')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-personel-izin', 'Izinli_Personel_Listesi')">📄 Word</button>
+          </div>
+        </h2>
         <div id="izin-listesi">
           <p style="font-size: 0.85rem; color: var(--text-muted);">Kayıtlı izinli/raporlu personel bulunmuyor.</p>
         </div>
@@ -476,8 +586,14 @@
         <button class="btn" style="width: 100%;" onclick="izinEkle()">İzin Kaydet</button>
       </div>
 
-      <div class="card">
-        <h2>📌 2026-2027 MEB Tatil Takvimi</h2>
+      <div class="card" id="card-tatil-takvimi">
+        <h2>
+          <span>📌 2026-2027 MEB Tatil Takvimi</span>
+          <div class="export-actions">
+            <button class="btn-export" onclick="modulYazdir('card-tatil-takvimi', 'MEB_Tatil_Takvimi')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-tatil-takvimi', 'MEB_Tatil_Takvimi')">📄 Word</button>
+          </div>
+        </h2>
         <div class="list-item">
           <div><strong>1. Dönem Ara Tatili</strong><div class="list-subtitle">16 - 20 Kasım 2026</div></div>
           <span class="badge badge-amber">1 Hafta</span>
@@ -495,8 +611,14 @@
 
     <!-- TAB 3: DEVAMSIZLIK -->
     <section id="devamsizlik" class="tab-content">
-      <div class="card">
-        <h2>👥 Günlük Öğrenci Yoklaması</h2>
+      <div class="card" id="card-gunluk-yoklama">
+        <h2>
+          <span>👥 Günlük Öğrenci Yoklaması</span>
+          <div class="export-actions">
+            <button class="btn-export" onclick="modulYazdir('card-gunluk-yoklama', 'Gunluk_Sinif_Yoklamasi')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-gunluk-yoklama', 'Gunluk_Sinif_Yoklamasi')">📄 Word</button>
+          </div>
+        </h2>
         <div class="input-group">
           <label>Sınıf / Şube Seçiniz</label>
           <select id="sinif-sec" onchange="ogrencileriYukle()">
@@ -509,11 +631,13 @@
         </div>
       </div>
 
-      <!-- DETAYLI DEVAMSIZLIK TAKİBİ -->
-      <div class="card" style="border: 1px solid #bfdbfe; background: #fafcff;">
+      <div class="card" id="card-detay-devamsizlik" style="border: 1px solid #bfdbfe; background: #fafcff;">
         <h2>
           <span>🔎 Detaylı Devamsızlık Takibi</span>
-          <span class="badge badge-blue">Aylık Döküm</span>
+          <div class="export-actions">
+            <button class="btn-export" onclick="modulYazdir('card-detay-devamsizlik', 'Ogrenci_Detay_Devamsizlik')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-detay-devamsizlik', 'Ogrenci_Detay_Devamsizlik')">📄 Word</button>
+          </div>
         </h2>
         <div class="input-group">
           <label>Öğrenci Seçiniz</label>
@@ -526,11 +650,13 @@
         </div>
       </div>
 
-      <!-- SINIF DEVAMSIZLIK TABLOSU -->
       <div class="card" id="devamsizlik-istatistik-karti" style="display: none;">
         <h2>
           <span>📊 Sınıf Devamsızlık İstatistiği (e-Okul)</span>
-          <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal;">Dönem Toplamı</span>
+          <div class="export-actions">
+            <button class="btn-export" onclick="modulYazdir('devamsizlik-istatistik-karti', 'Sinif_Devamsizlik_Istatistigi')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('devamsizlik-istatistik-karti', 'Sinif_Devamsizlik_Istatistigi')">📄 Word</button>
+          </div>
         </h2>
         <div id="sinif-devamsizlik-tablosu" style="overflow-x: auto;"></div>
       </div>
@@ -554,20 +680,28 @@
         <button class="btn btn-outline" style="width: 100%;" onclick="yeniOgrenciEkle()">Öğrenciyi Sınıfa Kaydet</button>
       </div>
 
-      <div class="card">
+      <div class="card" id="card-bugun-yoklar">
         <h2>
           <span>📋 Bugün Yok / İzinli Olan Öğrenciler</span>
-          <span id="devamsiz-toplam-sayi" class="badge badge-red" style="font-size:0.75rem;">0 Öğrenci</span>
+          <div class="export-actions">
+            <span id="devamsiz-toplam-sayi" class="badge badge-red" style="font-size:0.75rem;">0 Öğrenci</span>
+            <button class="btn-export" onclick="modulYazdir('card-bugun-yoklar', 'Bugun_Yok_Izinli_Ogrenciler')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-bugun-yoklar', 'Bugun_Yok_Izinli_Ogrenciler')">📄 Word</button>
+          </div>
         </h2>
         <div id="tum-devamsizlar-listesi">
           <p style="font-size: 0.85rem; color: var(--text-muted);">Şu an için devamsız veya izinli öğrenci bulunmuyor.</p>
         </div>
       </div>
 
-      <div class="card card-danger">
+      <div class="card card-danger" id="card-kritik-devamsiz">
         <h2>
           <span>⚠️ 10 Günü Aşan Öğrenciler (Riskli)</span>
-          <span id="kritik-risk-toplam-sayi" class="badge badge-red" style="font-size:0.75rem;">0 Öğrenci</span>
+          <div class="export-actions">
+            <span id="kritik-risk-toplam-sayi" class="badge badge-red" style="font-size:0.75rem;">0 Öğrenci</span>
+            <button class="btn-export" onclick="modulYazdir('card-kritik-devamsiz', 'Riskli_Devamsiz_Ogrenciler')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-kritik-devamsiz', 'Riskli_Devamsiz_Ogrenciler')">📄 Word</button>
+          </div>
         </h2>
         <p style="font-size: 0.76rem; color: #991b1b; margin-bottom: 0.8rem;">
           Mevzuat gereği toplam devamsızlığı 10 gün sınırını aşan ve takibi gereken öğrenciler aşağıda listelenmiştir.
@@ -580,10 +714,14 @@
     <section id="dogumgunu" class="tab-content">
       <div id="bugun-dogumgunu-alani"></div>
 
-      <div class="card">
+      <div class="card" id="card-dogumgunleri">
         <h2>
           <span>🎂 Yaklaşan Doğum Günleri (1 Aylık)</span>
-          <span id="yaklasan-toplam-sayi" class="badge badge-pink" style="font-size:0.75rem;">0 Öğrenci</span>
+          <div class="export-actions">
+            <span id="yaklasan-toplam-sayi" class="badge badge-pink" style="font-size:0.75rem;">0 Öğrenci</span>
+            <button class="btn-export" onclick="modulYazdir('card-dogumgunleri', 'Yaklasan_Dogum_Gunleri')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-dogumgunleri', 'Yaklasan_Dogum_Gunleri')">📄 Word</button>
+          </div>
         </h2>
         <div id="yaklasan-dogumgunu-listesi">
           <p style="font-size:0.85rem; color:var(--text-muted);">Önümüzdeki 1 ay içinde doğum günü olan öğrenci bulunmuyor.</p>
@@ -593,10 +731,13 @@
 
     <!-- TAB 5: AJANDA, KULÜPLER & KURULLAR -->
     <section id="ajanda" class="tab-content">
-      <div class="card" style="border: 1px solid #c7d2fe; background: #fdfefe;">
+      <div class="card" id="card-sosyal-kurul" style="border: 1px solid #c7d2fe; background: #fdfefe;">
         <h2>
           <span>🏛️ Sosyal Etkinlikler Kurulu</span>
-          <span class="badge badge-blue">2026-2027</span>
+          <div class="export-actions">
+            <button class="btn-export" onclick="modulYazdir('card-sosyal-kurul', 'Sosyal_Etkinlikler_Kurulu')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-sosyal-kurul', 'Sosyal_Etkinlikler_Kurulu')">📄 Word</button>
+          </div>
         </h2>
         <div style="font-size: 0.8rem; line-height: 1.5; color: #334155;">
           <p><strong>Kurul Başkanı:</strong> Metin YONCALIK (Müdür Yrd.)[cite: 37]</p>
@@ -607,10 +748,13 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" id="card-ogrenci-kulupleri">
         <h2>
           <span>👥 Öğrenci Kulüpleri ve Danışman Öğretmenler</span>
-          <span class="badge badge-purple">8 Kulüp</span>
+          <div class="export-actions">
+            <button class="btn-export" onclick="modulYazdir('card-ogrenci-kulupleri', 'Ogrenci_Kulupleri_Listesi')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-ogrenci-kulupleri', 'Ogrenci_Kulupleri_Listesi')">📄 Word</button>
+          </div>
         </h2>
         
         <div class="list-item">
@@ -654,10 +798,13 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" id="card-belirli-gunler">
         <h2>
           <span>🎖️ Belirli Günler ve Görevli Öğretmenler</span>
-          <span class="badge badge-amber">Takvim</span>
+          <div class="export-actions">
+            <button class="btn-export" onclick="modulYazdir('card-belirli-gunler', 'Belirli_Gunler_Cizelgesi')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-belirli-gunler', 'Belirli_Gunler_Cizelgesi')">📄 Word</button>
+          </div>
         </h2>
 
         <div class="list-item">
@@ -769,10 +916,13 @@
 
     <!-- TAB 6: YEŞİL VATAN TEMATİK TAKVİMİ -->
     <section id="yesilvatan" class="tab-content">
-      <div class="card card-green">
+      <div class="card card-green" id="card-yesil-vatan">
         <h2>
           <span>🌱 Yeşil Vatan Tematik Takvimi</span>
-          <span class="badge badge-green">2026-2027</span>
+          <div class="export-actions">
+            <button class="btn-export" onclick="modulYazdir('card-yesil-vatan', 'Yesil_Vatan_Tematik_Takvimi')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-yesil-vatan', 'Yesil_Vatan_Tematik_Takvimi')">📄 Word</button>
+          </div>
         </h2>
         <p style="font-size: 0.8rem; color: #166534; line-height: 1.45; margin-bottom: 0.8rem;">
           Milli Eğitim Bakanlığı Yeşil Vatan Projesi kapsamında okulumuzda ay ay yürütülecek tematik çalışmalar, sorumlu kulüpler ve görevli öğretmenler aşağıda belirtilmiştir.
@@ -890,7 +1040,97 @@
   <script>
     let deferredPrompt = null;
 
-    // OTOMATİK CİHAZ VE İŞLETİM SİSTEMİ TESPİTİ
+    // YAZDIRMA / PDF KAYDETME FONKSİYONU
+    function modulYazdir(cardId, dosyaAdi) {
+      const card = document.getElementById(cardId);
+      if (!card) return;
+
+      const printWindow = window.open('', '', 'width=800,height=900');
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>${dosyaAdi}</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 25px; color: #0f172a; }
+            h2 { color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; font-size: 1.2rem; }
+            .export-actions, .btn, .btn-sm { display: none !important; }
+            table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
+            th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
+            th { background: #f8fafc; font-weight: 700; color: #334155; }
+            .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; border: 1px solid #cbd5e1; }
+            .list-item { border-bottom: 1px solid #e2e8f0; padding: 10px 0; }
+            .list-title { font-weight: 700; font-size: 0.95rem; }
+            .list-subtitle { font-size: 0.8rem; color: #64748b; margin-top: 3px; }
+          </style>
+        </head>
+        <body>
+          <div style="text-align:center; margin-bottom:15px;">
+            <h3 style="margin:0; color:#1e3a8a;">T.C. AKSARAY VALİLİĞİ</h3>
+            <h4 style="margin:4px 0;">Hacı Ömer Usluer Özel Eğitim Meslek Okulu Müdürlüğü</h4>
+          </div>
+          ${card.outerHTML}
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 350);
+    }
+
+    // WORD BELGESİ (.DOC) İNDİRME FONKSİYONU
+    function modulWordIndir(cardId, dosyaAdi) {
+      const card = document.getElementById(cardId);
+      if (!card) return;
+
+      const clone = card.cloneNode(true);
+      clone.querySelectorAll('.export-actions, .btn, .btn-sm, button').forEach(el => el.remove());
+
+      const htmlContent = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+          <meta charset='utf-8'>
+          <title>${dosyaAdi}</title>
+          <style>
+            body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; color: #000000; }
+            h2 { color: #1e3a8a; font-size: 14pt; border-bottom: 1.5pt solid #1e3a8a; padding-bottom: 4pt; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10pt; font-size: 10pt; }
+            th, td { border: 1pt solid #999999; padding: 6pt 8pt; text-align: left; }
+            th { background-color: #f1f5f9; font-weight: bold; }
+            .list-item { border-bottom: 0.5pt solid #cccccc; padding: 6pt 0; }
+            .list-title { font-weight: bold; font-size: 11pt; }
+            .list-subtitle { font-size: 9.5pt; color: #555555; }
+          </style>
+        </head>
+        <body>
+          <div style="text-align: center; margin-bottom: 15pt;">
+            <p style="margin:0; font-size:12pt; font-weight:bold;">T.C. AKSARAY VALİLİĞİ</p>
+            <p style="margin:2pt 0; font-size:11pt; font-weight:bold;">Hacı Ömer Usluer Özel Eğitim Meslek Okulu Müdürlüğü</p>
+            <p style="margin:2pt 0; font-size:10pt; color:#666;">2026-2027 Eğitim Öğretim Yılı</p>
+          </div>
+          ${clone.innerHTML}
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(['\ufeff' + htmlContent], {
+        type: 'application/msword'
+      });
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${dosyaAdi}_2026.doc`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // PWA & CİHAZ YÖNETİMİ
     function cihazTespitiYap() {
       const ua = navigator.userAgent || navigator.vendor || window.opera;
       const isIos = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -899,23 +1139,19 @@
       return { isIos, isWindows, isAndroid };
     }
 
-    // PWA POP-UP GÖSTERİM KONTROLÜ
     function pwaModalGoster() {
       const modal = document.getElementById('pwa-modal-overlay');
       const topBar = document.getElementById('pwa-top-bar');
       const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
 
-      // Zaten yüklüyse ve bağımsız penceredeyse hiç gösterme
       if (isStandalone) {
         if (topBar) topBar.style.display = 'none';
         if (modal) modal.style.display = 'none';
         return;
       }
 
-      // Üst çubuğu her halükarda görünür yap
       if (topBar) topBar.style.display = 'flex';
 
-      // Pop-up bu oturumda kapatılmadıysa aç
       if (!sessionStorage.getItem('pwa_dismissed')) {
         const { isIos, isWindows } = cihazTespitiYap();
         const desc = document.getElementById('pwa-modal-desc');
@@ -963,7 +1199,7 @@
         });
       } else {
         if (isIos) {
-          alert("📲 iPhone / iPad Kurulumu:\n\n1. Safari tarayıcınızın altındaki 'Paylaş' (kare ve yukarı ok) simgesine dokunun.\n2. Açılan menüde aşağı kaydırıp 'Ana Ekrana Ekle' seçeneğini seçin.");
+          alert("📲 iPhone / iPad Kurulumu:\n\n1. Safari tarayıcınızın altındaki 'Paylaş' simgesine dokunun.\n2. Açılan menüde 'Ana Ekrana Ekle' seçeneğini seçin.");
         } else if (isWindows) {
           alert("💻 Windows Kurulumu:\n\nChrome veya Edge adres çubuğunun en sağında yer alan 'Uygulamayı Yükle' simgesine tıklayın.");
         } else {
@@ -973,7 +1209,7 @@
       }
     }
 
-    // PERSONEL LİSTESİ VE GİRİŞ ŞİFRELERİ (T.C.)
+    // KULLANICI KİMLİK VERİTABANI
     const KULLANICILAR = {
       "abdulkadirkaplan": { ad: "Abdulkadir KAPLAN", tc: "17564124752" },
       "aysunkaracaer": { ad: "Aysun KARACAER", tc: "27386558970" },
@@ -1034,6 +1270,82 @@
       "12-B-Zihin": ["sehnazaktas"],
       "12-C-Zihin": ["gulayuludag"]
     };
+
+    const REHABILITASYON_LISTESI = [
+      { ad: "HÜSEYİN DOĞAN", sinif: "11/A", gun: "ÇİZELGE", saat: "Çizelgede Belirtilen Gün ve Saatler", kurum: "İLK DENGE" },
+      { ad: "UMUT EFE KÜRKCÜ", sinif: "9/B", gun: "ÇİZELGE", saat: "Çizelgede Belirtilen Gün ve Saatler", kurum: "İLK DENGE" },
+      { ad: "SELİN SU ATASOY", sinif: "11/A", gun: "Her Salı ve Perşembe", saat: "Okul Çıkışı", kurum: "GÜLŞAH" },
+      { ad: "YEMEN ACAR", sinif: "10/B", gun: "Her Salı", saat: "Okul Çıkışı", kurum: "GÜLŞAH" },
+      { ad: "MUHAMMET ABDURRAHİM ŞİMŞEK", sinif: "11/C", gun: "Her Perşembe", saat: "09:00 - 12:00 Arası", kurum: "GÜLŞAH" },
+      { ad: "MUHAMMET ADNAN ÇİÇEK", sinif: "10-A Otizm", gun: "ÇİZELGE", saat: "Çizelgede Belirtilen Gün ve Saatler", kurum: "İLK DENGE" },
+      { ad: "ŞENOL EFE KÜRKLÜ", sinif: "12/A", gun: "ÇİZELGE", saat: "Çizelgede Belirtilen Gün ve Saatler", kurum: "İLK DENGE" },
+      { ad: "FADİMANA NUR GÖKTAŞ", sinif: "10/B", gun: "Her Salı ve Perşembe", saat: "Okul Çıkışı", kurum: "GÜLŞAH" },
+      { ad: "ESİN SULTAN ÇAĞLAYAN", sinif: "10/B", gun: "Her Çarşamba", saat: "09:00 - 12:00 Arası", kurum: "GÜLŞAH" },
+      { ad: "FURKAN ÇAĞLAYAN FİDAN", sinif: "12/A", gun: "Her Çarşamba", saat: "Okul Çıkışı", kurum: "İLKADIM AKADEMİ" },
+      { ad: "ALİ ÖZ", sinif: "9/A", gun: "Her Salı", saat: "09:00 - 12:00 Arası", kurum: "GÜLŞAH" },
+      { ad: "OKTAY TALHA BORAN", sinif: "11/B", gun: "Her Çarşamba", saat: "09:00 - 12:00 Arası", kurum: "GÜLŞAH" }
+    ];
+
+    const SERVIS_LISTESI = [
+      { no: 1, hat: "21. Güzergah (Kılıçaslan-Kurtuluş-Laleli-Bahçeli-Pınar)", plaka: "68 S 0857", sofor: "Ahmet YAMAN", rehber: "Şeyda Nur ÇELİK", firma: "Hasan AKBULUT" },
+      { no: 2, hat: "23. Güzergah (Yenimahalle-Sanayi-Tacin-K. Bölcek-B.Bölcek)", plaka: "68 S 0110", sofor: "Hasan AKBULUT", rehber: "İmren BAYRAKDAR ALTIN", firma: "Hasan AKBULUT" },
+      { no: 3, hat: "24. Güzergah (Pamucak-Taşpazar-Paşacık)", plaka: "68 S 0624", sofor: "İbrahim BARIŞ", rehber: "Songül BORAN", firma: "Hasan AKBULUT" },
+      { no: 4, hat: "22. Güzergah (Y.Emre-Cumhuriyet-Hasas-Nakkaş-Coğlaki)", plaka: "68 S 0413", sofor: "Şaban GÜN", rehber: "Döndü TEPE", firma: "68 AKBULUT DAYI TURİZM" },
+      { no: 5, hat: "25. Güzergah (Şifahane-Şamlı-Şeyhhamit-Çerdiğin-Meydan-Dere)", plaka: "68 S 0518", sofor: "Tamer ALTINSOY", rehber: "Hilal ALTINSOY", firma: "68 AKBULUT DAYI TURİZM" },
+      { no: 6, hat: "26. Güzergah (Y.S.Selim-Hürriyet-İstiklal-E.Kapı-Selçuklu)", plaka: "68 S 0797", sofor: "Ersin KAYA", rehber: "Habibe BAYDİLLİ", firma: "68 AKBULUT DAYI TURİZM" },
+      { no: 7, hat: "48. Hat (Helvadere-Elmacık-Kargın-Yuva-Karaören)", plaka: "68 S 0635", sofor: "Celal DURMUŞ", rehber: "Derya BAYDAR", firma: "Eren ÖZTÜRK" },
+      { no: 8, hat: "49. Hat (Akhisar-Sağlık Köyü)", plaka: "68 S 0128", sofor: "Şevket SALCIOĞLU", rehber: "Ayşe Nur ŞENER", firma: "Eren ÖZTÜRK" },
+      { no: 9, hat: "50. Güzergah (İncesu-Armutlu-Kutlu-Aratol)", plaka: "68 S 0557", sofor: "Uğur BİLEN", rehber: "Gülendam ERTUĞRUL", firma: "BURAK TOUR" },
+      { no: 10, hat: "51. Güzergah (Akçakent-Karacaören-Dikmen-Taşpınar)", plaka: "68 S 0628", sofor: "Mustafa SEVİNDİ", rehber: "Döndü ÖZTÜRK", firma: "Emrah ŞAHAN" },
+      { no: 11, hat: "52. Güzergah (Gözlükuyu-Hamidiye-Bahçesaray)", plaka: "68 S 0295", sofor: "İbrahim Ethem ÜSTÜN", rehber: "Zeliha KOCAGÖL", firma: "Emrah ŞAHAN" },
+      { no: 12, hat: "53. Güzergah (Doğantarla-Gücünkaya-Sevinçli)", plaka: "68 S 0631", sofor: "Ayhan ALTINKAYA", rehber: "Navruz ALTINSOY", firma: "Sabri ÖZCAN" },
+      { no: 13, hat: "54. Hat (Çekiçler-Salmanlı-E.Yeniköy-Ekeciktolu)", plaka: "68 AGE 873", sofor: "Muhterem COŞKUN", rehber: "Özgül YUMUŞAK", firma: "AKTUR" },
+      { no: 14, hat: "55. Güzergah (Yeşiltepe-Yeşilova-Hırkatol-Selecikösetolu)", plaka: "68 S 0510", sofor: "Akın BİLDİRİCİ", rehber: "Songül ALTIN", firma: "68 AKBULUT DAYI TURİZM" },
+      { no: 15, hat: "57. Güzergah (Kalebalta-Göksügüzel-Gençosman)", plaka: "68 S 0269", sofor: "Mehmet GÖÇ", rehber: "Birsen TEKE", firma: "İNCİ MERT TURİZM" },
+      { no: 16, hat: "58. Güzergah (Yenikent-H.Hasanlı Yaylası-Ataköy-Aratol)", plaka: "68 AFV 103", sofor: "Mehmet AYGÜNER", rehber: "Buse AYGÜNER", firma: "Mehmet AYGÜNER" },
+      { no: 17, hat: "56. Güzergah (Y.Cerit-Bağlıkaya-Çimeliyeniköy-Topakkaya)", plaka: "68 AGG 807", sofor: "Bilal ÇAKIR", rehber: "Hacıgül GÜZYURDU", firma: "Hasan AKBULUT" }
+    ];
+
+    function toggleServisListesi() {
+      const el = document.getElementById('servis-listesi-alani');
+      el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
+    }
+
+    function servisTablosunuDoldur() {
+      const tbody = document.getElementById('servis-tablo-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      SERVIS_LISTESI.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${s.no}</strong></td>
+          <td>${s.hat}</td>
+          <td><span class="badge badge-blue">${s.plaka}</span></td>
+          <td>${s.sofor}</td>
+          <td>${s.rehber}</td>
+          <td style="font-size:0.72rem; color:var(--text-muted);">${s.firma}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function rehabilitasyonListesiniDoldur() {
+      const container = document.getElementById('rehab-listesi-alani');
+      if (!container) return;
+      container.innerHTML = '';
+      REHABILITASYON_LISTESI.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'list-item';
+        row.innerHTML = `
+          <div>
+            <div class="list-title">🏥 ${item.ad} <span style="font-size:0.75rem; color:var(--text-muted);">(${item.sinif})</span></div>
+            <div class="list-subtitle">🗓️ ${item.gun} • ⏰ ${item.saat}</div>
+          </div>
+          <span class="badge badge-green">${item.kurum}</span>
+        `;
+        container.appendChild(row);
+      });
+    }
 
     let aktifKullanici = null;
 
@@ -1430,7 +1742,7 @@
       ]
     };
 
-    const VERI_VERSIYONU = "v17_tam_stabil_pwa_ios_win";
+    const VERI_VERSIYONU = "v19_yazdir_pdf_word_entegre";
     let kayitliVersiyon = localStorage.getItem('okul_ogrenciler_versiyon');
     
     if (kayitliVersiyon !== VERI_VERSIYONU) {
@@ -1893,19 +2205,20 @@
           izinBit.value = bugunStr;
         }
 
+        servisTablosunuDoldur();
+        rehabilitasyonListesiniDoldur();
         izinleriGoster();
         ogrencileriYukle();
         devamsizlariGuncelle();
         dogumGunleriniHesapla();
         kritikRiskliOgrencileriGoster();
 
-        // 1.2 saniye sonra otomatik kurulum modali açılır
         setTimeout(() => {
           pwaModalGoster();
         }, 1200);
 
       } catch (err) {
-        console.error("Yükleme sırasında hata yakalandı:", err);
+        console.error("Yükleme sırasında hata:", err);
       }
     };
   </script>
