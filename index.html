@@ -1137,6 +1137,8 @@
       }
     }
 
+    // PERSONEL LİSTESİ VE GİRİŞ ŞİFRELERİ (T.C.)
+    // YAKUP SERT ÇIKARILDI, AYNUR HIZAR EKLENDİ
     const KULLANICILAR = {
       "abdulkadirkaplan": { ad: "Abdulkadir KAPLAN", tc: "17564124752" },
       "aysunkaracaer": { ad: "Aysun KARACAER", tc: "27386558970" },
@@ -1172,7 +1174,7 @@
       "sehnazaktas": { ad: "Şehnaz AKTAŞ", tc: "56845576040" },
       "sevkibaran": { ad: "Şevki BARAN (Müdür Yrd.)", tc: "64612329744" },
       "tugbaeskin": { ad: "Tuğba ESKİN", tc: "45676948942" },
-      "yakupsert": { ad: "Yakup SERT", tc: "71614083864" },
+      "aynurhizar": { ad: "Aynur HIZAR", tc: "123456789" }, // 
       "yusufertugrulduru": { ad: "Yusuf Ertuğrul DURU", tc: "23387689804" },
       "sevilayelmas": { ad: "Sevilay ELMAS", tc: "60100256448" },
       "betuloruc": { ad: "Betül ORUÇ", tc: "42928661536" }
@@ -1399,7 +1401,6 @@
       "2026-12-04": { my: "METİN YONCALIK", s1: "RAYİHA SANCAR", s2: "SEVİLAY ELMAS", s3: "BETÜL ORUÇ", z: "HİLAL EŞ DEMİR / SULTAN ERMİŞ", k1: "BELKIZ ÖLMEZ" }
     };
 
-    // GÜVENLİ İZİN KONTROLÜ
     function isimIzinliMi(adSoyad, tarihStr) {
       if (!adSoyad || !tarihStr) return false;
       try {
@@ -1510,8 +1511,9 @@
 
       const yetkili = gununServisYetkilisiniBul(tarihStr);
       const isIdareci = aktifKullanici && IDARECILER.includes(aktifKullanici.user);
+      const isAynurHizar = aktifKullanici && (aktifKullanici.user === "aynurhizar");
       const isServisNobetcisi = aktifKullanici && (aktifKullanici.user === yetkili.hocaUsername);
-      const yoklamaGirebilir = isIdareci || isServisNobetcisi;
+      const yoklamaGirebilir = isIdareci || isServisNobetcisi || isAynurHizar;
 
       const rozet = document.getElementById('servis-yetki-rozet');
       const detay = document.getElementById('servis-yetki-detay');
@@ -1779,14 +1781,36 @@
       });
     }
 
+    // YETKİLERİ UYGULA (AYNUR HIZAR ÖZEL YETKİ KONTROLÜ DAHİL)
     function yetkileriUygula() {
       const isIdareci = aktifKullanici && IDARECILER.includes(aktifKullanici.user);
+      const isAynurHizar = aktifKullanici && (aktifKullanici.user === "aynurhizar");
+
       document.querySelectorAll('.admin-only').forEach(el => {
         el.style.display = isIdareci ? 'block' : 'none';
       });
       document.querySelectorAll('.admin-btn-delete').forEach(el => {
         el.style.display = isIdareci ? 'inline-block' : 'none';
       });
+
+      // Aynur HIZAR Giriş Yaptıysa: Yalnızca Nöbet ve Servis & Rehab Butonları Görünsün
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        const target = btn.getAttribute('data-target');
+        if (isAynurHizar) {
+          if (target === 'nobet' || target === 'servis-rehab') {
+            btn.style.display = 'flex';
+          } else {
+            btn.style.display = 'none';
+          }
+        } else {
+          btn.style.display = 'flex';
+        }
+      });
+
+      if (isAynurHizar) {
+        // Doğrudan Nöbet sekmesini aktif et
+        sekmeDegistir('nobet');
+      }
 
       sinifSecicisiniDoldur();
       detayOgrenciSecicisiniDoldur();
@@ -2396,7 +2420,7 @@
       }
     }
 
-    // BİLDİRİM FONKSİYONLARI (Web Notifications API)
+    // YENİLENEN BİLDİRİM MOTORU (Android & Arka Plan Korumalı)
     function bildirimIzniIste() {
       if (!("Notification" in window)) {
         alert("Bu cihaz veya tarayıcı bildirimleri desteklemiyor.");
@@ -2405,10 +2429,20 @@
 
       Notification.requestPermission().then(permission => {
         if (permission === "granted") {
-          new Notification("Hacı Ömer Usluer ÖEMO", {
+          const opt = {
             body: "Bildirimler başarıyla aktif edildi!",
-            icon: "./logo.png"
-          });
+            icon: "./logo.png",
+            badge: "./logo.png",
+            vibrate: [200, 100, 200]
+          };
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistration().then(reg => {
+              if (reg && reg.showNotification) reg.showNotification("Hacı Ömer Usluer ÖEMO", opt);
+              else new Notification("Hacı Ömer Usluer ÖEMO", opt);
+            });
+          } else {
+            new Notification("Hacı Ömer Usluer ÖEMO", opt);
+          }
           const btn = document.getElementById('btn-bildirim-izni');
           if (btn) btn.style.display = 'none';
         } else {
@@ -2437,10 +2471,22 @@
 
       if (gorevYeri) {
         if (!sessionStorage.getItem('nobet_bildirildi_' + bugunStr)) {
-          new Notification("🛡️ Nöbet Göreviniz Bulunmaktadır", {
+          const baslik = "🛡️ Nöbet Göreviniz Bulunmaktadır";
+          const opt = {
             body: `Sayın ${aktifKullanici.ad}, bugün ${gorevYeri} göreviniz vardır.`,
-            icon: "./logo.png"
-          });
+            icon: "./logo.png",
+            badge: "./logo.png",
+            vibrate: [200, 100, 200]
+          };
+
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistration().then(reg => {
+              if (reg && reg.showNotification) reg.showNotification(baslik, opt);
+              else new Notification(baslik, opt);
+            });
+          } else {
+            new Notification(baslik, opt);
+          }
           sessionStorage.setItem('nobet_bildirildi_' + bugunStr, 'true');
         }
       }
@@ -2452,7 +2498,9 @@
       if (!metin) return alert("Lütfen bir bildirim metni yazın.");
 
       if (db) {
+        const duyuruId = "duyuru_" + Date.now();
         db.ref("canli_okul_duyuru").set({
+          id: duyuruId,
           gonderen: aktifKullanici ? aktifKullanici.ad : "Okul İdaresi",
           mesaj: metin,
           zaman: Date.now()
@@ -2465,16 +2513,36 @@
 
     function canliDuyuruDinle() {
       if (!db) return;
-      db.ref("canli_okul_duyuru").on("value", snapshot => {
+      db.ref("canli_okul_duyuru").on("value", async snapshot => {
         const data = snapshot.val();
-        if (!data) return;
+        if (!data || !data.id) return;
 
-        if (Date.now() - data.zaman < 60000) {
+        const sonGosterilen = localStorage.getItem("son_okunan_duyuru_id");
+        if (sonGosterilen !== data.id) {
+          localStorage.setItem("son_okunan_duyuru_id", data.id);
+
           if (Notification.permission === "granted") {
-            new Notification(`📢 Duyuru: ${data.gonderen}`, {
+            const baslik = `📢 ${data.gonderen}`;
+            const secenekler = {
               body: data.mesaj,
-              icon: "./logo.png"
-            });
+              icon: "./logo.png",
+              badge: "./logo.png",
+              vibrate: [200, 100, 200]
+            };
+
+            if ('serviceWorker' in navigator) {
+              try {
+                const reg = await navigator.serviceWorker.getRegistration();
+                if (reg && reg.showNotification) {
+                  reg.showNotification(baslik, secenekler);
+                  return;
+                }
+              } catch (e) {}
+            }
+
+            try {
+              new Notification(baslik, secenekler);
+            } catch (e) {}
           }
         }
       });
@@ -2571,7 +2639,7 @@
       try {
         varsayilanTarihlereGec();
 
-        // Yerel verileri anında render et (gecikme veya boş kalma olamaz)
+        // 1. Önce doğrudan yerel verileri anında çiz
         sinifSecicisiniDoldur();
         detayOgrenciSecicisiniDoldur();
         rehabilitasyonTablosunuDoldur();
@@ -2580,7 +2648,7 @@
         kritikRiskliOgrencileriGoster();
         izinleriGoster();
 
-        // Oturum kontrolü
+        // 2. Oturumu denetle
         const oturum = localStorage.getItem('oturum_kullanici');
         if (oturum) {
           aktifKullanici = JSON.parse(oturum);
@@ -2604,7 +2672,7 @@
           if (btn) btn.style.display = 'none';
         }
 
-        // Firebase senkronizasyonunu başlat
+        // 3. Arka planda Firebase canlı senkronizasyonunu devreye sok
         firebaseSenkronizasyonunuBaslat();
 
         setTimeout(() => {
