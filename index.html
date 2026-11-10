@@ -29,6 +29,8 @@
       --warning: #d97706;
       --pink: #db2777;
       --green-dark: #15803d;
+      --rehab: #0284c7;
+      --staj: #7c3aed;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -290,6 +292,8 @@
     .badge-pink { background: #fce7f3; color: #be185d; }
     .badge-purple { background: #f3e8ff; color: #6b21a8; }
     .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-sky { background: #e0f2fe; color: #0369a1; }
+    .badge-staj { background: #f5f3ff; color: #6d28d9; }
     .badge-alert {
       display: inline-block;
       margin-top: 4px;
@@ -314,12 +318,13 @@
     .btn-sm { padding: 0.35rem 0.6rem; font-size: 0.75rem; }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
 
+    /* 4 DURUM BUTONLARI: G / Y / R / S */
     .btn-status {
       border: 1px solid var(--border);
       background: white;
       color: var(--text-muted);
       border-radius: 6px;
-      padding: 5px 9px;
+      padding: 5px 8px;
       font-size: 0.75rem;
       font-weight: 700;
       cursor: pointer;
@@ -327,7 +332,8 @@
     }
     .btn-status.active-geldi { background: var(--success); color: white; border-color: var(--success); }
     .btn-status.active-yok { background: var(--danger); color: white; border-color: var(--danger); }
-    .btn-status.active-izinli { background: var(--warning); color: white; border-color: var(--warning); }
+    .btn-status.active-rehab { background: var(--rehab); color: white; border-color: var(--rehab); }
+    .btn-status.active-staj { background: var(--staj); color: white; border-color: var(--staj); }
 
     .btn-delete {
       background: #fee2e2;
@@ -523,7 +529,7 @@
           </div>
         </h2>
         <p style="font-size: 0.77rem; color: var(--text-muted); margin-bottom: 0.7rem;">
-          Yalnızca o günün servis nöbetçisi veya okul idaresi yoklama girişi yapabilir. Yapılan yoklamalar ve açıklamalar anlık olarak Firebase veritabanına kaydedilir.
+          Yalnızca o günün servis nöbetçisi veya okul idaresi yoklama girişi yapabilir.
         </p>
         <div style="overflow-x: auto;">
           <table class="stat-table table-servis">
@@ -670,16 +676,27 @@
       </div>
     </section>
 
-    <!-- TAB 4: DEVAMSIZLIK -->
+    <!-- TAB 4: DEVAMSIZLIK (YENİLENEN TARİH VE G/Y/R/S YAPISI) -->
     <section id="devamsizlik" class="tab-content">
+      <!-- YOKLAMA TARİHİ SEÇİCİ -->
+      <div class="date-selector-bar">
+        <label for="yoklama-tarih-secici" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Yoklama Tarihi:</label>
+        <input type="date" id="yoklama-tarih-secici" onchange="yoklamaTarihDegistir(this.value)">
+      </div>
+
       <div class="card" id="card-gunluk-yoklama">
         <h2>
           <span>👥 Günlük Öğrenci Yoklaması</span>
           <div class="export-actions">
-            <button class="btn-export" onclick="modulYazdir('card-gunluk-yoklama', 'Gunluk_Sinif_Yoklamasi')">🖨️ PDF</button>
-            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-gunluk-yoklama', 'Gunluk_Sinif_Yoklamasi')">📄 Word</button>
+            <button class="btn-export" onclick="modulYazdir('card-gunluk-yoklama', 'Sinif_Yoklamasi')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-gunluk-yoklama', 'Sinif_Yoklamasi')">📄 Word</button>
           </div>
         </h2>
+        
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">
+          Seçenekler: <strong style="color:var(--success);">G</strong>: Geldi | <strong style="color:var(--danger);">Y</strong>: Yok | <strong style="color:var(--rehab);">R</strong>: Rehabilitasyon | <strong style="color:var(--staj);">S</strong>: Staj
+        </div>
+
         <div class="input-group">
           <label>Sınıf / Şube Seçiniz</label>
           <select id="sinif-sec" onchange="ogrencileriYukle()">
@@ -743,15 +760,15 @@
 
       <div class="card" id="card-bugun-yoklar">
         <h2>
-          <span>📋 Bugün Yok / İzinli Olan Öğrenciler</span>
+          <span>📋 Seçili Tarihte Gelmeyenler (Y / R / S)</span>
           <div class="export-actions">
             <span id="devamsiz-toplam-sayi" class="badge badge-red" style="font-size:0.75rem;">0 Öğrenci</span>
-            <button class="btn-export" onclick="modulYazdir('card-bugun-yoklar', 'Bugun_Yok_Izinli_Ogrenciler')">🖨️ PDF</button>
-            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-bugun-yoklar', 'Bugun_Yok_Izinli_Ogrenciler')">📄 Word</button>
+            <button class="btn-export" onclick="modulYazdir('card-bugun-yoklar', 'Secili_Tarih_Devamsizlar')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-bugun-yoklar', 'Secili_Tarih_Devamsizlar')">📄 Word</button>
           </div>
         </h2>
         <div id="tum-devamsizlar-listesi">
-          <p style="font-size: 0.85rem; color: var(--text-muted);">Şu an için devamsız veya izinli öğrenci bulunmuyor.</p>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Bu tarih için devamsızlık kaydı bulunmuyor.</p>
         </div>
       </div>
 
@@ -1084,7 +1101,7 @@
         });
       } else {
         if (isIos) {
-          alert("📲 iPhone / iPad Kurulumu:\n\n1. Safari altındaki 'Paylaş' simgesine dokunun.\n2. Açılan menüde 'Ana Ekrana Ekle' seçeneğini seçin.");
+          alert("📲 iPhone / iPad Kurulumu:\n\n1. Safari tarayıcınızın altındaki 'Paylaş' simgesine dokunun.\n2. Açılan menüde 'Ana Ekrana Ekle' seçeneğini seçin.");
         } else if (isWindows) {
           alert("💻 Windows Kurulumu:\n\nChrome veya Edge adres çubuğunun sağındaki 'Uygulamayı Yükle' simgesine tıklayın.");
         } else {
@@ -1192,144 +1209,146 @@
 
     const varsayilanSiniflar = {
       "9-A-Otizm": [
-        { no: "3", ad: "AHMET HÜYÜKLÜ", dt: "06/06/2011", durum: "", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
-        { no: "4", ad: "EMİR KÜPELİ", dt: "19/05/2011", durum: "", ozursuz: 0.0, ozurlu: 0.5, toplam: 0.5 },
-        { no: "5", ad: "TALHA EREN KAVUN", dt: "09/07/2010", durum: "", ozursuz: 2.0, ozurlu: 0.5, toplam: 2.5 }
+        { no: "3", ad: "AHMET HÜYÜKLÜ", dt: "06/06/2011", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
+        { no: "4", ad: "EMİR KÜPELİ", dt: "19/05/2011", ozursuz: 0.0, ozurlu: 0.5, toplam: 0.5 },
+        { no: "5", ad: "TALHA EREN KAVUN", dt: "09/07/2010", ozursuz: 2.0, ozurlu: 0.5, toplam: 2.5 }
       ],
       "9-B-Otizm": [
-        { no: "8", ad: "MEHMET AKİF KONUK", dt: "10/03/2011", durum: "", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
-        { no: "11", ad: "YİĞİT EFE ŞAHİN", dt: "18/04/2010", durum: "", ozursuz: 6.0, ozurlu: 3.0, toplam: 9.0 }
+        { no: "8", ad: "MEHMET AKİF KONUK", dt: "10/03/2011", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
+        { no: "11", ad: "YİĞİT EFE ŞAHİN", dt: "18/04/2010", ozursuz: 6.0, ozurlu: 3.0, toplam: 9.0 }
       ],
       "9-A-Zihin": [
-        { no: "1", ad: "KIYMET CEMRE YETİŞİR", dt: "18/07/2011", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "22", ad: "ALİ ÖZ", dt: "03/12/2012", durum: "", ozursuz: 4.5, ozurlu: 3.5, toplam: 8.0 },
-        { no: "55", ad: "BAKİ SAMET KESER", dt: "29/05/2012", durum: "", ozursuz: 2.0, ozurlu: 0.0, toplam: 2.0 },
-        { no: "69", ad: "RECEP SAĞTAŞ", dt: "03/07/2008", durum: "", ozursuz: 4.0, ozurlu: 3.0, toplam: 7.0 },
-        { no: "93", ad: "ŞEVVAL SU UÇAK", dt: "06/09/2010", durum: "", ozursuz: 0.0, ozurlu: 2.0, toplam: 2.0 },
-        { no: "98", ad: "TUANA GÜL USLU", dt: "16/11/2010", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
-        { no: "111", ad: "EMSAL EMİN GÜL", dt: "28/06/2011", durum: "", ozursuz: 5.0, ozurlu: 8.5, toplam: 13.5 },
-        { no: "130", ad: "DOĞAN EREN", dt: "14/06/2012", durum: "", ozursuz: 3.0, ozurlu: 0.0, toplam: 3.0 },
-        { no: "140", ad: "EVLİYA KILIÇ", dt: "20/12/2010", durum: "", ozursuz: 5.0, ozurlu: 1.0, toplam: 6.0 }
+        { no: "1", ad: "KIYMET CEMRE YETİŞİR", dt: "18/07/2011", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "22", ad: "ALİ ÖZ", dt: "03/12/2012", ozursuz: 4.5, ozurlu: 3.5, toplam: 8.0 },
+        { no: "55", ad: "BAKİ SAMET KESER", dt: "29/05/2012", ozursuz: 2.0, ozurlu: 0.0, toplam: 2.0 },
+        { no: "69", ad: "RECEP SAĞTAŞ", dt: "03/07/2008", ozursuz: 4.0, ozurlu: 3.0, toplam: 7.0 },
+        { no: "93", ad: "ŞEVVAL SU UÇAK", dt: "06/09/2010", ozursuz: 0.0, ozurlu: 2.0, toplam: 2.0 },
+        { no: "98", ad: "TUANA GÜL USLU", dt: "16/11/2010", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
+        { no: "111", ad: "EMSAL EMİN GÜL", dt: "28/06/2011", ozursuz: 5.0, ozurlu: 8.5, toplam: 13.5 },
+        { no: "130", ad: "DOĞAN EREN", dt: "14/06/2012", ozursuz: 3.0, ozurlu: 0.0, toplam: 3.0 },
+        { no: "140", ad: "EVLİYA KILIÇ", dt: "20/12/2010", ozursuz: 5.0, ozurlu: 1.0, toplam: 6.0 }
       ],
       "9-B-Zihin": [
-        { no: "34", ad: "ALEYNA TINMAZ", dt: "04/09/2008", durum: "", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 },
-        { no: "71", ad: "MEDİNE HİDAYET IRK", dt: "25/04/2011", durum: "", ozursuz: 19.0, ozurlu: 0.0, toplam: 19.0 },
-        { no: "73", ad: "MUHAMMET EMİN CAN", dt: "05/04/2012", durum: "", ozursuz: 4.0, ozurlu: 1.0, toplam: 5.0 },
-        { no: "76", ad: "MUHARREM CANDAN", dt: "09/01/2012", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "77", ad: "UMUT EFE KÜRKÇÜ", dt: "25/10/2010", durum: "", ozursuz: 9.0, ozurlu: 0.0, toplam: 9.0 },
-        { no: "78", ad: "AYŞE ÇAĞLAYAN", dt: "30/01/2012", durum: "", ozursuz: 15.0, ozurlu: 7.0, toplam: 22.0 },
-        { no: "103", ad: "MUSAB MUHSİN İNCE", dt: "12/09/2011", durum: "", ozursuz: 0.0, ozurlu: 1.0, toplam: 1.0 },
-        { no: "116", ad: "MERT DEMİR", dt: "09/09/2011", durum: "", ozursuz: 0.0, ozurlu: 2.0, toplam: 2.0 },
-        { no: "125", ad: "ABDÜLSAMET KARAAĞAÇ", dt: "06/07/2011", durum: "", ozursuz: 0.5, ozurlu: 0.0, toplam: 0.5 },
-        { no: "132", ad: "EYÜP KILIÇASLAN", dt: "20/09/2011", durum: "", ozursuz: 8.0, ozurlu: 3.0, toplam: 11.0 }
+        { no: "34", ad: "ALEYNA TINMAZ", dt: "04/09/2008", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 },
+        { no: "71", ad: "MEDİNE HİDAYET IRK", dt: "25/04/2011", ozursuz: 19.0, ozurlu: 0.0, toplam: 19.0 },
+        { no: "73", ad: "MUHAMMET EMİN CAN", dt: "05/04/2012", ozursuz: 4.0, ozurlu: 1.0, toplam: 5.0 },
+        { no: "76", ad: "MUHARREM CANDAN", dt: "09/01/2012", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "77", ad: "UMUT EFE KÜRKÇÜ", dt: "25/10/2010", ozursuz: 9.0, ozurlu: 0.0, toplam: 9.0 },
+        { no: "78", ad: "AYŞE ÇAĞLAYAN", dt: "30/01/2012", ozursuz: 15.0, ozurlu: 7.0, toplam: 22.0 },
+        { no: "103", ad: "MUSAB MUHSİN İNCE", dt: "12/09/2011", ozursuz: 0.0, ozurlu: 1.0, toplam: 1.0 },
+        { no: "116", ad: "MERT DEMİR", dt: "09/09/2011", ozursuz: 0.0, ozurlu: 2.0, toplam: 2.0 },
+        { no: "125", ad: "ABDÜLSAMET KARAAĞAÇ", dt: "06/07/2011", ozursuz: 0.5, ozurlu: 0.0, toplam: 0.5 },
+        { no: "132", ad: "EYÜP KILIÇASLAN", dt: "20/09/2011", ozursuz: 8.0, ozurlu: 3.0, toplam: 11.0 }
       ],
       "10-A-Otizm": [
-        { no: "50", ad: "EYÜP EYMEN SEVER", dt: "05/11/2009", durum: "", ozursuz: 7.5, ozurlu: 0.0, toplam: 7.5 },
-        { no: "51", ad: "MUSTAFACAN SARI", dt: "11/03/2010", durum: "", ozursuz: 2.5, ozurlu: 0.0, toplam: 2.5 },
-        { no: "52", ad: "MUHAMMED HARUN", dt: "03/01/2010", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
-        { no: "53", ad: "MUHAMMET ADNAN ÇİÇEK", dt: "27/10/2009", durum: "", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 }
+        { no: "50", ad: "EYÜP EYMEN SEVER", dt: "05/11/2009", ozursuz: 7.5, ozurlu: 0.0, toplam: 7.5 },
+        { no: "51", ad: "MUSTAFACAN SARI", dt: "11/03/2010", ozursuz: 2.5, ozurlu: 0.0, toplam: 2.5 },
+        { no: "52", ad: "MUHAMMED HARUN", dt: "03/01/2010", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
+        { no: "53", ad: "MUHAMMET ADNAN ÇİÇEK", dt: "27/10/2009", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 }
       ],
       "10-A-Zihin": [
-        { no: "37", ad: "BERAT KARATAŞ", dt: "05/08/2009", durum: "", ozursuz: 14.0, ozurlu: 0.0, toplam: 14.0 },
-        { no: "43", ad: "KERİM YILMAZ", dt: "27/10/2010", durum: "", ozursuz: 4.0, ozurlu: 3.5, toplam: 7.5 },
-        { no: "45", ad: "NARİN UÇAK", dt: "31/05/2007", durum: "", ozursuz: 8.5, ozurlu: 4.0, toplam: 12.5 },
-        { no: "58", ad: "BERİL ŞAHAN", dt: "02/02/2011", durum: "", ozursuz: 0.0, ozurlu: 0.5, toplam: 0.5 },
-        { no: "59", ad: "MEHMET FATİH ER", dt: "21/12/2007", durum: "", ozursuz: 5.5, ozurlu: 3.0, toplam: 8.5 },
-        { no: "64", ad: "HACER ÇALIŞKAN", dt: "01/07/2011", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "141", ad: "LEMAN ER", dt: "20/08/2010", durum: "", ozursuz: 23.0, ozurlu: 0.0, toplam: 23.0 }
+        { no: "37", ad: "BERAT KARATAŞ", dt: "05/08/2009", ozursuz: 14.0, ozurlu: 0.0, toplam: 14.0 },
+        { no: "43", ad: "KERİM YILMAZ", dt: "27/10/2010", ozursuz: 4.0, ozurlu: 3.5, toplam: 7.5 },
+        { no: "45", ad: "NARİN UÇAK", dt: "31/05/2007", ozursuz: 8.5, ozurlu: 4.0, toplam: 12.5 },
+        { no: "58", ad: "BERİL ŞAHAN", dt: "02/02/2011", ozursuz: 0.0, ozurlu: 0.5, toplam: 0.5 },
+        { no: "59", ad: "MEHMET FATİH ER", dt: "21/12/2007", ozursuz: 5.5, ozurlu: 3.0, toplam: 8.5 },
+        { no: "64", ad: "HACER ÇALIŞKAN", dt: "01/07/2011", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "141", ad: "LEMAN ER", dt: "20/08/2010", ozursuz: 23.0, ozurlu: 0.0, toplam: 23.0 }
       ],
       "10-B-Zihin": [
-        { no: "16", ad: "YEMEN ACAR", dt: "01/09/2011", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
-        { no: "38", ad: "CAFER CAN OZAN", dt: "15/07/2011", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
-        { no: "41", ad: "ESİN SULTAN ÇAĞLAYAN", dt: "28/12/2010", durum: "", ozursuz: 8.0, ozurlu: 0.0, toplam: 8.0 },
-        { no: "42", ad: "HACI SEYİT DAĞ", dt: "28/12/2010", durum: "", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 },
-        { no: "65", ad: "NAGİHAN MERCAN", dt: "18/03/2010", durum: "", ozursuz: 0.0, ozurlu: 1.0, toplam: 1.0 },
-        { no: "70", ad: "FADIMANA NUR GÖKTAŞ", dt: "22/02/2009", durum: "", ozursuz: 0.0, ozurlu: 3.0, toplam: 3.0 },
-        { no: "99", ad: "YONCA GÖNÜLTAŞ", dt: "02/09/2011", durum: "", ozursuz: 14.5, ozurlu: 6.0, toplam: 20.5 },
-        { no: "104", ad: "HİLAL GÖNÜLTAŞ", dt: "03/07/2009", durum: "", ozursuz: 11.5, ozurlu: 17.0, toplam: 28.5 }
+        { no: "16", ad: "YEMEN ACAR", dt: "01/09/2011", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
+        { no: "38", ad: "CAFER CAN OZAN", dt: "15/07/2011", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
+        { no: "41", ad: "ESİN SULTAN ÇAĞLAYAN", dt: "28/12/2010", ozursuz: 8.0, ozurlu: 0.0, toplam: 8.0 },
+        { no: "42", ad: "HACI SEYİT DAĞ", dt: "28/12/2010", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 },
+        { no: "65", ad: "NAGİHAN MERCAN", dt: "18/03/2010", ozursuz: 0.0, ozurlu: 1.0, toplam: 1.0 },
+        { no: "70", ad: "FADIMANA NUR GÖKTAŞ", dt: "22/02/2009", ozursuz: 0.0, ozurlu: 3.0, toplam: 3.0 },
+        { no: "99", ad: "YONCA GÖNÜLTAŞ", dt: "02/09/2011", ozursuz: 14.5, ozurlu: 6.0, toplam: 20.5 },
+        { no: "104", ad: "HİLAL GÖNÜLTAŞ", dt: "03/07/2009", ozursuz: 11.5, ozurlu: 17.0, toplam: 28.5 }
       ],
       "10-C-Zihin": [
-        { no: "40", ad: "ENES KAYNAK", dt: "23/04/2011", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
-        { no: "46", ad: "SEYFİ ALTUNTAŞ", dt: "26/02/2009", durum: "", ozursuz: 1.0, ozurlu: 3.0, toplam: 4.0 },
-        { no: "47", ad: "YAŞAR ÇAKIR", dt: "28/09/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "48", ad: "YUSUF FURKAN DEMİREL", dt: "11/07/2010", durum: "", ozursuz: 1.0, ozurlu: 0.0, toplam: 1.0 },
-        { no: "54", ad: "HAMZA UÇAN", dt: "01/08/2011", durum: "", ozursuz: 8.0, ozurlu: 0.0, toplam: 8.0 },
-        { no: "63", ad: "ŞİFAYİ ARDA YILDIZ", dt: "15/07/2006", durum: "", ozursuz: 2.0, ozurlu: 3.0, toplam: 5.0 }
+        { no: "40", ad: "ENES KAYNAK", dt: "23/04/2011", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
+        { no: "46", ad: "SEYFİ ALTUNTAŞ", dt: "26/02/2009", ozursuz: 1.0, ozurlu: 3.0, toplam: 4.0 },
+        { no: "47", ad: "YAŞAR ÇAKIR", dt: "28/09/2010", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "48", ad: "YUSUF FURKAN DEMİREL", dt: "11/07/2010", ozursuz: 1.0, ozurlu: 0.0, toplam: 1.0 },
+        { no: "54", ad: "HAMZA UÇAN", dt: "01/08/2011", ozursuz: 8.0, ozurlu: 0.0, toplam: 8.0 },
+        { no: "63", ad: "ŞİFAYİ ARDA YILDIZ", dt: "15/07/2006", ozursuz: 2.0, ozurlu: 3.0, toplam: 5.0 }
       ],
       "11-12-A-Otizm": [
-        { no: "134", ad: "ENES SARIKAYA", dt: "03/06/2010", durum: "", ozursuz: 6.0, ozurlu: 5.5, toplam: 11.5 },
-        { no: "135", ad: "EMİRHAN YİLDİRİM", dt: "17/06/2009", durum: "", ozursuz: 2.0, ozurlu: 0.0, toplam: 2.0 },
-        { no: "122", ad: "NACİ EROĞLU", dt: "02/03/2008", durum: "", ozursuz: 5.5, ozurlu: 0.0, toplam: 5.5 },
-        { no: "133", ad: "EREN KÖSE", dt: "03/09/2009", durum: "", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 }
+        { no: "134", ad: "ENES SARIKAYA", dt: "03/06/2010", ozursuz: 6.0, ozurlu: 5.5, toplam: 11.5 },
+        { no: "135", ad: "EMİRHAN YİLDİRİM", dt: "17/06/2009", ozursuz: 2.0, ozurlu: 0.0, toplam: 2.0 },
+        { no: "122", ad: "NACİ EROĞLU", dt: "02/03/2008", ozursuz: 5.5, ozurlu: 0.0, toplam: 5.5 },
+        { no: "133", ad: "EREN KÖSE", dt: "03/09/2009", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 }
       ],
       "11-A-Zihin": [
-        { no: "12", ad: "ADEM AYHAN", dt: "28/02/2009", durum: "", ozursuz: 0.0, ozurlu: 3.5, toplam: 3.5 },
-        { no: "30", ad: "İLHAN ABUR", dt: "20/05/2009", durum: "", ozursuz: 3.0, ozurlu: 0.5, toplam: 3.5 },
-        { no: "32", ad: "SÜLEYMAN BERK", dt: "13/05/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "86", ad: "HÜSEYİN DOĞAN", dt: "15/04/2008", durum: "", ozursuz: 7.5, ozurlu: 3.0, toplam: 10.5 },
-        { no: "91", ad: "İSMAİL COŞKUNER", dt: "18/02/2010", durum: "", ozursuz: 2.0, ozurlu: 0.5, toplam: 2.5 },
-        { no: "117", ad: "ADEM ENES KARA", dt: "12/09/2009", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
-        { no: "118", ad: "ALPER KESTEK", dt: "04/02/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "127", ad: "SELİN SU ATASOY", dt: "08/01/2009", durum: "", ozursuz: 0.0, ozurlu: 10.0, toplam: 10.0 },
-        { no: "131", ad: "RUKİYE KILIÇ", dt: "13/09/2009", durum: "", ozursuz: 7.5, ozurlu: 0.0, toplam: 7.5 },
-        { no: "139", ad: "MUSTAFA AĞIRBAŞ", dt: "26/02/2009", durum: "", ozursuz: 0.0, ozurlu: 3.5, toplam: 3.5 }
+        { no: "12", ad: "ADEM AYHAN", dt: "28/02/2009", ozursuz: 0.0, ozurlu: 3.5, toplam: 3.5 },
+        { no: "30", ad: "İLHAN ABUR", dt: "20/05/2009", ozursuz: 3.0, ozurlu: 0.5, toplam: 3.5 },
+        { no: "32", ad: "SÜLEYMAN BERK", dt: "13/05/2010", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "86", ad: "HÜSEYİN DOĞAN", dt: "15/04/2008", ozursuz: 7.5, ozurlu: 3.0, toplam: 10.5 },
+        { no: "91", ad: "İSMAİL COŞKUNER", dt: "18/02/2010", ozursuz: 2.0, ozurlu: 0.5, toplam: 2.5 },
+        { no: "117", ad: "ADEM ENES KARA", dt: "12/09/2009", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
+        { no: "118", ad: "ALPER KESTEK", dt: "04/02/2010", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "127", ad: "SELİN SU ATASOY", dt: "08/01/2009", ozursuz: 0.0, ozurlu: 10.0, toplam: 10.0 },
+        { no: "131", ad: "RUKİYE KILIÇ", dt: "13/09/2009", ozursuz: 7.5, ozurlu: 0.0, toplam: 7.5 },
+        { no: "139", ad: "MUSTAFA AĞIRBAŞ", dt: "26/02/2009", ozursuz: 0.0, ozurlu: 3.5, toplam: 3.5 }
       ],
       "11-B-Zihin": [
-        { no: "18", ad: "AFİFE NİSA ÖZATA", dt: "29/10/2009", durum: "", ozursuz: 2.5, ozurlu: 3.0, toplam: 5.5 },
-        { no: "26", ad: "FATMA SILA ÖLMEZ", dt: "06/09/2009", durum: "", ozursuz: 5.0, ozurlu: 5.0, toplam: 10.0 },
-        { no: "35", ad: "OKTAY TALHA BORAN", dt: "15/08/2010", durum: "", ozursuz: 9.5, ozurlu: 0.0, toplam: 9.5 },
-        { no: "79", ad: "BETÜL YERLİ", dt: "24/04/2009", durum: "", ozursuz: 2.0, ozurlu: 1.0, toplam: 3.0 },
-        { no: "80", ad: "DUYGU ŞENSOY", dt: "13/10/2009", durum: "", ozursuz: 1.5, ozurlu: 0.5, toplam: 2.0 },
-        { no: "81", ad: "HACER ELBASAN", dt: "10/12/2009", durum: "", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
-        { no: "119", ad: "BÜŞRA GÜLER", dt: "05/08/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "128", ad: "SENANUR ÇAPALI", dt: "05/05/2009", durum: "", ozursuz: 2.0, ozurlu: 0.0, toplam: 2.0 },
-        { no: "137", ad: "ESMA AKYÜZ", dt: "09/07/2009", durum: "", ozursuz: 8.0, ozurlu: 1.0, toplam: 9.0 },
-        { no: "138", ad: "HÜSNA AKYÜZ", dt: "09/07/2009", durum: "", ozursuz: 8.0, ozurlu: 1.0, toplam: 9.0 }
+        { no: "18", ad: "AFİFE NİSA ÖZATA", dt: "29/10/2009", ozursuz: 2.5, ozurlu: 3.0, toplam: 5.5 },
+        { no: "26", ad: "FATMA SILA ÖLMEZ", dt: "06/09/2009", ozursuz: 5.0, ozurlu: 5.0, toplam: 10.0 },
+        { no: "35", ad: "OKTAY TALHA BORAN", dt: "15/08/2010", ozursuz: 9.5, ozurlu: 0.0, toplam: 9.5 },
+        { no: "79", ad: "BETÜL YERLİ", dt: "24/04/2009", ozursuz: 2.0, ozurlu: 1.0, toplam: 3.0 },
+        { no: "80", ad: "DUYGU ŞENSOY", dt: "13/10/2009", ozursuz: 1.5, ozurlu: 0.5, toplam: 2.0 },
+        { no: "81", ad: "HACER ELBASAN", dt: "10/12/2009", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
+        { no: "119", ad: "BÜŞRA GÜLER", dt: "05/08/2010", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "128", ad: "SENANUR ÇAPALI", dt: "05/05/2009", ozursuz: 2.0, ozurlu: 0.0, toplam: 2.0 },
+        { no: "137", ad: "ESMA AKYÜZ", dt: "09/07/2009", ozursuz: 8.0, ozurlu: 1.0, toplam: 9.0 },
+        { no: "138", ad: "HÜSNA AKYÜZ", dt: "09/07/2009", ozursuz: 8.0, ozurlu: 1.0, toplam: 9.0 }
       ],
       "11-C-Zihin": [
-        { no: "31", ad: "OSMAN KILIÇASLAN", dt: "04/04/2009", durum: "", ozursuz: 1.0, ozurlu: 0.5, toplam: 1.5 },
-        { no: "39", ad: "DERVİŞ KÖSE", dt: "28/03/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "102", ad: "KUDRET AKBAŞ", dt: "10/11/2010", durum: "", ozursuz: 3.5, ozurlu: 9.0, toplam: 12.5 },
-        { no: "105", ad: "MUHAMMET ABDURRAHİM ŞİMŞEK", dt: "23/05/2006", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "109", ad: "ÖMER DİK", dt: "20/08/2010", durum: "", ozursuz: 15.5, ozurlu: 0.0, toplam: 15.5 },
-        { no: "129", ad: "İSA SULU", dt: "22/05/2009", durum: "", ozursuz: 6.0, ozurlu: 0.0, toplam: 6.0 }
+        { no: "31", ad: "OSMAN KILIÇASLAN", dt: "04/04/2009", ozursuz: 1.0, ozurlu: 0.5, toplam: 1.5 },
+        { no: "39", ad: "DERVİŞ KÖSE", dt: "28/03/2010", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "102", ad: "KUDRET AKBAŞ", dt: "10/11/2010", ozursuz: 3.5, ozurlu: 9.0, toplam: 12.5 },
+        { no: "105", ad: "MUHAMMET ABDURRAHİM ŞİMŞEK", dt: "23/05/2006", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "109", ad: "ÖMER DİK", dt: "20/08/2010", ozursuz: 15.5, ozurlu: 0.0, toplam: 15.5 },
+        { no: "129", ad: "İSA SULU", dt: "22/05/2009", ozursuz: 6.0, ozurlu: 0.0, toplam: 6.0 }
       ],
       "12-A-Zihin": [
-        { no: "6", ad: "AHMET UYGUN", dt: "01/05/2008", durum: "", ozursuz: 6.0, ozurlu: 0.0, toplam: 6.0 },
-        { no: "25", ad: "METEHAN KIŞKIR", dt: "26/07/2007", durum: "", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
-        { no: "66", ad: "REYHAN YAVAŞ", dt: "01/04/2008", durum: "", ozursuz: 11.0, ozurlu: 0.0, toplam: 11.0 },
-        { no: "88", ad: "ŞENOL EFE KÜRKLÜ", dt: "09/06/2009", durum: "", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 },
-        { no: "89", ad: "EMİNE EBRAR ÇETİN", dt: "19/09/2008", durum: "", ozursuz: 3.0, ozurlu: 0.0, toplam: 3.0 },
-        { no: "113", ad: "ANISA AHANGAR", dt: "09/08/2005", durum: "", ozursuz: 0.0, ozurlu: 5.0, toplam: 5.0 },
-        { no: "121", ad: "FURKAN ÇAĞLAYAN FİDAN", dt: "25/07/2008", durum: "", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 },
-        { no: "123", ad: "LEVENT GEDİK", dt: "21/12/2005", durum: "", ozursuz: 9.5, ozurlu: 0.0, toplam: 9.5 }
+        { no: "6", ad: "AHMET UYGUN", dt: "01/05/2008", ozursuz: 6.0, ozurlu: 0.0, toplam: 6.0 },
+        { no: "25", ad: "METEHAN KIŞKIR", dt: "26/07/2007", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
+        { no: "66", ad: "REYHAN YAVAŞ", dt: "01/04/2008", ozursuz: 11.0, ozurlu: 0.0, toplam: 11.0 },
+        { no: "88", ad: "ŞENOL EFE KÜRKLÜ", dt: "09/06/2009", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 },
+        { no: "89", ad: "EMİNE EBRAR ÇETİN", dt: "19/09/2008", ozursuz: 3.0, ozurlu: 0.0, toplam: 3.0 },
+        { no: "113", ad: "ANISA AHANGAR", dt: "09/08/2005", ozursuz: 0.0, ozurlu: 5.0, toplam: 5.0 },
+        { no: "121", ad: "FURKAN ÇAĞLAYAN FİDAN", dt: "25/07/2008", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 },
+        { no: "123", ad: "LEVENT GEDİK", dt: "21/12/2005", ozursuz: 9.5, ozurlu: 0.0, toplam: 9.5 }
       ],
       "12-B-Zihin": [
-        { no: "36", ad: "BEKİR MERHAMET SEVİNÇ", dt: "19/04/2010", durum: "", ozursuz: 4.0, ozurlu: 4.0, toplam: 8.0 },
-        { no: "84", ad: "HİKMET YILMAZ", dt: "22/02/2009", durum: "", ozursuz: 28.0, ozurlu: 3.0, toplam: 31.0 },
-        { no: "87", ad: "MUHAMMED FURKAN İNAL", dt: "30/07/2008", durum: "", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 },
-        { no: "95", ad: "HÜMEYRA TAŞKIN", dt: "21/09/2007", durum: "", ozursuz: 4.5, ozurlu: 0.0, toplam: 4.5 },
-        { no: "106", ad: "RAMAZAN KIRLI", dt: "13/10/2007", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
-        { no: "114", ad: "RUKİYE KAYALI", dt: "08/07/2008", durum: "", ozursuz: 9.0, ozurlu: 0.0, toplam: 9.0 },
-        { no: "120", ad: "EMRE GÜL", dt: "07/01/2008", durum: "", ozursuz: 12.5, ozurlu: 5.0, toplam: 17.5 }
+        { no: "36", ad: "BEKİR MERHAMET SEVİNÇ", dt: "19/04/2010", ozursuz: 4.0, ozurlu: 4.0, toplam: 8.0 },
+        { no: "84", ad: "HİKMET YILMAZ", dt: "22/02/2009", ozursuz: 28.0, ozurlu: 3.0, toplam: 31.0 },
+        { no: "87", ad: "MUHAMMED FURKAN İNAL", dt: "30/07/2008", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 },
+        { no: "95", ad: "HÜMEYRA TAŞKIN", dt: "21/09/2007", ozursuz: 4.5, ozurlu: 0.0, toplam: 4.5 },
+        { no: "106", ad: "RAMAZAN KIRLI", dt: "13/10/2007", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
+        { no: "114", ad: "RUKİYE KAYALI", dt: "08/07/2008", ozursuz: 9.0, ozurlu: 0.0, toplam: 9.0 },
+        { no: "120", ad: "EMRE GÜL", dt: "07/01/2008", ozursuz: 12.5, ozurlu: 5.0, toplam: 17.5 }
       ],
       "12-C-Zihin": [
-        { no: "9", ad: "ELENNUR DAĞ", dt: "16/05/2008", durum: "", ozursuz: 1.0, ozurlu: 0.0, toplam: 1.0 },
-        { no: "23", ad: "İBRAHİM EROĞLU", dt: "11/04/2008", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "82", ad: "TUĞRUL SINAV", dt: "24/02/2009", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "90", ad: "ASLI ŞENER", dt: "03/05/2009", durum: "", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 },
-        { no: "94", ad: "İBRAHİM ÇAĞLAR", dt: "18/05/2009", durum: "", ozursuz: 15.0, ozurlu: 0.0, toplam: 15.0 },
-        { no: "112", ad: "OSMAN TORAMAN", dt: "02/11/2008", durum: "", ozursuz: 3.0, ozurlu: 0.0, toplam: 3.0 }
+        { no: "9", ad: "ELENNUR DAĞ", dt: "16/05/2008", ozursuz: 1.0, ozurlu: 0.0, toplam: 1.0 },
+        { no: "23", ad: "İBRAHİM EROĞLU", dt: "11/04/2008", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "82", ad: "TUĞRUL SINAV", dt: "24/02/2009", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "90", ad: "ASLI ŞENER", dt: "03/05/2009", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 },
+        { no: "94", ad: "İBRAHİM ÇAĞLAR", dt: "18/05/2009", ozursuz: 15.0, ozurlu: 0.0, toplam: 15.0 },
+        { no: "112", ad: "OSMAN TORAMAN", dt: "02/11/2008", ozursuz: 3.0, ozurlu: 0.0, toplam: 3.0 }
       ]
     };
 
     let okulSinifVerisi = varsayilanSiniflar;
+    let gunlukYoklamalar = {}; // okul_sinif_yoklamalar/TARİH/SINIF/OGRENCI_NO
     let rehabListesi = varsayilanRehabListesi;
     let izinler = [];
     let servisYoklamaKayitlari = {};
     let servisYedekAtamalar = {};
     let aktifKullanici = null;
     let aktifServisTarihi = "";
+    let aktifYoklamaTarihi = "";
 
     const nobetVeritabani = {
       "2026-11-02": { my: "RESUL ŞAHİNER", s1: "ABDULKADİR KAPLAN", s2: "FURKAN EROĞLU", s3: "SERDAR SAÇLI", z: "TUĞBA ESKİN / NURAY AKKAN", k1: "SULTAN BARUT" },
@@ -1356,7 +1375,7 @@
 
     // CANLI FIREBASE DİNLEYİCİLERİ
     function firebaseSenkronizasyonunuBaslat() {
-      // 1. Sınıf ve Öğrenci Yoklama Verileri
+      // 1. Sınıf Öğrenci Listeleri
       db.ref("okul_sinif_verisi").on("value", snapshot => {
         const val = snapshot.val();
         if (val) {
@@ -1371,178 +1390,479 @@
         detayOgrenciSecicisiniDoldur();
       });
 
-      // 2. Rehabilitasyon Öğrenci Listesi
+      // 2. Tarih Bazlı Günlük Yoklamalar (okul_sinif_yoklamalar/TARİH/SINIF/OGRENCI_NO)
+      db.ref("okul_sinif_yoklamalar").on("value", snapshot => {
+        gunlukYoklamalar = snapshot.val() || {};
+        ogrencileriYukle();
+        devamsizlariGuncelle();
+      });
+
+      // 3. Rehabilitasyon Listesi
       db.ref("okul_rehab_listesi").on("value", snapshot => {
         const val = snapshot.val();
-        if (val) {
-          rehabListesi = val;
-        } else {
-          db.ref("okul_rehab_listesi").set(varsayilanRehabListesi);
-        }
+        rehabListesi = val ? val : varsayilanRehabListesi;
         rehabilitasyonTablosunuDoldur();
       });
 
-      // 3. Personel İzin Kayıtları
+      // 4. Personel İzin Kayıtları
       db.ref("okul_izinler").on("value", snapshot => {
         const val = snapshot.val();
         izinler = val ? val : [];
         izinleriGoster();
-        const seciliTarih = document.getElementById('nobet-tarih-secici').value;
-        if (seciliTarih) tariheGoreNobetYukle(seciliTarih);
+        const seciliNobetTarih = document.getElementById('nobet-tarih-secici').value;
+        if (seciliNobetTarih) tariheGoreNobetYukle(seciliNobetTarih);
         servisModulunuGuncelle();
       });
 
-      // 4. Servis Yoklamaları
+      // 5. Servis Yoklamaları
       db.ref("okul_servis_yoklamalar").on("value", snapshot => {
-        const val = snapshot.val();
-        servisYoklamaKayitlari = val ? val : {};
+        servisYoklamaKayitlari = snapshot.val() || {};
         servisModulunuGuncelle();
       });
 
-      // 5. Servis Yedek Atamaları
+      // 6. Servis Yedek Atamaları
       db.ref("okul_servis_atamalar").on("value", snapshot => {
-        const val = snapshot.val();
-        servisYedekAtamalar = val ? val : {};
+        servisYedekAtamalar = snapshot.val() || {};
         servisModulunuGuncelle();
       });
     }
 
-    function isimIzinliMi(adSoyad, tarihStr) {
-      if (!adSoyad || !tarihStr) return false;
-      const t = new Date(tarihStr).getTime();
-      return izinler.some(izin => {
-        const bas = new Date(izin.baslangic).getTime();
-        const bit = new Date(izin.bitis).getTime();
-        const isimEslesiyor = adSoyad.toLocaleLowerCase('tr-TR').includes(izin.ad.toLocaleLowerCase('tr-TR'));
-        return isimEslesiyor && (t >= bas && t <= bit);
+    function yoklamaTarihDegistir(tarihStr) {
+      aktifYoklamaTarihi = tarihStr;
+      ogrencileriYukle();
+      devamsizlariGuncelle();
+    }
+
+    function toggleDurum(sinif, ogrNo, tiklananDurum) {
+      const tarih = aktifYoklamaTarihi;
+      const mevcutDurum = (gunlukYoklamalar[tarih] && gunlukYoklamalar[tarih][sinif] && gunlukYoklamalar[tarih][sinif][ogrNo]) ? gunlukYoklamalar[tarih][sinif][ogrNo] : "";
+      const yeniDurum = (mevcutDurum === tiklananDurum) ? "" : tiklananDurum;
+
+      db.ref(`okul_sinif_yoklamalar/${tarih}/${sinif}/${ogrNo}`).set(yeniDurum);
+    }
+
+    function devamsizlariGuncelle() {
+      const container = document.getElementById('tum-devamsizlar-listesi');
+      const rozet = document.getElementById('devamsiz-toplam-sayi');
+      const tarih = aktifYoklamaTarihi;
+      let devamsizListesi = [];
+
+      if (gunlukYoklamalar[tarih]) {
+        for (const [sinifKey, ogrMap] of Object.entries(gunlukYoklamalar[tarih])) {
+          const sinifOgrencileri = okulSinifVerisi[sinifKey] || [];
+          for (const [no, durum] of Object.entries(ogrMap)) {
+            if (durum === 'Y' || durum === 'R' || durum === 'S') {
+              const ogr = sinifOgrencileri.find(o => String(o.no) === String(no));
+              const ad = ogr ? ogr.ad : "Öğrenci";
+              devamsizListesi.push({
+                sinif: formatSinifAdi(sinifKey),
+                no: no,
+                ad: ad,
+                durum: durum
+              });
+            }
+          }
+        }
+      }
+
+      rozet.innerText = `${devamsizListesi.length} Öğrenci`;
+
+      if (devamsizListesi.length === 0) {
+        container.innerHTML = `<p style="font-size: 0.85rem; color: var(--text-muted);">${tarih} tarihinde devamsız (Yok/Rehab/Staj) öğrenci kaydı bulunmuyor.</p>`;
+        rozet.className = 'badge badge-blue';
+        return;
+      }
+
+      rozet.className = 'badge badge-red';
+      container.innerHTML = '';
+      devamsizListesi.forEach(item => {
+        let durumRozet = '';
+        if (item.durum === 'Y') durumRozet = '<span class="badge badge-red">Yok (Y)</span>';
+        else if (item.durum === 'R') durumRozet = '<span class="badge badge-sky">Rehabilitasyon (R)</span>';
+        else if (item.durum === 'S') durumRozet = '<span class="badge badge-staj">Staj (S)</span>';
+
+        const row = document.createElement('div');
+        row.className = 'list-item';
+        row.innerHTML = `
+          <div>
+            <div class="list-title">${item.no} - ${item.ad}</div>
+            <div class="list-subtitle">🏫 ${item.sinif}</div>
+          </div>
+          <div>${durumRozet}</div>
+        `;
+        container.appendChild(row);
       });
     }
 
-    function gununServisYetkilisiniBul(tarihStr) {
-      if (servisYedekAtamalar[tarihStr]) {
-        return {
-          hocaUsername: servisYedekAtamalar[tarihStr].username,
-          hocaAd: servisYedekAtamalar[tarihStr].ad,
-          tip: "Yedek Görevlendirme (İdarece Atandı)"
-        };
-      }
-
-      const nobetData = nobetVeritabani[tarihStr];
-      if (!nobetData || !nobetData.s1) {
-        return { hocaUsername: "", hocaAd: "Belirlenmedi", tip: "Nöbet Kaydı Yok" };
-      }
-
-      const hocaAd = nobetData.s1;
-      let matchedUsername = "";
-      for (const [u, val] of Object.entries(KULLANICILAR)) {
-        if (hocaAd.toLocaleLowerCase('tr-TR').includes(val.ad.toLocaleLowerCase('tr-TR')) ||
-            val.ad.toLocaleLowerCase('tr-TR').includes(hocaAd.toLocaleLowerCase('tr-TR'))) {
-          matchedUsername = u;
-          break;
-        }
-      }
-
-      const izinli = isimIzinliMi(hocaAd, tarihStr);
-      return {
-        hocaUsername: matchedUsername,
-        hocaAd: hocaAd,
-        izinliMi: izinli,
-        tip: izinli ? "Asıl Nöbetçi İzinli / Raporlu!" : "Asıl Servis Nöbetçisi"
-      };
+    function formatSinifAdi(kod) {
+      return kod ? kod.replace(/-/g, ' ') : '';
     }
 
-    function servisTarihDegistir(tarihStr) {
-      aktifServisTarihi = tarihStr;
-      servisModulunuGuncelle();
-    }
+    function ogrencileriYukle() {
+      const seciliSinif = document.getElementById('sinif-sec').value;
+      const liste = document.getElementById('ogrenci-listesi');
+      const statKarti = document.getElementById('devamsizlik-istatistik-karti');
+      const statTablosu = document.getElementById('sinif-devamsizlik-tablosu');
+      liste.innerHTML = '';
 
-    function servisModulunuGuncelle() {
-      const tarihStr = aktifServisTarihi;
-      const yetkili = gununServisYetkilisiniBul(tarihStr);
+      if (!seciliSinif) {
+        liste.innerHTML = '<p style="font-size:0.85rem; color:var(--text-muted); padding: 0.5rem 0; text-align: center;">Yoklama almak için lütfen yukarıdan bir sınıf seçin.</p>';
+        statKarti.style.display = 'none';
+        return;
+      }
+
+      statKarti.style.display = 'block';
+
+      if (!okulSinifVerisi[seciliSinif]) {
+        okulSinifVerisi[seciliSinif] = [];
+      }
+
+      const ogrenciler = okulSinifVerisi[seciliSinif];
+
+      if (ogrenciler.length === 0) {
+        liste.innerHTML = '<p style="font-size:0.85rem; color:var(--text-muted); padding: 0.5rem 0;">Bu sınıfta kayıtlı öğrenci bulunmuyor.</p>';
+        statTablosu.innerHTML = '';
+        return;
+      }
+
       const isIdareci = aktifKullanici && IDARECILER.includes(aktifKullanici.user);
-      const isServisNobetcisi = aktifKullanici && (aktifKullanici.user === yetkili.hocaUsername);
-      const yoklamaGirebilir = isIdareci || isServisNobetcisi;
+      const tarih = aktifYoklamaTarihi;
+      const sinifTarihYoklama = (gunlukYoklamalar[tarih] && gunlukYoklamalar[tarih][seciliSinif]) ? gunlukYoklamalar[tarih][seciliSinif] : {};
 
-      const rozet = document.getElementById('servis-yetki-rozet');
-      const detay = document.getElementById('servis-yetki-detay');
-      
-      if (yetkili.izinliMi && !servisYedekAtamalar[tarihStr]) {
-        rozet.className = "badge badge-red";
-        rozet.innerText = "Nöbetçi İzinli/Raporlu";
-        detay.innerHTML = `
-          <strong>Tarih:</strong> ${tarihStr} <br>
-          <strong>Asıl Görevli:</strong> ${yetkili.hocaAd} <span class="badge-alert">⚠️ İZİNLİ/RAPORLU</span><br>
-          <span style="color:#b91c1c; font-weight:700;">Günün servis nöbetçisi izinli olduğu için idare tarafından yedek görevlendirme yapılması bekleniyor.</span>
+      ogrenciler.forEach((ogr, index) => {
+        const row = document.createElement('div');
+        row.className = 'list-item';
+
+        const dKod = sinifTarihYoklama[ogr.no] || "";
+        let dMetin = "Girilmedi";
+        let dRenk = "var(--text-muted)";
+
+        if (dKod === 'G') { dMetin = "Geldi (G)"; dRenk = "var(--success)"; }
+        else if (dKod === 'Y') { dMetin = "Yok (Y)"; dRenk = "var(--danger)"; }
+        else if (dKod === 'R') { dMetin = "Rehabilitasyon (R)"; dRenk = "var(--rehab)"; }
+        else if (dKod === 'S') { dMetin = "Staj (S)"; dRenk = "var(--staj)"; }
+
+        row.innerHTML = `
+          <div>
+            <div class="list-title">${ogr.no} - ${ogr.ad}</div>
+            <div style="font-size:0.8rem; margin-top:2px; font-weight:700; color:${dRenk}">
+              ${dMetin}
+            </div>
+          </div>
+          <div class="status-btns">
+            <button class="btn-status ${dKod === 'G' ? 'active-geldi' : ''}" onclick="toggleDurum('${seciliSinif}', '${ogr.no}', 'G')">G</button>
+            <button class="btn-status ${dKod === 'Y' ? 'active-yok' : ''}" onclick="toggleDurum('${seciliSinif}', '${ogr.no}', 'Y')">Y</button>
+            <button class="btn-status ${dKod === 'R' ? 'active-rehab' : ''}" onclick="toggleDurum('${seciliSinif}', '${ogr.no}', 'R')">R</button>
+            <button class="btn-status ${dKod === 'S' ? 'active-staj' : ''}" onclick="toggleDurum('${seciliSinif}', '${ogr.no}', 'S')">S</button>
+            ${isIdareci ? `<button class="btn-delete admin-btn-delete" onclick="ogrenciSil('${seciliSinif}', ${index})">✕</button>` : ''}
+          </div>
         `;
+        liste.appendChild(row);
+      });
+
+      let tHtml = `
+        <table class="stat-table">
+          <thead>
+            <tr>
+              <th>No & İsim</th>
+              <th>${tarih} Durumu</th>
+              <th>Özürsüz</th>
+              <th>Özürlü</th>
+              <th>Toplam</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      ogrenciler.forEach(ogr => {
+        const ozursuz = ogr.ozursuz !== undefined ? ogr.ozursuz : 0;
+        const ozurlu = ogr.ozurlu !== undefined ? ogr.ozurlu : 0;
+        const toplam = ogr.toplam !== undefined ? ogr.toplam : (ozursuz + ozurlu);
+        const kritikMi = toplam > 10;
+        const dKod = sinifTarihYoklama[ogr.no] || "-";
+
+        tHtml += `
+          <tr style="${kritikMi ? 'background: #fff1f2;' : ''}">
+            <td><strong>${ogr.no}</strong> ${ogr.ad} ${kritikMi ? '<span class="badge-alert">Riskli</span>' : ''}</td>
+            <td><strong style="color:var(--primary);">${dKod}</strong></td>
+            <td>${ozursuz} gün</td>
+            <td>${ozurlu} gün</td>
+            <td><strong style="color: ${kritikMi ? 'var(--danger)' : 'var(--primary)'};">${toplam} gün</strong></td>
+          </tr>
+        `;
+      });
+
+      tHtml += `</tbody></table>`;
+      statTablosu.innerHTML = tHtml;
+    }
+
+    function ogrenciDetayDevamsizlikGoster() {
+      const val = document.getElementById('detay-ogr-sec').value;
+      const resContainer = document.getElementById('detay-ogr-sonuc');
+
+      if (!val) {
+        resContainer.innerHTML = '<p style="font-size:0.82rem; color:var(--text-muted); text-align:center;">Öğrenci detaylarını görmek için yukarıdan seçim yapın.</p>';
+        return;
+      }
+
+      const [sinifKey, ogrNo] = val.split('___');
+      const ogrenciler = okulSinifVerisi[sinifKey] || [];
+      const ogr = ogrenciler.find(o => String(o.no) === String(ogrNo));
+
+      if (!ogr) {
+        resContainer.innerHTML = '<p style="font-size:0.82rem; color:var(--danger); text-align:center;">Öğrenci bulunamadı.</p>';
+        return;
+      }
+
+      const ozursuz = ogr.ozursuz !== undefined ? ogr.ozursuz : 0;
+      const ozurlu = ogr.ozurlu !== undefined ? ogr.ozurlu : 0;
+      const toplam = ogr.toplam !== undefined ? ogr.toplam : (ozursuz + ozurlu);
+
+      const eylulOzursuz = (ozursuz * 0.25).toFixed(1);
+      const ekimOzursuz = (ozursuz * 0.45).toFixed(1);
+      const kasimOzursuz = (ozursuz - parseFloat(eylulOzursuz) - parseFloat(ekimOzursuz)).toFixed(1);
+
+      resContainer.innerHTML = `
+        <div style="background:white; border-radius:8px; padding:10px; border:1px solid var(--border);">
+          <div style="font-weight:700; color:var(--primary); font-size:0.9rem; margin-bottom:4px;">
+            ${ogr.no} - ${ogr.ad}
+          </div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">
+            Sınıf: <strong>${formatSinifAdi(sinifKey)}</strong> | Doğum: <strong>${ogr.dt || 'Belirtilmedi'}</strong>
+          </div>
+          
+          <table class="stat-table">
+            <thead>
+              <tr>
+                <th>Dönem</th>
+                <th>Özürsüz</th>
+                <th>Özürlü</th>
+                <th>Toplam</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. Dönem Toplam</strong></td>
+                <td><span class="badge badge-amber">${ozursuz} Gün</span></td>
+                <td><span class="badge badge-blue">${ozurlu} Gün</span></td>
+                <td><strong style="color:${toplam > 10 ? 'var(--danger)' : 'var(--primary)'}; font-size:0.88rem;">${toplam} Gün</strong></td>
+              </tr>
+              <tr>
+                <td>Eylül 2026</td>
+                <td>${eylulOzursuz} gün</td>
+                <td>${(ozurlu * 0.2).toFixed(1)} gün</td>
+                <td>${(parseFloat(eylulOzursuz) + ozurlu * 0.2).toFixed(1)} gün</td>
+              </tr>
+              <tr>
+                <td>Ekim 2026</td>
+                <td>${ekimOzursuz} gün</td>
+                <td>${(ozurlu * 0.5).toFixed(1)} gün</td>
+                <td>${(parseFloat(ekimOzursuz) + ozurlu * 0.5).toFixed(1)} gün</td>
+              </tr>
+              <tr>
+                <td>Kasım 2026</td>
+                <td>${kasimOzursuz} gün</td>
+                <td>${(ozurlu * 0.3).toFixed(1)} gün</td>
+                <td>${(parseFloat(kasimOzursuz) + ozurlu * 0.3).toFixed(1)} gün</td>
+              </tr>
+            </tbody>
+          </table>
+          ${toplam > 10 ? '<div style="margin-top:8px; font-size:0.75rem; color:#b91c1c; font-weight:700;">⚠️ Bu öğrenci 10 gün sınırını aşmıştır. Veli bilgilendirmesi yapılması önerilir.</div>' : ''}
+        </div>
+      `;
+    }
+
+    function kritikRiskliOgrencileriGoster() {
+      const container = document.getElementById('kritik-risk-listesi');
+      const rozet = document.getElementById('kritik-risk-toplam-sayi');
+      let riskliOgrenciler = [];
+
+      for (const [sinifKey, ogrenciler] of Object.entries(okulSinifVerisi)) {
+        ogrenciler.forEach(ogr => {
+          const ozursuz = ogr.ozursuz !== undefined ? ogr.ozursuz : 0;
+          const ozurlu = ogr.ozurlu !== undefined ? ogr.ozurlu : 0;
+          const toplam = ogr.toplam !== undefined ? ogr.toplam : (ozursuz + ozurlu);
+
+          if (toplam > 10) {
+            riskliOgrenciler.push({
+              sinif: formatSinifAdi(sinifKey),
+              no: ogr.no,
+              ad: ogr.ad,
+              ozursuz: ozursuz,
+              ozurlu: ozurlu,
+              toplam: toplam
+            });
+          }
+        });
+      }
+
+      riskliOgrenciler.sort((a, b) => b.toplam - a.toplam);
+      rozet.innerText = `${riskliOgrenciler.length} Öğrenci`;
+
+      if (riskliOgrenciler.length === 0) {
+        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-muted);">10 günü geçen riskli öğrenci bulunmamaktadır.</p>';
+        return;
+      }
+
+      container.innerHTML = '';
+      riskliOgrenciler.forEach(ogr => {
+        const row = document.createElement('div');
+        row.className = 'list-item';
+        row.innerHTML = `
+          <div>
+            <div class="list-title" style="color:#b91c1c;">⚠️ ${ogr.no} - ${ogr.ad}</div>
+            <div class="list-subtitle">🏫 ${ogr.sinif} • Özürsüz: ${ogr.ozursuz} g | Özürlü: ${ogr.ozurlu} g</div>
+          </div>
+          <div style="text-align: right;">
+            <span class="badge badge-red" style="font-size:0.85rem;">${ogr.toplam} Gün</span>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function yeniOgrenciEkle() {
+      const seciliSinif = document.getElementById('sinif-sec').value;
+      const no = document.getElementById('yeni-ogr-no').value.trim();
+      const ad = document.getElementById('yeni-ogr-ad').value.trim();
+      const dtRaw = document.getElementById('yeni-ogr-dt').value;
+
+      if (!seciliSinif) return alert('Lütfen önce bir sınıf seçin.');
+      if (!no || !ad) return alert('Lütfen öğrenci no ve ad soyad alanlarını doldurun.');
+
+      let dtFormatted = '';
+      if (dtRaw) {
+        const p = dtRaw.split('-');
+        dtFormatted = `${p[2]}/${p[1]}/${p[0]}`;
+      }
+
+      const sinifListesi = okulSinifVerisi[seciliSinif] ? [...okulSinifVerisi[seciliSinif]] : [];
+      sinifListesi.push({
+        no,
+        ad: ad.toLocaleUpperCase('tr-TR'),
+        dt: dtFormatted,
+        ozursuz: 0.0,
+        ozurlu: 0.0,
+        toplam: 0.0
+      });
+
+      db.ref(`okul_sinif_verisi/${seciliSinif}`).set(sinifListesi).then(() => {
+        document.getElementById('yeni-ogr-no').value = '';
+        document.getElementById('yeni-ogr-ad').value = '';
+        document.getElementById('yeni-ogr-dt').value = '';
+        alert("Öğrenci başarıyla sınıfa eklendi.");
+      });
+    }
+
+    function ogrenciSil(sinif, index) {
+      if (confirm('Bu öğrenciyi sınıftan silmek istediğinize emin misiniz?')) {
+        const yeniListe = okulSinifVerisi[sinif].filter((_, i) => i !== index);
+        db.ref(`okul_sinif_verisi/${sinif}`).set(yeniListe);
+      }
+    }
+
+    function dogumGunleriniHesapla() {
+      const bugun = new Date();
+      bugun.setHours(0,0,0,0);
+      const buYil = bugun.getFullYear();
+
+      const bugunOlanlarAlani = document.getElementById('bugun-dogumgunu-alani');
+      const yaklasanListeAlani = document.getElementById('yaklasan-dogumgunu-listesi');
+      const yaklasanRozet = document.getElementById('yaklasan-toplam-sayi');
+
+      let bugunOlanlar = [];
+      let yaklasanlar = [];
+
+      for (const [sinifKey, ogrenciler] of Object.entries(okulSinifVerisi)) {
+        ogrenciler.forEach(ogr => {
+          if (!ogr.dt) return;
+          const parcalar = ogr.dt.split('/');
+          if (parcalar.length !== 3) return;
+
+          const gun = parseInt(parcalar[0], 10);
+          const ay = parseInt(parcalar[1], 10) - 1;
+          const dogumYili = parseInt(parcalar[2], 10);
+
+          let dgBuYil = new Date(buYil, ay, gun);
+          dgBuYil.setHours(0,0,0,0);
+
+          if (dgBuYil < bugun) {
+            dgBuYil = new Date(buYil + 1, ay, gun);
+          }
+
+          const farkZaman = dgBuYil.getTime() - bugun.getTime();
+          const farkGun = Math.round(farkZaman / (1000 * 3600 * 24));
+          const yeniYas = dgBuYil.getFullYear() - dogumYili;
+
+          if (farkGun === 0) {
+            bugunOlanlar.push({
+              no: ogr.no,
+              ad: ogr.ad,
+              sinif: formatSinifAdi(sinifKey),
+              yas: yeniYas
+            });
+          } else if (farkGun > 0 && farkGun <= 30) {
+            yaklasanlar.push({
+              no: ogr.no,
+              ad: ogr.ad,
+              sinif: formatSinifAdi(sinifKey),
+              tarih: `${gun.toString().padStart(2, '0')}/${(ay+1).toString().padStart(2, '0')}`,
+              kalanGun: farkGun,
+              yas: yeniYas
+            });
+          }
+        });
+      }
+
+      if (bugunOlanlar.length > 0) {
+        let bHtml = '';
+        bugunOlanlar.forEach(b => {
+          bHtml += `
+            <div class="birthday-card-today">
+              <div style="font-size: 2rem;">🎉 🎂 🎈</div>
+              <h3>${b.no} - ${b.ad}</h3>
+              <div style="font-size: 0.85rem; color: #9d174d; font-weight:600;">${b.sinif} • ${b.yas}. Yaş</div>
+              <div class="birthday-greeting">''Doğum Günün Kutlu Olsun''</div>
+            </div>
+          `;
+        });
+        bugunOlanlarAlani.innerHTML = bHtml;
       } else {
-        rozet.className = "badge badge-green";
-        rozet.innerText = yetkili.tip;
-        detay.innerHTML = `
-          <strong>Tarih:</strong> ${tarihStr} <br>
-          <strong>Yetkili Servis Nöbetçisi:</strong> <span style="font-size:0.95rem; font-weight:700; color:var(--primary);">${yetkili.hocaAd}</span><br>
-          <strong>Giriş Yetkiniz:</strong> ${yoklamaGirebilir ? '<span style="color:var(--success); font-weight:700;">✔️ Yetkilisiniz (Yoklama Alabilirsiniz)</span>' : '<span style="color:var(--text-muted);">🔒 Sadece Okuma Modu (Yoklama Girişi Kapalı)</span>'}
-        `;
+        bugunOlanlarAlani.innerHTML = '';
       }
 
-      const tbody = document.getElementById('servis-yoklama-tbody');
-      tbody.innerHTML = '';
+      yaklasanlar.sort((a, b) => a.kalanGun - b.kalanGun);
+      yaklasanRozet.innerText = `${yaklasanlar.length} Öğrenci`;
 
-      if (!servisYoklamaKayitlari[tarihStr]) {
-        servisYoklamaKayitlari[tarihStr] = {};
+      if (yaklasanlar.length === 0) {
+        yaklasanListeAlani.innerHTML = '<p style="font-size:0.85rem; color:var(--text-muted); padding: 0.5rem 0;">Önümüzdeki 1 ay içinde doğum günü olan öğrenci bulunmuyor.</p>';
+        return;
       }
 
-      SERVIS_LISTESI.forEach(s => {
-        const kayit = servisYoklamaKayitlari[tarihStr][s.no] || { durum: "", aciklama: "" };
-        const tr = document.createElement('tr');
-
-        let yoklamaHucresi = "";
-        let aciklamaHucresi = "";
-
-        if (yoklamaGirebilir) {
-          yoklamaHucresi = `
-            <div class="status-btns" style="justify-content:center;">
-              <button class="btn-status ${kayit.durum === 'Geldi' ? 'active-geldi' : ''}" onclick="servisDurumAyarla(${s.no}, 'Geldi')">Geldi</button>
-              <button class="btn-status ${kayit.durum === 'Gelmedi' ? 'active-yok' : ''}" onclick="servisDurumAyarla(${s.no}, 'Gelmedi')">Gelmedi</button>
-            </div>
-          `;
-          aciklamaHucresi = `
-            <input type="text" value="${kayit.aciklama || ''}" placeholder="Not ekle..." onchange="servisAciklamaKaydet(${s.no}, this.value)">
-          `;
-        } else {
-          const badgeClass = kayit.durum === 'Geldi' ? 'badge-green' : (kayit.durum === 'Gelmedi' ? 'badge-red' : 'badge-amber');
-          yoklamaHucresi = `
-            <div style="text-align:center;">
-              <span class="badge ${badgeClass}">${kayit.durum || 'Alınmadı'}</span>
-            </div>
-          `;
-          aciklamaHucresi = `<span style="font-size:0.75rem; color:#475569;">${kayit.aciklama || '-'}</span>`;
-        }
-
-        tr.innerHTML = `
-          <td><strong>${s.no}</strong></td>
-          <td><div style="font-weight:600; font-size:0.8rem;">${s.hat}</div><div style="font-size:0.7rem; color:var(--text-muted);">${s.firma}</div></td>
-          <td><span class="badge badge-blue">${s.plaka}</span></td>
-          <td>${s.sofor}</td>
-          <td>${s.rehber}</td>
-          <td>${yoklamaHucresi}</td>
-          <td>${aciklamaHucresi}</td>
+      yaklasanListeAlani.innerHTML = '';
+      yaklasanlar.forEach(y => {
+        let sureMetni = y.kalanGun === 1 ? 'Yarın' : `${y.kalanGun} gün sonra`;
+        const row = document.createElement('div');
+        row.className = 'list-item';
+        row.innerHTML = `
+          <div>
+            <div class="list-title">🎈 ${y.no} - ${y.ad}</div>
+            <div class="list-subtitle">🏫 ${y.sinif} • ${y.yas}. Yaşına Girecek</div>
+          </div>
+          <div style="text-align: right;">
+            <span class="badge badge-pink">${y.tarih}</span>
+            <div style="font-size: 0.72rem; color: var(--pink); font-weight: 600; margin-top: 3px;">${sureMetni}</div>
+          </div>
         `;
-        tbody.appendChild(tr);
+        yaklasanListeAlani.appendChild(row);
       });
     }
 
     function servisDurumAyarla(servisNo, durum) {
       const tarihStr = aktifServisTarihi;
-      if (!servisYoklamaKayitlari[tarihStr]) servisYoklamaKayitlari[tarihStr] = {};
-      if (!servisYoklamaKayitlari[tarihStr][servisNo]) servisYoklamaKayitlari[tarihStr][servisNo] = { durum: "", aciklama: "" };
-
-      if (servisYoklamaKayitlari[tarihStr][servisNo].durum === durum) {
-        servisYoklamaKayitlari[tarihStr][servisNo].durum = "";
-      } else {
-        servisYoklamaKayitlari[tarihStr][servisNo].durum = durum;
-      }
-
-      db.ref(`okul_servis_yoklamalar/${tarihStr}/${servisNo}/durum`).set(servisYoklamaKayitlari[tarihStr][servisNo].durum);
+      const mevcut = (servisYoklamaKayitlari[tarihStr] && servisYoklamaKayitlari[tarihStr][servisNo]) ? servisYoklamaKayitlari[tarihStr][servisNo].durum : "";
+      const yeniDurum = (mevcut === durum) ? "" : durum;
+      db.ref(`okul_servis_yoklamalar/${tarihStr}/${servisNo}/durum`).set(yeniDurum);
     }
 
     function servisAciklamaKaydet(servisNo, metin) {
@@ -1740,6 +2060,9 @@
         sessionStorage.setItem('oturum_kullanici', JSON.stringify(aktifKullanici));
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('kullanici-karsilama').innerText = `Hoş geldiniz, ${kullanici.ad}`;
+        
+        // Giriş yapıldığında tüm tarihleri o güne ayarla
+        varsayilanTarihlereGec();
         yetkileriUygula();
         ogrencileriYukle();
       } else {
@@ -1772,7 +2095,10 @@
       window.scrollTo(0, 0);
 
       if (hedefId === 'dogumgunu') dogumGunleriniHesapla();
-      if (hedefId === 'devamsizlik') kritikRiskliOgrencileriGoster();
+      if (hedefId === 'devamsizlik') {
+        kritikRiskliOgrencileriGoster();
+        devamsizlariGuncelle();
+      }
       if (hedefId === 'servis-rehab') {
         servisModulunuGuncelle();
         rehabilitasyonTablosunuDoldur();
@@ -1868,405 +2194,39 @@
       }
     }
 
-    function formatSinifAdi(kod) {
-      return kod.replace(/-/g, ' ');
-    }
-
-    function ogrencileriYukle() {
-      const seciliSinif = document.getElementById('sinif-sec').value;
-      const liste = document.getElementById('ogrenci-listesi');
-      const statKarti = document.getElementById('devamsizlik-istatistik-karti');
-      const statTablosu = document.getElementById('sinif-devamsizlik-tablosu');
-      liste.innerHTML = '';
-
-      if (!seciliSinif) {
-        liste.innerHTML = '<p style="font-size:0.85rem; color:var(--text-muted); padding: 0.5rem 0; text-align: center;">Yoklama almak için lütfen yukarıdan bir sınıf seçin.</p>';
-        statKarti.style.display = 'none';
-        return;
-      }
-
-      statKarti.style.display = 'block';
-
-      if (!okulSinifVerisi[seciliSinif]) {
-        okulSinifVerisi[seciliSinif] = [];
-      }
-
-      const ogrenciler = okulSinifVerisi[seciliSinif];
-
-      if (ogrenciler.length === 0) {
-        liste.innerHTML = '<p style="font-size:0.85rem; color:var(--text-muted); padding: 0.5rem 0;">Bu sınıfta kayıtlı öğrenci bulunmuyor.</p>';
-        statTablosu.innerHTML = '';
-        return;
-      }
-
-      const isIdareci = aktifKullanici && IDARECILER.includes(aktifKullanici.user);
-
-      ogrenciler.forEach((ogr, index) => {
-        const row = document.createElement('div');
-        row.className = 'list-item';
-
-        const durumMetni = ogr.durum ? ogr.durum : 'Belirtilmedi';
-        const durumRengi = ogr.durum === 'Geldi' ? 'var(--success)' : (ogr.durum === 'Yok' ? 'var(--danger)' : (ogr.durum === 'İzinli' ? 'var(--warning)' : 'var(--text-muted)'));
-
-        row.innerHTML = `
-          <div>
-            <div class="list-title">${ogr.no} - ${ogr.ad}</div>
-            <div id="st-${seciliSinif}-${index}" style="font-size:0.8rem; margin-top:2px; font-weight:600; color:${durumRengi}">
-              ${durumMetni}
-            </div>
-          </div>
-          <div class="status-btns">
-            <button class="btn-status ${ogr.durum === 'Geldi' ? 'active-geldi' : ''}" onclick="toggleDurum('${seciliSinif}', ${index}, 'Geldi')">G</button>
-            <button class="btn-status ${ogr.durum === 'Yok' ? 'active-yok' : ''}" onclick="toggleDurum('${seciliSinif}', ${index}, 'Yok')">Y</button>
-            <button class="btn-status ${ogr.durum === 'İzinli' ? 'active-izinli' : ''}" onclick="toggleDurum('${seciliSinif}', ${index}, 'İzinli')">İ</button>
-            ${isIdareci ? `<button class="btn-delete admin-btn-delete" onclick="ogrenciSil('${seciliSinif}', ${index})">✕</button>` : ''}
-          </div>
-        `;
-        liste.appendChild(row);
-      });
-
-      let tHtml = `
-        <table class="stat-table">
-          <thead>
-            <tr>
-              <th>No & İsim</th>
-              <th>Özürsüz</th>
-              <th>Özürlü</th>
-              <th>Toplam</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      ogrenciler.forEach(ogr => {
-        const ozursuz = ogr.ozursuz !== undefined ? ogr.ozursuz : 0;
-        const ozurlu = ogr.ozurlu !== undefined ? ogr.ozurlu : 0;
-        const toplam = ogr.toplam !== undefined ? ogr.toplam : (ozursuz + ozurlu);
-        const kritikMi = toplam > 10;
-
-        tHtml += `
-          <tr style="${kritikMi ? 'background: #fff1f2;' : ''}">
-            <td><strong>${ogr.no}</strong> ${ogr.ad} ${kritikMi ? '<span class="badge-alert">Riskli</span>' : ''}</td>
-            <td>${ozursuz} gün</td>
-            <td>${ozurlu} gün</td>
-            <td><strong style="color: ${kritikMi ? 'var(--danger)' : 'var(--primary)'};">${toplam} gün</strong></td>
-          </tr>
-        `;
-      });
-
-      tHtml += `</tbody></table>`;
-      statTablosu.innerHTML = tHtml;
-    }
-
-    function ogrenciDetayDevamsizlikGoster() {
-      const val = document.getElementById('detay-ogr-sec').value;
-      const resContainer = document.getElementById('detay-ogr-sonuc');
-
-      if (!val) {
-        resContainer.innerHTML = '<p style="font-size:0.82rem; color:var(--text-muted); text-align:center;">Öğrenci detaylarını görmek için yukarıdan seçim yapın.</p>';
-        return;
-      }
-
-      const [sinifKey, ogrNo] = val.split('___');
-      const ogrenciler = okulSinifVerisi[sinifKey] || [];
-      const ogr = ogrenciler.find(o => o.no === ogrNo);
-
-      if (!ogr) {
-        resContainer.innerHTML = '<p style="font-size:0.82rem; color:var(--danger); text-align:center;">Öğrenci bulunamadı.</p>';
-        return;
-      }
-
-      const ozursuz = ogr.ozursuz !== undefined ? ogr.ozursuz : 0;
-      const ozurlu = ogr.ozurlu !== undefined ? ogr.ozurlu : 0;
-      const toplam = ogr.toplam !== undefined ? ogr.toplam : (ozursuz + ozurlu);
-
-      const eylulOzursuz = (ozursuz * 0.25).toFixed(1);
-      const ekimOzursuz = (ozursuz * 0.45).toFixed(1);
-      const kasimOzursuz = (ozursuz - parseFloat(eylulOzursuz) - parseFloat(ekimOzursuz)).toFixed(1);
-
-      resContainer.innerHTML = `
-        <div style="background:white; border-radius:8px; padding:10px; border:1px solid var(--border);">
-          <div style="font-weight:700; color:var(--primary); font-size:0.9rem; margin-bottom:4px;">
-            ${ogr.no} - ${ogr.ad}
-          </div>
-          <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">
-            Sınıf: <strong>${formatSinifAdi(sinifKey)}</strong> | Doğum: <strong>${ogr.dt || 'Belirtilmedi'}</strong>
-          </div>
-          
-          <table class="stat-table">
-            <thead>
-              <tr>
-                <th>Dönem</th>
-                <th>Özürsüz</th>
-                <th>Özürlü</th>
-                <th>Toplam</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>1. Dönem Toplam</strong></td>
-                <td><span class="badge badge-amber">${ozursuz} Gün</span></td>
-                <td><span class="badge badge-blue">${ozurlu} Gün</span></td>
-                <td><strong style="color:${toplam > 10 ? 'var(--danger)' : 'var(--primary)'}; font-size:0.88rem;">${toplam} Gün</strong></td>
-              </tr>
-              <tr>
-                <td>Eylül 2026</td>
-                <td>${eylulOzursuz} gün</td>
-                <td>${(ozurlu * 0.2).toFixed(1)} gün</td>
-                <td>${(parseFloat(eylulOzursuz) + ozurlu * 0.2).toFixed(1)} gün</td>
-              </tr>
-              <tr>
-                <td>Ekim 2026</td>
-                <td>${ekimOzursuz} gün</td>
-                <td>${(ozurlu * 0.5).toFixed(1)} gün</td>
-                <td>${(parseFloat(ekimOzursuz) + ozurlu * 0.5).toFixed(1)} gün</td>
-              </tr>
-              <tr>
-                <td>Kasım 2026</td>
-                <td>${kasimOzursuz} gün</td>
-                <td>${(ozurlu * 0.3).toFixed(1)} gün</td>
-                <td>${(parseFloat(kasimOzursuz) + ozurlu * 0.3).toFixed(1)} gün</td>
-              </tr>
-            </tbody>
-          </table>
-          ${toplam > 10 ? '<div style="margin-top:8px; font-size:0.75rem; color:#b91c1c; font-weight:700;">⚠️ Bu öğrenci 10 gün sınırını aşmıştır. Veli bilgilendirmesi yapılması önerilir.</div>' : ''}
-        </div>
-      `;
-    }
-
-    function toggleDurum(sinif, index, tiklananDurum) {
-      const ogr = okulSinifVerisi[sinif][index];
-      const yeniDurum = (ogr.durum === tiklananDurum) ? "" : tiklananDurum;
-      db.ref(`okul_sinif_verisi/${sinif}/${index}/durum`).set(yeniDurum);
-    }
-
-    function devamsizlariGuncelle() {
-      const container = document.getElementById('tum-devamsizlar-listesi');
-      const rozet = document.getElementById('devamsiz-toplam-sayi');
-      let devamsizListesi = [];
-
-      for (const [sinifKey, ogrenciler] of Object.entries(okulSinifVerisi)) {
-        ogrenciler.forEach(ogr => {
-          if (ogr.durum === 'Yok' || ogr.durum === 'İzinli') {
-            devamsizListesi.push({
-              sinif: formatSinifAdi(sinifKey),
-              no: ogr.no,
-              ad: ogr.ad,
-              durum: ogr.durum
-            });
-          }
-        });
-      }
-
-      rozet.innerText = `${devamsizListesi.length} Öğrenci`;
-
-      if (devamsizListesi.length === 0) {
-        container.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted);">Şu an için devamsız veya izinli öğrenci bulunmuyor.</p>';
-        rozet.className = 'badge badge-blue';
-        return;
-      }
-
-      rozet.className = 'badge badge-red';
-      container.innerHTML = '';
-      devamsizListesi.forEach(item => {
-        const row = document.createElement('div');
-        row.className = 'list-item';
-        row.innerHTML = `
-          <div>
-            <div class="list-title">${item.no} - ${item.ad}</div>
-            <div class="list-subtitle">🏫 ${item.sinif}</div>
-          </div>
-          <span class="badge ${item.durum === 'Yok' ? 'badge-red' : 'badge-amber'}">${item.durum}</span>
-        `;
-        container.appendChild(row);
-      });
-    }
-
-    function kritikRiskliOgrencileriGoster() {
-      const container = document.getElementById('kritik-risk-listesi');
-      const rozet = document.getElementById('kritik-risk-toplam-sayi');
-      let riskliOgrenciler = [];
-
-      for (const [sinifKey, ogrenciler] of Object.entries(okulSinifVerisi)) {
-        ogrenciler.forEach(ogr => {
-          const ozursuz = ogr.ozursuz !== undefined ? ogr.ozursuz : 0;
-          const ozurlu = ogr.ozurlu !== undefined ? ogr.ozurlu : 0;
-          const toplam = ogr.toplam !== undefined ? ogr.toplam : (ozursuz + ozurlu);
-
-          if (toplam > 10) {
-            riskliOgrenciler.push({
-              sinif: formatSinifAdi(sinifKey),
-              no: ogr.no,
-              ad: ogr.ad,
-              ozursuz: ozursuz,
-              ozurlu: ozurlu,
-              toplam: toplam
-            });
-          }
-        });
-      }
-
-      riskliOgrenciler.sort((a, b) => b.toplam - a.toplam);
-      rozet.innerText = `${riskliOgrenciler.length} Öğrenci`;
-
-      if (riskliOgrenciler.length === 0) {
-        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-muted);">10 günü geçen riskli öğrenci bulunmamaktadır.</p>';
-        return;
-      }
-
-      container.innerHTML = '';
-      riskliOgrenciler.forEach(ogr => {
-        const row = document.createElement('div');
-        row.className = 'list-item';
-        row.innerHTML = `
-          <div>
-            <div class="list-title" style="color:#b91c1c;">⚠️ ${ogr.no} - ${ogr.ad}</div>
-            <div class="list-subtitle">🏫 ${ogr.sinif} • Özürsüz: ${ogr.ozursuz} g | Özürlü: ${ogr.ozurlu} g</div>
-          </div>
-          <div style="text-align: right;">
-            <span class="badge badge-red" style="font-size:0.85rem;">${ogr.toplam} Gün</span>
-          </div>
-        `;
-        container.appendChild(row);
-      });
-    }
-
-    function yeniOgrenciEkle() {
-      const seciliSinif = document.getElementById('sinif-sec').value;
-      const no = document.getElementById('yeni-ogr-no').value.trim();
-      const ad = document.getElementById('yeni-ogr-ad').value.trim();
-      const dtRaw = document.getElementById('yeni-ogr-dt').value;
-
-      if (!seciliSinif) return alert('Lütfen önce bir sınıf seçin.');
-      if (!no || !ad) return alert('Lütfen öğrenci no ve ad soyad alanlarını doldurun.');
-
-      let dtFormatted = '';
-      if (dtRaw) {
-        const p = dtRaw.split('-');
-        dtFormatted = `${p[2]}/${p[1]}/${p[0]}`;
-      }
-
-      const sinifListesi = okulSinifVerisi[seciliSinif] ? [...okulSinifVerisi[seciliSinif]] : [];
-      sinifListesi.push({
-        no,
-        ad: ad.toLocaleUpperCase('tr-TR'),
-        dt: dtFormatted,
-        durum: '',
-        ozursuz: 0.0,
-        ozurlu: 0.0,
-        toplam: 0.0
-      });
-
-      db.ref(`okul_sinif_verisi/${seciliSinif}`).set(sinifListesi).then(() => {
-        document.getElementById('yeni-ogr-no').value = '';
-        document.getElementById('yeni-ogr-ad').value = '';
-        document.getElementById('yeni-ogr-dt').value = '';
-        alert("Öğrenci başarıyla sınıfa eklendi.");
-      });
-    }
-
-    function ogrenciSil(sinif, index) {
-      if (confirm('Bu öğrenciyi sınıftan silmek istediğinize emin misiniz?')) {
-        const yeniListe = okulSinifVerisi[sinif].filter((_, i) => i !== index);
-        db.ref(`okul_sinif_verisi/${sinif}`).set(yeniListe);
-      }
-    }
-
-    function dogumGunleriniHesapla() {
+    // AÇILIŞTA GÜNÜN TARİHİNE GEÇİŞ
+    function varsayilanTarihlereGec() {
       const bugun = new Date();
-      bugun.setHours(0,0,0,0);
-      const buYil = bugun.getFullYear();
+      const yil = bugun.getFullYear();
+      const ay = String(bugun.getMonth() + 1).padStart(2, '0');
+      const gun = String(bugun.getDate()).padStart(2, '0');
+      const bugunStr = `${yil}-${ay}-${gun}`;
 
-      const bugunOlanlarAlani = document.getElementById('bugun-dogumgunu-alani');
-      const yaklasanListeAlani = document.getElementById('yaklasan-dogumgunu-listesi');
-      const yaklasanRozet = document.getElementById('yaklasan-toplam-sayi');
+      aktifServisTarihi = bugunStr;
+      aktifYoklamaTarihi = bugunStr;
 
-      let bugunOlanlar = [];
-      let yaklasanlar = [];
-
-      for (const [sinifKey, ogrenciler] of Object.entries(okulSinifVerisi)) {
-        ogrenciler.forEach(ogr => {
-          if (!ogr.dt) return;
-          const parcalar = ogr.dt.split('/');
-          if (parcalar.length !== 3) return;
-
-          const gun = parseInt(parcalar[0], 10);
-          const ay = parseInt(parcalar[1], 10) - 1;
-          const dogumYili = parseInt(parcalar[2], 10);
-
-          let dgBuYil = new Date(buYil, ay, gun);
-          dgBuYil.setHours(0,0,0,0);
-
-          if (dgBuYil < bugun) {
-            dgBuYil = new Date(buYil + 1, ay, gun);
-          }
-
-          const farkZaman = dgBuYil.getTime() - bugun.getTime();
-          const farkGun = Math.round(farkZaman / (1000 * 3600 * 24));
-          const yeniYas = dgBuYil.getFullYear() - dogumYili;
-
-          if (farkGun === 0) {
-            bugunOlanlar.push({
-              no: ogr.no,
-              ad: ogr.ad,
-              sinif: formatSinifAdi(sinifKey),
-              yas: yeniYas
-            });
-          } else if (farkGun > 0 && farkGun <= 30) {
-            yaklasanlar.push({
-              no: ogr.no,
-              ad: ogr.ad,
-              sinif: formatSinifAdi(sinifKey),
-              tarih: `${gun.toString().padStart(2, '0')}/${(ay+1).toString().padStart(2, '0')}`,
-              kalanGun: farkGun,
-              yas: yeniYas
-            });
-          }
-        });
+      const seciciNobet = document.getElementById('nobet-tarih-secici');
+      if (seciciNobet) {
+        seciciNobet.value = bugunStr;
+        tariheGoreNobetYukle(bugunStr);
       }
 
-      if (bugunOlanlar.length > 0) {
-        let bHtml = '';
-        bugunOlanlar.forEach(b => {
-          bHtml += `
-            <div class="birthday-card-today">
-              <div style="font-size: 2rem;">🎉 🎂 🎈</div>
-              <h3>${b.no} - ${b.ad}</h3>
-              <div style="font-size: 0.85rem; color: #9d174d; font-weight:600;">${b.sinif} • ${b.yas}. Yaş</div>
-              <div class="birthday-greeting">''Doğum Günün Kutlu Olsun''</div>
-            </div>
-          `;
-        });
-        bugunOlanlarAlani.innerHTML = bHtml;
-      } else {
-        bugunOlanlarAlani.innerHTML = '';
+      const seciciServis = document.getElementById('servis-tarih-secici');
+      if (seciciServis) {
+        seciciServis.value = bugunStr;
       }
 
-      yaklasanlar.sort((a, b) => a.kalanGun - b.kalanGun);
-      yaklasanRozet.innerText = `${yaklasanlar.length} Öğrenci`;
-
-      if (yaklasanlar.length === 0) {
-        yaklasanListeAlani.innerHTML = '<p style="font-size:0.85rem; color:var(--text-muted); padding: 0.5rem 0;">Önümüzdeki 1 ay içinde doğum günü olan öğrenci bulunmuyor.</p>';
-        return;
+      const seciciYoklama = document.getElementById('yoklama-tarih-secici');
+      if (seciciYoklama) {
+        seciciYoklama.value = bugunStr;
       }
 
-      yaklasanListeAlani.innerHTML = '';
-      yaklasanlar.forEach(y => {
-        let sureMetni = y.kalanGun === 1 ? 'Yarın' : `${y.kalanGun} gün sonra`;
-        const row = document.createElement('div');
-        row.className = 'list-item';
-        row.innerHTML = `
-          <div>
-            <div class="list-title">🎈 ${y.no} - ${y.ad}</div>
-            <div class="list-subtitle">🏫 ${y.sinif} • ${y.yas}. Yaşına Girecek</div>
-          </div>
-          <div style="text-align: right;">
-            <span class="badge badge-pink">${y.tarih}</span>
-            <div style="font-size: 0.72rem; color: var(--pink); font-weight: 600; margin-top: 3px;">${sureMetni}</div>
-          </div>
-        `;
-        yaklasanListeAlani.appendChild(row);
-      });
+      const izinBas = document.getElementById('izin-baslangic');
+      const izinBit = document.getElementById('izin-bitis');
+      if (izinBas && izinBit) {
+        izinBas.value = bugunStr;
+        izinBit.value = bugunStr;
+      }
     }
 
     window.onload = function() {
@@ -2285,32 +2245,9 @@
           if (e.key === 'Enter') girisYap();
         });
 
-        const bugun = new Date();
-        const yil = bugun.getFullYear();
-        const ay = String(bugun.getMonth() + 1).padStart(2, '0');
-        const gun = String(bugun.getDate()).padStart(2, '0');
-        const bugunStr = `${yil}-${ay}-${gun}`;
-        aktifServisTarihi = bugunStr;
+        varsayilanTarihlereGec();
 
-        const seciciNobet = document.getElementById('nobet-tarih-secici');
-        if (seciciNobet) {
-          seciciNobet.value = bugunStr;
-          tariheGoreNobetYukle(bugunStr);
-        }
-
-        const seciciServis = document.getElementById('servis-tarih-secici');
-        if (seciciServis) {
-          seciciServis.value = bugunStr;
-        }
-
-        const izinBas = document.getElementById('izin-baslangic');
-        const izinBit = document.getElementById('izin-bitis');
-        if (izinBas && izinBit) {
-          izinBas.value = bugunStr;
-          izinBit.value = bugunStr;
-        }
-
-        // Firebase Dinleyicisini Başlat
+        // Firebase Canlı Dinleyicilerini Başlat
         firebaseSenkronizasyonunuBaslat();
 
         setTimeout(() => {
