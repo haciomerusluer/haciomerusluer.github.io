@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Hacı Ömer Usluer ÖEMO</title>
   <meta name="theme-color" content="#1e3a8a">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Okul Portalı">
-
-  <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiSMOhY8SxIMOIbWVyIFVzbHVlciDDlsVFTU8iLCJzaG9ydF9uYW1lIjoiT2t1bFBvcnRhbCIsInN0YXJ0X3VybCI6Ii4vaW5kZXguaHRtbCIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmOGZheGZhIiwidGhlbWVfY29sb3IiOiIjMWUzYThhIn0=">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2997/2997295.png">
 
   <style>
     :root {
@@ -30,37 +30,34 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: var(--bg); color: var(--text); padding-bottom: 95px; }
 
-    <!-- HER ZAMAN GÖRÜNÜR KURULUM ÇUBUĞU -->
-  <div id="pwa-top-bar" style="background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
-    <div style="display:flex; align-items:center; gap:8px;">
-      <span style="font-size:1.3rem;">📲</span>
-      <span><strong>Okul Portalını Yükle</strong> (Ana Ekrana Ekle)</span>
-    </div>
-    <button type="button" onclick="anaEkranaYukle()" style="background:#ffffff; color:#1e3a8a; border:none; padding:6px 14px; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer;">
-      Yükle
-    </button>
-  </div>
+    /* SABİT ÜST YÜKLEME ÇUBUĞU (WINDOWS & ANDROID & IOS) */
+    #pwa-top-bar {
+      display: none;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: white;
+      padding: 10px 14px;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.84rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    #pwa-top-bar button {
+      background: #ffffff;
+      color: #1e3a8a;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
 
-  <!-- AÇILIR PENCERE (POP-UP MODAL) -->
-  <div id="pwa-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); z-index: 9999999; align-items: center; justify-content: center; padding: 1.25rem;">
-    <div style="background: white; border-radius: 18px; padding: 1.5rem; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 20px 25px rgba(0,0,0,0.25);">
-      <div style="font-size: 2.8rem; margin-bottom: 0.5rem;">📲</div>
-      <h3 style="font-size: 1.15rem; color: #1e3a8a; margin-bottom: 0.4rem;">Uygulamayı Ana Ekrana Ekleyin</h3>
-      <p id="pwa-modal-desc" style="font-size: 0.85rem; color: #64748b; line-height: 1.45; margin-bottom: 1.25rem;">
-        Hacı Ömer Usluer ÖEMO Okul Portalı'nı telefonunuza veya bilgisayarınıza uygulama olarak indirip internet olmadan da tam ekran kullanabilirsiniz.
-      </p>
-      <div style="display: flex; gap: 8px;">
-        <button type="button" onclick="pwaModalKapat()" style="flex:1; padding:0.7rem; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; border:none; background:#f1f5f9; color:#64748b;">Daha Sonra</button>
-        <button type="button" id="btn-pwa-install-act" onclick="anaEkranaYukle()" style="flex:1; padding:0.7rem; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; border:none; background:#1e3a8a; color:white;">Hemen Ekle</button>
-      </div>
-    </div>
-  </div>
-    /* ANA EKRANA EKLEME POP-UP MODAL */
+    /* PWA KURULUM POP-UP MODAL */
     #pwa-modal-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.65);
+      background: rgba(15, 23, 42, 0.7);
       backdrop-filter: blur(4px);
       z-index: 1000000;
       align-items: center;
@@ -71,38 +68,23 @@
       background: white;
       border-radius: 18px;
       padding: 1.5rem;
-      max-width: 380px;
+      max-width: 400px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 20px 25px rgba(0,0,0,0.25);
       animation: popIn 0.25s ease-out;
     }
     @keyframes popIn {
-      from { transform: scale(0.9); opacity: 0; }
+      from { transform: scale(0.92); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
-    .pwa-modal-icon {
-      font-size: 2.8rem;
-      margin-bottom: 0.5rem;
-    }
-    .pwa-modal h3 {
-      font-size: 1.15rem;
-      color: var(--primary);
-      margin-bottom: 0.4rem;
-    }
-    .pwa-modal p {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      line-height: 1.45;
-      margin-bottom: 1.25rem;
-    }
-    .pwa-modal-btns {
-      display: flex;
-      gap: 8px;
-    }
+    .pwa-modal-icon { font-size: 2.8rem; margin-bottom: 0.5rem; }
+    .pwa-modal h3 { font-size: 1.15rem; color: var(--primary); margin-bottom: 0.4rem; }
+    .pwa-modal p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 1.25rem; text-align: left; }
+    .pwa-modal-btns { display: flex; gap: 8px; }
     .pwa-modal-btns button {
       flex: 1;
-      padding: 0.7rem;
+      padding: 0.75rem;
       border-radius: 8px;
       font-size: 0.88rem;
       font-weight: 600;
@@ -357,13 +339,22 @@
 </head>
 <body>
 
-  <!-- YENİ: MODERN ANA EKRANA EKLEME POP-UP'I -->
+  <!-- KALICI ÜST YÜKLEME ÇUBUĞU -->
+  <div id="pwa-top-bar">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-size:1.3rem;">📲</span>
+      <span><strong>Okul Portalını Yükle</strong> (Ana Ekrana Ekle)</span>
+    </div>
+    <button type="button" onclick="anaEkranaYukle()">Yükle</button>
+  </div>
+
+  <!-- AÇILIR KURULUM PENCERESİ (WINDOWS, ANDROID, IOS) -->
   <div id="pwa-modal-overlay">
     <div class="pwa-modal">
       <div class="pwa-modal-icon">📲</div>
-      <h3>Ana Ekrana Ekleyin</h3>
+      <h3 id="pwa-modal-title">Uygulamayı Yükleyin</h3>
       <p id="pwa-modal-desc">
-        Hacı Ömer Usluer ÖEMO Okul Portalı'nı telefonunuza veya masaüstünüze uygulama olarak ekleyip tek tıkla tam ekran kullanabilirsiniz.
+        Hacı Ömer Usluer ÖEMO Okul Portalı'nı telefonunuza veya bilgisayarınıza ekleyerek tam ekran, hızlı ve donma olmadan kullanabilirsiniz.
       </p>
       <div class="pwa-modal-btns">
         <button type="button" class="btn-pwa-dismiss" onclick="pwaModalKapat()">Daha Sonra</button>
@@ -372,6 +363,7 @@
     </div>
   </div>
 
+  <!-- GİRİŞ EKRANI -->
   <div id="login-overlay">
     <div class="login-box">
       <div style="font-size: 2.2rem; margin-bottom: 8px;">🏫</div>
@@ -420,29 +412,29 @@
       <div class="card">
         <h2>📌 Nöbetçi Öğretmen Görev Hatırlatması</h2>
         <ul style="padding-left: 1.2rem; font-size: 0.8rem; color: #475569; line-height: 1.45;">
-          <li>Nöbetler, okul idaresi tarafından hazırlanan nöbet çizelgelerine uygun olarak tutulur. Bu çizelgelerde okul idaresinin bilgisi dışında değişiklik yapılamaz.[cite: 3]</li>
-          <li>Okulda ilk ders başlamadan 30 dakika önce hazır bulunur, okulun genel kontrolünü yapar, eksikleri okul yönetimine bildirir ve son ders bitiminden 30 dakika sonra gerekli kontrolleri yaparak nöbet görevini tamamlar.[cite: 3]</li>
-          <li>Nöbetçi öğretmenler nöbet saatleri içerisinde nöbet yerinde bulunur. Ani ve benzeri mazeretin meydana gelmesi halinde, yetkili amirin müsaadesi ile nöbeti kendisinden sonra gelene devredebilir.[cite: 3]</li>
-          <li>Sabah gelindiğinde; nöbet/görev bölgesi kontrol ederek nöbet defterini imzalamak. Nöbeti sonunda nöbet defterine nöbeti süresi içindeki önemli olayları ve aldığı önlemleri belirten raporu yazmak ve imzalamak. Ayrıca tutanak tutulması gereken durumlarda tutanak tutar.[cite: 3]</li>
-          <li>Nöbet bölgesinde öğrencileri gözetlemek, öğrenciler arasında oluşabilecek kavga tartışma gibi durumları önlemek, gerektiğinde nöbetçi müdür yardımcısına bilgi vermek.[cite: 3]</li>
-          <li>Teneffüs anında yaralanan öğrencilere ilk yardım yapmak, acil durumlarda nöbetçi müdür yardımcısına bildirmek ve daha acil durumlarda hemen 112 acil yardım numarasını aramak.[cite: 3]</li>
-          <li>Teneffüslerde öğrencilerin derslere zamanında ve güvenli şekilde giriş-çıkışları için gerekli tedbirleri almak ve nöbet bölgesindeki tüm öğrenciler sınıflara girmeden nöbet bölgesini terk etmemek.[cite: 3]</li>
-          <li>Ders zili çaldıktan sonra tüm öğretmenlerle birlikte derse girerler. Sigara ve çay içmek için ayrıca beklemezler.[cite: 3]</li>
-          <li>Ders zili çaldığında, öğretmenleri derse girmeleri için uyarmak, derse zamanında girmeyenleri, girmemekte ısrar edenleri nöbet defterine yazmak ve okul yönetimine bildirmek.[cite: 3]</li>
-          <li>Raporlu/izinli olan öğretmenlerin durumlarını nöbetçi müdür yardımcısının önerileri doğrultusunda nöbet defterine ve sınıf defterine işlemek.[cite: 3]</li>
-          <li>Bahçe nöbet görevini yerine getiren öğretmenler ön ana giriş kapısının olduğu bölgede trafikle ilgili tedbirleri almak.[cite: 3]</li>
-          <li>Velilerin katlara çıkmamasını, sınıflara girmemesini sağlamak, gerekli durumda velilere ve ziyaretçilere rehberlik etmek.[cite: 3]</li>
-          <li>Sabah ilk girişte öğrencilerin düzenli olarak sınıflara girmelerini sağlamak, son ders çıkışında öğrencilerin okulu boşaltmalarını organize etmek, kapıda ve koridorlarda yığılmaları önlemek.[cite: 3]</li>
-          <li>Öğrencilerin okul bahçesi dışına çıkmamasını sağlamak, çıkanları tespit edip okul idaresine bildirmek.[cite: 3]</li>
-          <li>Yağmurlu ve karlı havalarda gerekli önlemler almak.[cite: 3]</li>
-          <li>Okulun günlük havalandırma, ısıtma ve temizlik işlerinin zamanında yapılıp yapılmadığını kontrol eder, eksiklerin giderilmesi için gerekli tedbirleri alır.[cite: 3]</li>
-          <li>Bayrak törenlerinin zamanında gereken önemin verilerek yapılmasını sağlar.[cite: 3]</li>
-          <li>Okulun eğitim, öğretim ve disiplin gibi işlerinin düzenli olarak yürütülmesinde, okul yöneticilerine yardımcı olur.[cite: 3]</li>
-          <li>Taşımalı okul servis araçları ile okula gelen çocukların iniş ve binişte isim listelerine göre kontrol etmek.[cite: 3]</li>
-          <li>Taşıma araçlarının ve şoförlerin araç takip çizelgesine uygun olup olmadığını kontrol eder.[cite: 3]</li>
-          <li>Öğrencilerinin öğle yemeklerini düzenli şekilde yiyebilmeleri için gerekli tedbirleri almak.[cite: 3]</li>
-          <li>Yemekleri kontrol ederek çizelgeye işlemek, yemeklerin sağlıksız ve eksik olması halinde okul idaresine bilgi vermek.[cite: 3]</li>
-          <li>Olumsuz herhangi bir durumda Nöbetçi Müdür Yardımcısına haber verir ve durumu kayıt altına alır.[cite: 3]</li>
+          <li>Nöbetler, okul idaresi tarafından hazırlanan nöbet çizelgelerine uygun olarak tutulur. Bu çizelgelerde okul idaresinin bilgisi dışında değişiklik yapılamaz.</li>
+          <li>Okulda ilk ders başlamadan 30 dakika önce hazır bulunur, okulun genel kontrolünü yapar, eksikleri okul yönetimine bildirir ve son ders bitiminden 30 dakika sonra gerekli kontrolleri yaparak nöbet görevini tamamlar.</li>
+          <li>Nöbetçi öğretmenler nöbet saatleri içerisinde nöbet yerinde bulunur. Ani ve benzeri mazeretin meydana gelmesi halinde, yetkili amirin müsaadesi ile nöbeti kendisinden sonra gelene devredebilir.</li>
+          <li>Sabah gelindiğinde; nöbet/görev bölgesi kontrol ederek nöbet defterini imzalamak. Nöbeti sonunda nöbet defterine nöbeti süresi içindeki önemli olayları ve aldığı önlemleri belirten raporu yazmak ve imzalamak. Ayrıca tutanak tutulması gereken durumlarda tutanak tutar.</li>
+          <li>Nöbet bölgesinde öğrencileri gözetlemek, öğrenciler arasında oluşabilecek kavga tartışma gibi durumları önlemek, gerektiğinde nöbetçi müdür yardımcısına bilgi vermek.</li>
+          <li>Teneffüs anında yaralanan öğrencilere ilk yardım yapmak, acil durumlarda nöbetçi müdür yardımcısına bildirmek ve daha acil durumlarda hemen 112 acil yardım numarasını aramak.</li>
+          <li>Teneffüslerde öğrencilerin derslere zamanında ve güvenli şekilde giriş-çıkışları için gerekli tedbirleri almak ve nöbet bölgesindeki tüm öğrenciler sınıflara girmeden nöbet bölgesini terk etmemek.</li>
+          <li>Ders zili çaldıktan sonra tüm öğretmenlerle birlikte derse girerler. Sigara ve çay içmek için ayrıca beklemezler.</li>
+          <li>Ders zili çaldığında, öğretmenleri derse girmeleri için uyarmak, derse zamanında girmeyenleri, girmemekte ısrar edenleri nöbet defterine yazmak ve okul yönetimine bildirmek.</li>
+          <li>Raporlu/izinli olan öğretmenlerin durumlarını nöbetçi müdür yardımcısının önerileri doğrultusunda nöbet defterine ve sınıf defterine işlemek.</li>
+          <li>Bahçe nöbet görevini yerine getiren öğretmenler ön ana giriş kapısının olduğu bölgede trafikle ilgili tedbirleri almak.</li>
+          <li>Velilerin katlara çıkmamasını, sınıflara girmemesini sağlamak, gerekli durumda velilere ve ziyaretçilere rehberlik etmek.</li>
+          <li>Sabah ilk girişte öğrencilerin düzenli olarak sınıflara girmelerini sağlamak, son ders çıkışında öğrencilerin okulu boşaltmalarını organize etmek, kapıda ve koridorlarda yığılmaları önlemek.</li>
+          <li>Öğrencilerin okul bahçesi dışına çıkmamasını sağlamak, çıkanları tespit edip okul idaresine bildirmek.</li>
+          <li>Yağmurlu ve karlı havalarda gerekli önlemler almak.</li>
+          <li>Okulun günlük havalandırma, ısıtma ve temizlik işlerinin zamanında yapılıp yapılmadığını kontrol eder, eksiklerin giderilmesi için gerekli tedbirleri alır.</li>
+          <li>Bayrak törenlerinin zamanında gereken önemin verilerek yapılmasını sağlar.</li>
+          <li>Okulun eğitim, öğretim ve disiplin gibi işlerinin düzenli olarak yürütülmesinde, okul yöneticilerine yardımcı olur.</li>
+          <li>Taşımalı okul servis araçları ile okula gelen çocukların iniş ve binişte isim listelerine göre kontrol etmek.</li>
+          <li>Taşıma araçlarının ve şoförlerin araç takip çizelgesine uygun olup olmadığını kontrol eder.</li>
+          <li>Öğrencilerinin öğle yemeklerini düzenli şekilde yiyebilmeleri için gerekli tedbirleri almak.</li>
+          <li>Yemekleri kontrol ederek çizelgeye işlemek, yemeklerin sağlıksız ve eksik olması halinde okul idaresine bilgi vermek.</li>
+          <li>Olumsuz herhangi bir durumda Nöbetçi Müdür Yardımcısına haber verir ve durumu kayıt altına alır.</li>
         </ul>
       </div>
     </section>
@@ -607,11 +599,11 @@
           <span class="badge badge-blue">2026-2027</span>
         </h2>
         <div style="font-size: 0.8rem; line-height: 1.5; color: #334155;">
-          <p><strong>Kurul Başkanı:</strong> Metin YONCALIK (Müdür Yrd.)[cite: 18, 20]</p>
-          <p><strong>Danışman Öğretmenler:</strong> Rayiha SANCAR, İsa BAYAR, Selmani Fahrisi AKMAN[cite: 18, 20]</p>
-          <p><strong>Öğrenci Temsilcileri:</strong> Osman KILIÇASLAN, İbrahim EROĞLU[cite: 18, 20]</p>
-          <p><strong>Okul Aile Birliği:</strong> Sevil ŞENSOY[cite: 18, 20]</p>
-          <p style="margin-top: 4px; font-size: 0.75rem; color: var(--text-muted);"><strong>Onay:</strong> İbrahim AKDERE (Okul Müdürü)[cite: 18, 20]</p>
+          <p><strong>Kurul Başkanı:</strong> Metin YONCALIK (Müdür Yrd.)[cite: 37]</p>
+          <p><strong>Danışman Öğretmenler:</strong> Rayiha SANCAR, İsa BAYAR, Selmani Fahrisi AKMAN[cite: 37]</p>
+          <p><strong>Öğrenci Temsilcileri:</strong> Osman KILIÇASLAN, İbrahim EROĞLU[cite: 37]</p>
+          <p><strong>Okul Aile Birliği:</strong> Sevil ŞENSOY[cite: 37]</p>
+          <p style="margin-top: 4px; font-size: 0.75rem; color: var(--text-muted);"><strong>Onay:</strong> İbrahim AKDERE (Okul Müdürü)[cite: 37]</p>
         </div>
       </div>
 
@@ -622,42 +614,42 @@
         </h2>
         
         <div class="list-item">
-          <div><div class="list-title">Tabiat ve Yaşanabilir Çevre Kulübü</div><div class="list-subtitle">Doğa - Çevre - Toplum Alanı[cite: 20]</div></div>
+          <div><div class="list-title">Tabiat ve Yaşanabilir Çevre Kulübü</div><div class="list-subtitle">Doğa - Çevre - Toplum Alanı</div></div>
           <span class="badge badge-blue">İsa BAYAR</span>
         </div>
 
         <div class="list-item">
-          <div><div class="list-title">Beyazay Kulübü</div><div class="list-subtitle">Kültür Dünyamız & Farkındalık Alanı[cite: 20]</div></div>
+          <div><div class="list-title">Beyazay Kulübü</div><div class="list-subtitle">Kültür Dünyamız & Farkındalık Alanı</div></div>
           <span class="badge badge-blue">Büşra TEMEL TURHAN</span>
         </div>
 
         <div class="list-item">
-          <div><div class="list-title">Yeşilay Kulübü</div><div class="list-subtitle">Doğa - Çevre - Sağlık Alanı[cite: 20]</div></div>
+          <div><div class="list-title">Yeşilay Kulübü</div><div class="list-subtitle">Doğa - Çevre - Sağlık Alanı</div></div>
           <span class="badge badge-blue">Nuray AKKAN</span>
         </div>
 
         <div class="list-item">
-          <div><div class="list-title">Siberay Kulübü</div><div class="list-subtitle">Bilim ve Dijital Yetkinlik Alanı[cite: 20]</div></div>
+          <div><div class="list-title">Siberay Kulübü</div><div class="list-subtitle">Bilim ve Dijital Yetkinlik Alanı</div></div>
           <span class="badge badge-blue">Mustafa AKBAL / Serdar SAÇLI</span>
         </div>
 
         <div class="list-item">
-          <div><div class="list-title">Kızılay Kulübü</div><div class="list-subtitle">Sosyal Sorumluluk & Yardım Alanı[cite: 19, 20]</div></div>
+          <div><div class="list-title">Kızılay Kulübü</div><div class="list-subtitle">Sosyal Sorumluluk & Yardım Alanı</div></div>
           <span class="badge badge-blue">Rayiha SANCAR</span>
         </div>
 
         <div class="list-item">
-          <div><div class="list-title">Tarih ve Kültürel Miras Kulübü</div><div class="list-subtitle">Milli Kültür & Değerler Alanı[cite: 19, 20]</div></div>
+          <div><div class="list-title">Tarih ve Kültürel Miras Kulübü</div><div class="list-subtitle">Milli Kültür & Değerler Alanı</div></div>
           <span class="badge badge-blue">Dilek EROĞLU</span>
         </div>
 
         <div class="list-item">
-          <div><div class="list-title">Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü</div><div class="list-subtitle">Spor ve Kapsayıcı Yaşam Alanı[cite: 20]</div></div>
+          <div><div class="list-title">Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü</div><div class="list-subtitle">Spor ve Kapsayıcı Yaşam Alanı</div></div>
           <span class="badge badge-blue">Abdulkadir KAPLAN</span>
         </div>
 
         <div class="list-item">
-          <div><div class="list-title">Yaşam Becerileri Kulübü</div><div class="list-subtitle">Sosyal Yaşam & Güvenlik Alanı[cite: 19, 20]</div></div>
+          <div><div class="list-title">Yaşam Becerileri Kulübü</div><div class="list-subtitle">Sosyal Yaşam & Güvenlik Alanı</div></div>
           <span class="badge badge-blue">Belkız ÖLMEZ</span>
         </div>
       </div>
@@ -671,28 +663,28 @@
         <div class="list-item">
           <div>
             <div class="list-title">Cumhuriyet Bayramı (29 Ekim)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü[cite: 18]<br><strong>Görevliler:</strong> Dilek EROĞLU, Tuğba ESKİN, Sultan BARUT, Hilal EŞ DEMİR[cite: 18]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü[cite: 37]<br><strong>Görevliler:</strong> Dilek EROĞLU, Tuğba ESKİN, Sultan BARUT, Hilal EŞ DEMİR[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Kızılay Haftası (29 Ekim - 4 Kasım)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Kızılay Kulübü[cite: 18]<br><strong>Görevliler:</strong> Rayiha SANCAR, Ayten GÖKTAŞ, Seda KIZMAZ, Mustafa AKBAL[cite: 18]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Kızılay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Rayiha SANCAR, Ayten GÖKTAŞ, Seda KIZMAZ, Mustafa AKBAL[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Atatürk Haftası (10 - 16 Kasım)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü[cite: 18]<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Gülçin GÜLER GÜR, Serap YILMAZ, Merve UĞUR[cite: 18]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Gülçin GÜLER GÜR, Serap YILMAZ, Merve UĞUR[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Afet Eğitimi ve Hazırlık Günü (12 Kasım)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tabiat ve Yaşanabilir Çevre (Tatbikat Yapılacak)[cite: 18]<br><strong>Görevliler:</strong> İsa BAYAR, Resul DEMİR, Yusuf Ertuğrul DURU[cite: 18]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tabiat ve Yaşanabilir Çevre (Tatbikat Yapılacak)[cite: 37]<br><strong>Görevliler:</strong> İsa BAYAR, Resul DEMİR, Yusuf Ertuğrul DURU[cite: 37]</div>
           </div>
         </div>
 
@@ -706,70 +698,70 @@
         <div class="list-item">
           <div>
             <div class="list-title">Dünya Engelliler Günü (3 Aralık)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler[cite: 18]<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır[cite: 18]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler[cite: 37]<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Sağlıklı Yaşam Farkındalık Haftası (Şubat)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü[cite: 18]<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Selmani Fahrisi AKMAN, Gülay ULUDAĞ, Nuray AKKAN[cite: 18]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü[cite: 37]<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Selmani Fahrisi AKMAN, Gülay ULUDAĞ, Nuray AKKAN[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Yeşilay Haftası (1 Mart Haftası)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Yeşilay Kulübü[cite: 18]<br><strong>Görevliler:</strong> Nuray AKKAN, Banu ÜNLÜ, Hilal EŞ DEMİR, Rayiha SANCAR[cite: 18]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Yeşilay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Nuray AKKAN, Banu ÜNLÜ, Hilal EŞ DEMİR, Rayiha SANCAR[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Dünya Down Sendromu Günü (21 Mart)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü[cite: 18]<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Ayten GÖKTAŞ, Yusuf Ertuğrul DURU, Selmani Fahrisi AKMAN[cite: 18]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Ayten GÖKTAŞ, Yusuf Ertuğrul DURU, Selmani Fahrisi AKMAN[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Dünya Otizm Farkındalık Günü (2 Nisan)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü[cite: 18]<br><strong>Görevliler:</strong> Dilek EROĞLU, Serap YILMAZ, Sümeyra CANPOLAT, Merve UĞUR, Gülçin GÜLER GÜR, Sevilay ELMAS, Betül ORUÇ, Furkan EROĞLU, Sultan ERMİŞ[cite: 18]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü[cite: 37]<br><strong>Görevliler:</strong> Dilek EROĞLU, Serap YILMAZ, Sümeyra CANPOLAT, Merve UĞUR, Gülçin GÜLER GÜR, Sevilay ELMAS, Betül ORUÇ, Furkan EROĞLU, Sultan ERMİŞ[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Bilim ve Problem Çözme Günü (Nisan)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü[cite: 18]<br><strong>Görevliler:</strong> Mustafa AKBAL, Serdar SAÇLI, Aysun KARACAER, Sultan ERMİŞ[cite: 18]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Mustafa AKBAL, Serdar SAÇLI, Aysun KARACAER, Sultan ERMİŞ[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Trafik ve İlkyardım Haftası (Mayıs İlk Hafta)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü[cite: 18]<br><strong>Görevliler:</strong> Belkız ÖLMEZ, Şehnaz AKTAŞ, Aysun KARACAER, Serdar SAÇLI[cite: 18]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü[cite: 37]<br><strong>Görevliler:</strong> Belkız ÖLMEZ, Şehnaz AKTAŞ, Aysun KARACAER, Serdar SAÇLI[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Engelliler Haftası (10 - 16 Mayıs)</div>
-            <div class="list-subtitle"><strong>Sorumlular:</strong> İsa BAYAR, Gülay ULUDAĞ, Banu ÜNLÜ, Sultan BARUT, Sümeyra CANPOLAT, Şehnaz AKTAŞ (Tüm Öğretmenler Görev Alır)[cite: 18]</div>
+            <div class="list-subtitle"><strong>Sorumlular:</strong> İsa BAYAR, Gülay ULUDAĞ, Banu ÜNLÜ, Sultan BARUT, Sümeyra CANPOLAT, Şehnaz AKTAŞ (Tüm Öğretmenler Görev Alır)[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">19 Mayıs Atatürk'ü Anma Gençlik ve Spor Bayramı</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam Kulübü[cite: 18]<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Resul DEMİR, Tuğba ESKİN, Furkan EROĞLU, Belkız ÖLMEZ, Seda KIZMAZ[cite: 18]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam Kulübü[cite: 37]<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Resul DEMİR, Tuğba ESKİN, Furkan EROĞLU, Belkız ÖLMEZ, Seda KIZMAZ[cite: 37]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Mezuniyet Programı (Haziran)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler[cite: 18]<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır[cite: 18]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler[cite: 37]<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır[cite: 37]</div>
           </div>
         </div>
       </div>
@@ -869,7 +861,6 @@
     </section>
   </div>
 
-  <!-- ALT MENÜ -->
   <nav class="nav-bar">
     <button type="button" class="nav-item active" data-target="nobet">
       <span class="nav-icon">🛡️</span>
@@ -899,12 +890,48 @@
   <script>
     let deferredPrompt = null;
 
-    // POP-UP GÖSTERİM KONTROLÜ
+    // OTOMATİK CİHAZ VE İŞLETİM SİSTEMİ TESPİTİ
+    function cihazTespitiYap() {
+      const ua = navigator.userAgent || navigator.vendor || window.opera;
+      const isIos = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isWindows = /Windows/i.test(ua);
+      const isAndroid = /Android/i.test(ua);
+      return { isIos, isWindows, isAndroid };
+    }
+
+    // PWA POP-UP GÖSTERİM KONTROLÜ
     function pwaModalGoster() {
       const modal = document.getElementById('pwa-modal-overlay');
+      const topBar = document.getElementById('pwa-top-bar');
       const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
-      // Zaten yüklü değilse ve kullanıcı daha önce kapatmadıysa göster
-      if (!isStandalone && !sessionStorage.getItem('pwa_dismissed')) {
+
+      // Zaten yüklüyse ve bağımsız penceredeyse hiç gösterme
+      if (isStandalone) {
+        if (topBar) topBar.style.display = 'none';
+        if (modal) modal.style.display = 'none';
+        return;
+      }
+
+      // Üst çubuğu her halükarda görünür yap
+      if (topBar) topBar.style.display = 'flex';
+
+      // Pop-up bu oturumda kapatılmadıysa aç
+      if (!sessionStorage.getItem('pwa_dismissed')) {
+        const { isIos, isWindows } = cihazTespitiYap();
+        const desc = document.getElementById('pwa-modal-desc');
+        const actBtn = document.getElementById('btn-pwa-install-act');
+
+        if (isIos) {
+          if (desc) desc.innerHTML = "iPhone / iPad için:<br>1. Safari altındaki <strong>'Paylaş' (yukarı ok)</strong> simgesine dokunun.<br>2. Menüden <strong>'Ana Ekrana Ekle'</strong>yi seçin.";
+          if (actBtn) actBtn.innerText = "Anladım";
+        } else if (isWindows) {
+          if (desc) desc.innerHTML = "Windows PC için:<br>Tarayıcı adres çubuğunun sağındaki <strong>'Uygulamayı Yükle'</strong> simgesine tıklayarak masaüstünüze ekleyebilirsiniz.";
+          if (actBtn) actBtn.innerText = "Yükle";
+        } else {
+          if (desc) desc.innerHTML = "Android telefonunuza veya tabletinize tek tıkla uygulama olarak kurmak için <strong>'Hemen Ekle'</strong> butonuna dokunun.";
+          if (actBtn) actBtn.innerText = "Hemen Ekle";
+        }
+
         if (modal) modal.style.display = 'flex';
       }
     }
@@ -922,17 +949,27 @@
     });
 
     function anaEkranaYukle() {
+      const { isIos, isWindows } = cihazTespitiYap();
+
       if (deferredPrompt) {
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then((choiceResult) => {
           if (choiceResult.outcome === 'accepted') {
             pwaModalKapat();
+            const topBar = document.getElementById('pwa-top-bar');
+            if (topBar) topBar.style.display = 'none';
           }
           deferredPrompt = null;
         });
       } else {
-        // iPhone / Safari veya desteklenmeyen tarayıcılar için
-        alert("Uygulamayı Ana Ekrana Eklemek İçin:\n\n1. Safari altındaki 'Paylaş' (kare ve yukarı ok) simgesine dokunun.\n2. Açılan menüden 'Ana Ekrana Ekle' seçeneğini seçin.");
+        if (isIos) {
+          alert("📲 iPhone / iPad Kurulumu:\n\n1. Safari tarayıcınızın altındaki 'Paylaş' (kare ve yukarı ok) simgesine dokunun.\n2. Açılan menüde aşağı kaydırıp 'Ana Ekrana Ekle' seçeneğini seçin.");
+        } else if (isWindows) {
+          alert("💻 Windows Kurulumu:\n\nChrome veya Edge adres çubuğunun en sağında yer alan 'Uygulamayı Yükle' simgesine tıklayın.");
+        } else {
+          alert("📲 Kurulum:\n\nTarayıcı menünüzden (sağ üstteki 3 nokta) 'Ana ekrana ekle' veya 'Uygulamayı yükle' seçeneğine dokunun.");
+        }
+        pwaModalKapat();
       }
     }
 
@@ -980,7 +1017,6 @@
 
     const IDARECILER = ["ibrahimakdere", "ibrahimipek", "metinyoncalik", "resulsahiner", "sevkibaran"];
 
-    // SINIF - ÖĞRETMEN YETKİLENDİRMESİ
     const SINIF_YETKILERI = {
       "9-A-Otizm": ["gulcingulergur", "sevilayelmas"],
       "9-B-Otizm": ["sultanermis", "sumeyracanpolat"],
@@ -1394,7 +1430,7 @@
       ]
     };
 
-    const VERI_VERSIYONU = "v16_pwa_popup_ve_yesilvatan";
+    const VERI_VERSIYONU = "v17_tam_stabil_pwa_ios_win";
     let kayitliVersiyon = localStorage.getItem('okul_ogrenciler_versiyon');
     
     if (kayitliVersiyon !== VERI_VERSIYONU) {
@@ -1823,101 +1859,53 @@
     }
 
     window.onload = function() {
-      const oturum = localStorage.getItem('oturum_kullanici');
-      if (oturum) {
-        aktifKullanici = JSON.parse(oturum);
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('kullanici-karsilama').innerText = `Hoş geldiniz, ${aktifKullanici.ad}`;
-        yetkileriUygula();
-      } else {
-        document.getElementById('login-overlay').style.display = 'flex';
-      }
-
-      document.getElementById('login-pass').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') girisYap();
-      });
-
-      const bugun = new Date();
-      const yil = bugun.getFullYear();
-      const ay = String(bugun.getMonth() + 1).padStart(2, '0');
-      const gun = String(bugun.getDate()).padStart(2, '0');
-      const bugunStr = `${yil}-${ay}-${gun}`;
-
-      const secici = document.getElementById('nobet-tarih-secici');
-      if (secici) {
-        secici.value = bugunStr;
-        tariheGoreNobetYukle(bugunStr);
-      }
-
-      const izinBas = document.getElementById('izin-baslangic');
-      const izinBit = document.getElementById('izin-bitis');
-      if (izinBas && izinBit) {
-        izinBas.value = bugunStr;
-        izinBit.value = bugunStr;
-      }
-
-      izinleriGoster();
-      ogrencileriYukle();
-      devamsizlariGuncelle();
-      dogumGunleriniHesapla();
-      kritikRiskliOgrencileriGoster();
-
-      let deferredPrompt = null;
-
-    // 1. Tarayıcının resmi kurulum mekanizmasını yakala
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      pwaModalGoster();
-    });
-
-    // 2. Pop-up Açma ve Kapatma
-    function pwaModalGoster() {
-      const modal = document.getElementById('pwa-modal-overlay');
-      const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
-      if (!isStandalone) {
-        if (modal) modal.style.display = 'flex';
-      }
-    }
-
-    function pwaModalKapat() {
-      const modal = document.getElementById('pwa-modal-overlay');
-      if (modal) modal.style.display = 'none';
-    }
-
-    // 3. Tıklanınca Çalışan Kurulum Fonksiyonu
-    function anaEkranaYukle() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            pwaModalKapat();
-            const topBar = document.getElementById('pwa-top-bar');
-            if (topBar) topBar.style.display = 'none';
-          }
-          deferredPrompt = null;
-        });
-      } else {
-        // iPhone/iPad veya tarayıcı kurulumu engellediyse adım adım göster
-        alert("📲 Uygulamayı Yüklemek İçin:\n\n1. Safari veya Chrome menüsünden 'Paylaş' (veya sağ üstteki 3 nokta) simgesine dokunun.\n2. Açılan menüden 'Ana Ekrana Ekle' (veya 'Uygulamayı Yükle') seçeneğini seçin.");
-      }
-    }
-      // iOS Safari için açılır pop-up kontrolü
-      const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
-      const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
-      if (isIos && !isStandalone && !sessionStorage.getItem('pwa_dismissed')) {
-        const desc = document.getElementById('pwa-modal-desc');
-        if (desc) {
-          desc.innerHTML = "Uygulamayı telefonunuza yüklemek için alttaki <strong>Paylaş</strong> simgesine dokunup <strong>'Ana Ekrana Ekle'</strong> deyin.";
+      try {
+        const oturum = localStorage.getItem('oturum_kullanici');
+        if (oturum) {
+          aktifKullanici = JSON.parse(oturum);
+          document.getElementById('login-overlay').style.display = 'none';
+          document.getElementById('kullanici-karsilama').innerText = `Hoş geldiniz, ${aktifKullanici.ad}`;
+          yetkileriUygula();
+        } else {
+          document.getElementById('login-overlay').style.display = 'flex';
         }
-        const actBtn = document.getElementById('btn-pwa-install-act');
-        if (actBtn) actBtn.innerText = "Nasıl Eklenir?";
-        const modal = document.getElementById('pwa-modal-overlay');
-        if (modal) modal.style.display = 'flex';
-      }
 
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdmZXRjaCcsIGZ1bmN0aW9uKGV2ZW50KSB7fSk7');
+        document.getElementById('login-pass').addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') girisYap();
+        });
+
+        const bugun = new Date();
+        const yil = bugun.getFullYear();
+        const ay = String(bugun.getMonth() + 1).padStart(2, '0');
+        const gun = String(bugun.getDate()).padStart(2, '0');
+        const bugunStr = `${yil}-${ay}-${gun}`;
+
+        const secici = document.getElementById('nobet-tarih-secici');
+        if (secici) {
+          secici.value = bugunStr;
+          tariheGoreNobetYukle(bugunStr);
+        }
+
+        const izinBas = document.getElementById('izin-baslangic');
+        const izinBit = document.getElementById('izin-bitis');
+        if (izinBas && izinBit) {
+          izinBas.value = bugunStr;
+          izinBit.value = bugunStr;
+        }
+
+        izinleriGoster();
+        ogrencileriYukle();
+        devamsizlariGuncelle();
+        dogumGunleriniHesapla();
+        kritikRiskliOgrencileriGoster();
+
+        // 1.2 saniye sonra otomatik kurulum modali açılır
+        setTimeout(() => {
+          pwaModalGoster();
+        }, 1200);
+
+      } catch (err) {
+        console.error("Yükleme sırasında hata yakalandı:", err);
       }
     };
   </script>
