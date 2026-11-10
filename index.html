@@ -1,10 +1,5 @@
 <!DOCTYPE html>
 <html lang="tr">
-  <!-- OKUL LOGOSU (UYGULAMA SİMGESİ) -->
-  <link rel="apple-touch-icon" sizes="180x180" href="./logo.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="./logo.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="./logo.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="./logo.png">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -14,7 +9,12 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Okul Portalı">
-  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2997/2997295.png">
+
+  <!-- OKUL LOGOSU & UYGULAMA SİMGESİ -->
+  <link rel="apple-touch-icon" sizes="180x180" href="./logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./logo.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./logo.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./logo.png">
 
   <!-- FIREBASE KÜTÜPHANELERİ -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -129,7 +129,7 @@
     header {
       background: linear-gradient(135deg, var(--primary), var(--primary-light));
       color: white;
-      padding: 1rem;
+      padding: 0.85rem 1rem;
       text-align: center;
       position: sticky;
       top: 0;
@@ -140,16 +140,18 @@
       align-items: center;
     }
     header .header-info { text-align: left; }
-    header h1 { font-size: 1rem; font-weight: 700; }
-    header p { font-size: 0.75rem; opacity: 0.9; margin-top: 2px; }
+    header h1 { font-size: 0.95rem; font-weight: 700; }
+    header p { font-size: 0.72rem; opacity: 0.9; margin-top: 2px; }
+    .header-actions { display: flex; align-items: center; gap: 6px; }
     .btn-logout {
       background: rgba(255,255,255,0.2);
       border: 1px solid rgba(255,255,255,0.4);
       color: white;
-      padding: 4px 10px;
+      padding: 5px 10px;
       border-radius: 6px;
       font-size: 0.72rem;
       cursor: pointer;
+      font-weight: 600;
     }
 
     .nav-bar {
@@ -429,7 +431,9 @@
   <!-- GİRİŞ EKRANI -->
   <div id="login-overlay">
     <div class="login-box">
-<img src="./logo.png" alt="Okul Logosu" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;">      <h2>Hacı Ömer Usluer ÖEMO</h2>
+      <!-- OKUL LOGOSU -->
+      <img src="./logo.png" alt="Okul Logosu" style="width: 85px; height: 85px; object-fit: contain; margin-bottom: 8px;">
+      <h2>Hacı Ömer Usluer ÖEMO</h2>
       <p>Öğretmen & Yönetim Giriş Paneli</p>
       
       <div class="input-group">
@@ -452,7 +456,10 @@
       <h1>Hacı Ömer Usluer ÖEMO</h1>
       <p id="kullanici-karsilama">Okul Yönetim Portalı</p>
     </div>
-    <button class="btn-logout" onclick="cikisYap()">Çıkış Yap</button>
+    <div class="header-actions">
+      <button class="btn-logout" id="btn-bildirim-izni" onclick="bildirimIzniIste()">🔔 Bildirim</button>
+      <button class="btn-logout" onclick="cikisYap()">Çıkış Yap</button>
+    </div>
   </header>
 
   <div class="container">
@@ -461,6 +468,17 @@
       <div class="date-selector-bar">
         <label for="nobet-tarih-secici" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Tarih Seç:</label>
         <input type="date" id="nobet-tarih-secici" onchange="tariheGoreNobetYukle(this.value)">
+      </div>
+
+      <!-- İDARE CANLI ANLIK BİLDİRİM / DUYURU GÖNDERME KARTI -->
+      <div class="card admin-only" style="border: 1px solid #fbcfe8; background: #fff5f8;">
+        <h2>📢 Personele Anlık Bildirim Gönder (İdare)</h2>
+        <div class="input-group">
+          <input type="text" id="idare-duyuru-metni" placeholder="Örn: Servisler okul bahçesine yanaşmıştır, nöbetçilerin dikkatine.">
+        </div>
+        <button class="btn btn-sm" style="background:#be185d; width:100%;" onclick="tumPersoneleBildirimGonder()">
+          Tüm Öğretmenlerin Ekranına Bildirim Olarak Fırlat
+        </button>
       </div>
 
       <div class="card" id="card-nobet-dagilim">
@@ -933,7 +951,7 @@
     </button>
   </nav>
   <script>
-    // FIREBASE BAĞLANTISI (Güvenli Try/Catch Başlatma)
+    // FIREBASE BAĞLANTISI (Zırhlı Try/Catch)
     let db = null;
     try {
       if (typeof firebase !== 'undefined') {
@@ -1154,7 +1172,7 @@
       "sehnazaktas": { ad: "Şehnaz AKTAŞ", tc: "56845576040" },
       "sevkibaran": { ad: "Şevki BARAN (Müdür Yrd.)", tc: "64612329744" },
       "tugbaeskin": { ad: "Tuğba ESKİN", tc: "45676948942" },
-      "aynurhizar": { ad: "Aynur HIZAR", tc: "123456789" },
+      "yakupsert": { ad: "Yakup SERT", tc: "71614083864" },
       "yusufertugrulduru": { ad: "Yusuf Ertuğrul DURU", tc: "23387689804" },
       "sevilayelmas": { ad: "Sevilay ELMAS", tc: "60100256448" },
       "betuloruc": { ad: "Betül ORUÇ", tc: "42928661536" }
@@ -1381,7 +1399,7 @@
       "2026-12-04": { my: "METİN YONCALIK", s1: "RAYİHA SANCAR", s2: "SEVİLAY ELMAS", s3: "BETÜL ORUÇ", z: "HİLAL EŞ DEMİR / SULTAN ERMİŞ", k1: "BELKIZ ÖLMEZ" }
     };
 
-    // GÜVENLİ İZİN KONTROLÜ (Dizi Korumalı)
+    // GÜVENLİ İZİN KONTROLÜ
     function isimIzinliMi(adSoyad, tarihStr) {
       if (!adSoyad || !tarihStr) return false;
       try {
@@ -1805,6 +1823,7 @@
         varsayilanTarihlereGec();
         yetkileriUygula();
         ogrencileriYukle();
+        nobetBildirimiDenetle();
       } else {
         err.innerText = "Şifre (T.C. Kimlik No) hatalı!";
         err.style.display = "block";
@@ -2377,6 +2396,143 @@
       }
     }
 
+    // BİLDİRİM FONKSİYONLARI (Web Notifications API)
+    function bildirimIzniIste() {
+      if (!("Notification" in window)) {
+        alert("Bu cihaz veya tarayıcı bildirimleri desteklemiyor.");
+        return;
+      }
+
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          new Notification("Hacı Ömer Usluer ÖEMO", {
+            body: "Bildirimler başarıyla aktif edildi!",
+            icon: "./logo.png"
+          });
+          const btn = document.getElementById('btn-bildirim-izni');
+          if (btn) btn.style.display = 'none';
+        } else {
+          alert("Bildirim izni verilmedi. Tarayıcı ayarlarından izin verebilirsiniz.");
+        }
+      });
+    }
+
+    function nobetBildirimiDenetle() {
+      if (!aktifKullanici || Notification.permission !== "granted") return;
+
+      const bugun = new Date();
+      const bugunStr = `${bugun.getFullYear()}-${String(bugun.getMonth() + 1).padStart(2, '0')}-${String(bugun.getDate()).padStart(2, '0')}`;
+      const nobet = nobetVeritabani[bugunStr];
+      if (!nobet) return;
+
+      const userAd = aktifKullanici.ad.toLocaleLowerCase('tr-TR');
+      let gorevYeri = "";
+
+      if (nobet.s1 && nobet.s1.toLocaleLowerCase('tr-TR').includes(userAd)) gorevYeri = "Servis Nöbeti & Bahçe";
+      else if (nobet.s2 && nobet.s2.toLocaleLowerCase('tr-TR').includes(userAd)) gorevYeri = "Okul Bahçesi-2 / Bodrum Kat";
+      else if (nobet.s3 && nobet.s3.toLocaleLowerCase('tr-TR').includes(userAd)) gorevYeri = "Bodrum Kat / Yemekhane";
+      else if (nobet.z && nobet.z.toLocaleLowerCase('tr-TR').includes(userAd)) gorevYeri = "Zemin Kat Koridorları";
+      else if (nobet.k1 && nobet.k1.toLocaleLowerCase('tr-TR').includes(userAd)) gorevYeri = "1. Kat Nöbetçisi";
+      else if (nobet.my && nobet.my.toLocaleLowerCase('tr-TR').includes(userAd)) gorevYeri = "Nöbetçi Müdür Yardımcısı";
+
+      if (gorevYeri) {
+        if (!sessionStorage.getItem('nobet_bildirildi_' + bugunStr)) {
+          new Notification("🛡️ Nöbet Göreviniz Bulunmaktadır", {
+            body: `Sayın ${aktifKullanici.ad}, bugün ${gorevYeri} göreviniz vardır.`,
+            icon: "./logo.png"
+          });
+          sessionStorage.setItem('nobet_bildirildi_' + bugunStr, 'true');
+        }
+      }
+    }
+
+    function tumPersoneleBildirimGonder() {
+      const input = document.getElementById('idare-duyuru-metni');
+      const metin = input.value.trim();
+      if (!metin) return alert("Lütfen bir bildirim metni yazın.");
+
+      if (db) {
+        db.ref("canli_okul_duyuru").set({
+          gonderen: aktifKullanici ? aktifKullanici.ad : "Okul İdaresi",
+          mesaj: metin,
+          zaman: Date.now()
+        }).then(() => {
+          input.value = "";
+          alert("Bildirim tüm öğretmenlerin ekranına gönderildi!");
+        });
+      }
+    }
+
+    function canliDuyuruDinle() {
+      if (!db) return;
+      db.ref("canli_okul_duyuru").on("value", snapshot => {
+        const data = snapshot.val();
+        if (!data) return;
+
+        if (Date.now() - data.zaman < 60000) {
+          if (Notification.permission === "granted") {
+            new Notification(`📢 Duyuru: ${data.gonderen}`, {
+              body: data.mesaj,
+              icon: "./logo.png"
+            });
+          }
+        }
+      });
+    }
+
+    function firebaseSenkronizasyonunuBaslat() {
+      if (!db) return;
+      try {
+        db.ref("okul_sinif_verisi").on("value", snapshot => {
+          const val = snapshot.val();
+          if (val) {
+            okulSinifVerisi = val;
+            ogrencileriYukle();
+            devamsizlariGuncelle();
+            dogumGunleriniHesapla();
+            kritikRiskliOgrencileriGoster();
+            detayOgrenciSecicisiniDoldur();
+          }
+        });
+
+        db.ref("okul_sinif_yoklamalar").on("value", snapshot => {
+          gunlukYoklamalar = snapshot.val() || {};
+          ogrencileriYukle();
+          devamsizlariGuncelle();
+        });
+
+        db.ref("okul_rehab_listesi").on("value", snapshot => {
+          const val = snapshot.val();
+          if (val) {
+            rehabListesi = val;
+            rehabilitasyonTablosunuDoldur();
+          }
+        });
+
+        db.ref("okul_izinler").on("value", snapshot => {
+          izinler = snapshot.val() || [];
+          izinleriGoster();
+          const seciliNobetTarih = document.getElementById('nobet-tarih-secici').value;
+          if (seciliNobetTarih) tariheGoreNobetYukle(seciliNobetTarih);
+          servisModulunuGuncelle();
+        });
+
+        db.ref("okul_servis_yoklamalar").on("value", snapshot => {
+          servisYoklamaKayitlari = snapshot.val() || {};
+          servisModulunuGuncelle();
+        });
+
+        db.ref("okul_servis_atamalar").on("value", snapshot => {
+          servisYedekAtamalar = snapshot.val() || {};
+          servisModulunuGuncelle();
+        });
+
+        canliDuyuruDinle();
+      } catch (err) {
+        console.error("Firebase dinleme hatası:", err);
+      }
+    }
+
     function varsayilanTarihlereGec() {
       const bugun = new Date();
       const yil = bugun.getFullYear();
@@ -2415,7 +2571,7 @@
       try {
         varsayilanTarihlereGec();
 
-        // 1. Önce doğrudan yerel verileri anında çiz
+        // Yerel verileri anında render et (gecikme veya boş kalma olamaz)
         sinifSecicisiniDoldur();
         detayOgrenciSecicisiniDoldur();
         rehabilitasyonTablosunuDoldur();
@@ -2424,13 +2580,14 @@
         kritikRiskliOgrencileriGoster();
         izinleriGoster();
 
-        // 2. Oturumu denetle
+        // Oturum kontrolü
         const oturum = localStorage.getItem('oturum_kullanici');
         if (oturum) {
           aktifKullanici = JSON.parse(oturum);
           document.getElementById('login-overlay').style.display = 'none';
           document.getElementById('kullanici-karsilama').innerText = `Hoş geldiniz, ${aktifKullanici.ad}`;
           yetkileriUygula();
+          nobetBildirimiDenetle();
         } else {
           document.getElementById('login-overlay').style.display = 'flex';
         }
@@ -2442,7 +2599,12 @@
           });
         }
 
-        // 3. Arka planda Firebase canlı senkronizasyonunu devreye sok
+        if (Notification.permission === "granted") {
+          const btn = document.getElementById('btn-bildirim-izni');
+          if (btn) btn.style.display = 'none';
+        }
+
+        // Firebase senkronizasyonunu başlat
         firebaseSenkronizasyonunuBaslat();
 
         setTimeout(() => {
