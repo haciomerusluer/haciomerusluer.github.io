@@ -11,6 +11,10 @@
   <meta name="apple-mobile-web-app-title" content="Okul Portalı">
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2997/2997295.png">
 
+  <!-- FIREBASE KÜTÜPHANELERİ -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
   <style>
     :root {
       --primary: #1e3a8a;
@@ -519,7 +523,7 @@
           </div>
         </h2>
         <p style="font-size: 0.77rem; color: var(--text-muted); margin-bottom: 0.7rem;">
-          Yalnızca o günün servis nöbetçisi veya okul idaresi yoklama girişi yapabilir. Yapılan yoklamalar ve açıklamalar anlık olarak kaydedilir.
+          Yalnızca o günün servis nöbetçisi veya okul idaresi yoklama girişi yapabilir. Yapılan yoklamalar ve açıklamalar anlık olarak Firebase veritabanına kaydedilir.
         </p>
         <div style="overflow-x: auto;">
           <table class="stat-table table-servis">
@@ -569,7 +573,7 @@
         </div>
       </div>
 
-      <!-- YENİ: İDARE REHABİLİTASYON ÖĞRENCİ EKLEME KARTI -->
+      <!-- İDARE REHABİLİTASYON ÖĞRENCİ EKLEME KARTI -->
       <div class="card admin-only" id="card-rehab-ekle" style="border: 1px solid #c7d2fe; background: #fcfdff;">
         <h2>➕ Rehabilitasyon Çizelgesine Öğrenci Ekle (İdare)</h2>
         <div class="row-2">
@@ -910,6 +914,21 @@
     </button>
   </nav>
   <script>
+    // FIREBASE YAPILANDIRMASI
+    const firebaseConfig = {
+      apiKey: "AIzaSyBsUQ938yM5FujqQIun3tVGy6vvvIAfps8",
+      authDomain: "haciomeruslueroemo.firebaseapp.com",
+      databaseURL: "https://haciomeruslueroemo-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "haciomeruslueroemo",
+      storageBucket: "haciomeruslueroemo.firebasestorage.app",
+      messagingSenderId: "196540358807",
+      appId: "1:196540358807:web:970a7ac723cfa3ce4e89d2",
+      measurementId: "G-9HV4JX1XG4"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     let deferredPrompt = null;
 
     function modulYazdir(cardId, dosyaAdi) {
@@ -1065,11 +1084,11 @@
         });
       } else {
         if (isIos) {
-          alert("📲 iPhone / iPad Kurulumu:\n\n1. Safari tarayıcınızın altındaki 'Paylaş' simgesine dokunun.\n2. Açılan menüde 'Ana Ekrana Ekle' seçeneğini seçin.");
+          alert("📲 iPhone / iPad Kurulumu:\n\n1. Safari altındaki 'Paylaş' simgesine dokunun.\n2. Açılan menüde 'Ana Ekrana Ekle' seçeneğini seçin.");
         } else if (isWindows) {
-          alert("💻 Windows Kurulumu:\n\nChrome veya Edge adres çubuğunun en sağında yer alan 'Uygulamayı Yükle' simgesine tıklayın.");
+          alert("💻 Windows Kurulumu:\n\nChrome veya Edge adres çubuğunun sağındaki 'Uygulamayı Yükle' simgesine tıklayın.");
         } else {
-          alert("📲 Kurulum:\n\nTarayıcı menünüzden (sağ üstteki 3 nokta) 'Ana ekrana ekle' veya 'Uygulamayı yükle' seçeneğine dokunun.");
+          alert("📲 Kurulum:\n\nTarayıcı menünüzden 'Ana ekrana ekle' veya 'Uygulamayı yükle' seçeneğine dokunun.");
         }
         pwaModalKapat();
       }
@@ -1171,7 +1190,144 @@
       { ad: "OKTAY TALHA BORAN", sinif: "11/B", gun: "HER ÇARŞAMBA", saat: "SAAT 09:00-12:00 ARASI", kurum: "GÜLŞAH" }
     ];
 
-    let rehabListesi = JSON.parse(localStorage.getItem('okul_rehab_listesi')) || varsayilanRehabListesi;
+    const varsayilanSiniflar = {
+      "9-A-Otizm": [
+        { no: "3", ad: "AHMET HÜYÜKLÜ", dt: "06/06/2011", durum: "", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
+        { no: "4", ad: "EMİR KÜPELİ", dt: "19/05/2011", durum: "", ozursuz: 0.0, ozurlu: 0.5, toplam: 0.5 },
+        { no: "5", ad: "TALHA EREN KAVUN", dt: "09/07/2010", durum: "", ozursuz: 2.0, ozurlu: 0.5, toplam: 2.5 }
+      ],
+      "9-B-Otizm": [
+        { no: "8", ad: "MEHMET AKİF KONUK", dt: "10/03/2011", durum: "", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
+        { no: "11", ad: "YİĞİT EFE ŞAHİN", dt: "18/04/2010", durum: "", ozursuz: 6.0, ozurlu: 3.0, toplam: 9.0 }
+      ],
+      "9-A-Zihin": [
+        { no: "1", ad: "KIYMET CEMRE YETİŞİR", dt: "18/07/2011", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "22", ad: "ALİ ÖZ", dt: "03/12/2012", durum: "", ozursuz: 4.5, ozurlu: 3.5, toplam: 8.0 },
+        { no: "55", ad: "BAKİ SAMET KESER", dt: "29/05/2012", durum: "", ozursuz: 2.0, ozurlu: 0.0, toplam: 2.0 },
+        { no: "69", ad: "RECEP SAĞTAŞ", dt: "03/07/2008", durum: "", ozursuz: 4.0, ozurlu: 3.0, toplam: 7.0 },
+        { no: "93", ad: "ŞEVVAL SU UÇAK", dt: "06/09/2010", durum: "", ozursuz: 0.0, ozurlu: 2.0, toplam: 2.0 },
+        { no: "98", ad: "TUANA GÜL USLU", dt: "16/11/2010", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
+        { no: "111", ad: "EMSAL EMİN GÜL", dt: "28/06/2011", durum: "", ozursuz: 5.0, ozurlu: 8.5, toplam: 13.5 },
+        { no: "130", ad: "DOĞAN EREN", dt: "14/06/2012", durum: "", ozursuz: 3.0, ozurlu: 0.0, toplam: 3.0 },
+        { no: "140", ad: "EVLİYA KILIÇ", dt: "20/12/2010", durum: "", ozursuz: 5.0, ozurlu: 1.0, toplam: 6.0 }
+      ],
+      "9-B-Zihin": [
+        { no: "34", ad: "ALEYNA TINMAZ", dt: "04/09/2008", durum: "", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 },
+        { no: "71", ad: "MEDİNE HİDAYET IRK", dt: "25/04/2011", durum: "", ozursuz: 19.0, ozurlu: 0.0, toplam: 19.0 },
+        { no: "73", ad: "MUHAMMET EMİN CAN", dt: "05/04/2012", durum: "", ozursuz: 4.0, ozurlu: 1.0, toplam: 5.0 },
+        { no: "76", ad: "MUHARREM CANDAN", dt: "09/01/2012", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "77", ad: "UMUT EFE KÜRKÇÜ", dt: "25/10/2010", durum: "", ozursuz: 9.0, ozurlu: 0.0, toplam: 9.0 },
+        { no: "78", ad: "AYŞE ÇAĞLAYAN", dt: "30/01/2012", durum: "", ozursuz: 15.0, ozurlu: 7.0, toplam: 22.0 },
+        { no: "103", ad: "MUSAB MUHSİN İNCE", dt: "12/09/2011", durum: "", ozursuz: 0.0, ozurlu: 1.0, toplam: 1.0 },
+        { no: "116", ad: "MERT DEMİR", dt: "09/09/2011", durum: "", ozursuz: 0.0, ozurlu: 2.0, toplam: 2.0 },
+        { no: "125", ad: "ABDÜLSAMET KARAAĞAÇ", dt: "06/07/2011", durum: "", ozursuz: 0.5, ozurlu: 0.0, toplam: 0.5 },
+        { no: "132", ad: "EYÜP KILIÇASLAN", dt: "20/09/2011", durum: "", ozursuz: 8.0, ozurlu: 3.0, toplam: 11.0 }
+      ],
+      "10-A-Otizm": [
+        { no: "50", ad: "EYÜP EYMEN SEVER", dt: "05/11/2009", durum: "", ozursuz: 7.5, ozurlu: 0.0, toplam: 7.5 },
+        { no: "51", ad: "MUSTAFACAN SARI", dt: "11/03/2010", durum: "", ozursuz: 2.5, ozurlu: 0.0, toplam: 2.5 },
+        { no: "52", ad: "MUHAMMED HARUN", dt: "03/01/2010", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
+        { no: "53", ad: "MUHAMMET ADNAN ÇİÇEK", dt: "27/10/2009", durum: "", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 }
+      ],
+      "10-A-Zihin": [
+        { no: "37", ad: "BERAT KARATAŞ", dt: "05/08/2009", durum: "", ozursuz: 14.0, ozurlu: 0.0, toplam: 14.0 },
+        { no: "43", ad: "KERİM YILMAZ", dt: "27/10/2010", durum: "", ozursuz: 4.0, ozurlu: 3.5, toplam: 7.5 },
+        { no: "45", ad: "NARİN UÇAK", dt: "31/05/2007", durum: "", ozursuz: 8.5, ozurlu: 4.0, toplam: 12.5 },
+        { no: "58", ad: "BERİL ŞAHAN", dt: "02/02/2011", durum: "", ozursuz: 0.0, ozurlu: 0.5, toplam: 0.5 },
+        { no: "59", ad: "MEHMET FATİH ER", dt: "21/12/2007", durum: "", ozursuz: 5.5, ozurlu: 3.0, toplam: 8.5 },
+        { no: "64", ad: "HACER ÇALIŞKAN", dt: "01/07/2011", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "141", ad: "LEMAN ER", dt: "20/08/2010", durum: "", ozursuz: 23.0, ozurlu: 0.0, toplam: 23.0 }
+      ],
+      "10-B-Zihin": [
+        { no: "16", ad: "YEMEN ACAR", dt: "01/09/2011", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
+        { no: "38", ad: "CAFER CAN OZAN", dt: "15/07/2011", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
+        { no: "41", ad: "ESİN SULTAN ÇAĞLAYAN", dt: "28/12/2010", durum: "", ozursuz: 8.0, ozurlu: 0.0, toplam: 8.0 },
+        { no: "42", ad: "HACI SEYİT DAĞ", dt: "28/12/2010", durum: "", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 },
+        { no: "65", ad: "NAGİHAN MERCAN", dt: "18/03/2010", durum: "", ozursuz: 0.0, ozurlu: 1.0, toplam: 1.0 },
+        { no: "70", ad: "FADIMANA NUR GÖKTAŞ", dt: "22/02/2009", durum: "", ozursuz: 0.0, ozurlu: 3.0, toplam: 3.0 },
+        { no: "99", ad: "YONCA GÖNÜLTAŞ", dt: "02/09/2011", durum: "", ozursuz: 14.5, ozurlu: 6.0, toplam: 20.5 },
+        { no: "104", ad: "HİLAL GÖNÜLTAŞ", dt: "03/07/2009", durum: "", ozursuz: 11.5, ozurlu: 17.0, toplam: 28.5 }
+      ],
+      "10-C-Zihin": [
+        { no: "40", ad: "ENES KAYNAK", dt: "23/04/2011", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
+        { no: "46", ad: "SEYFİ ALTUNTAŞ", dt: "26/02/2009", durum: "", ozursuz: 1.0, ozurlu: 3.0, toplam: 4.0 },
+        { no: "47", ad: "YAŞAR ÇAKIR", dt: "28/09/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "48", ad: "YUSUF FURKAN DEMİREL", dt: "11/07/2010", durum: "", ozursuz: 1.0, ozurlu: 0.0, toplam: 1.0 },
+        { no: "54", ad: "HAMZA UÇAN", dt: "01/08/2011", durum: "", ozursuz: 8.0, ozurlu: 0.0, toplam: 8.0 },
+        { no: "63", ad: "ŞİFAYİ ARDA YILDIZ", dt: "15/07/2006", durum: "", ozursuz: 2.0, ozurlu: 3.0, toplam: 5.0 }
+      ],
+      "11-12-A-Otizm": [
+        { no: "134", ad: "ENES SARIKAYA", dt: "03/06/2010", durum: "", ozursuz: 6.0, ozurlu: 5.5, toplam: 11.5 },
+        { no: "135", ad: "EMİRHAN YİLDİRİM", dt: "17/06/2009", durum: "", ozursuz: 2.0, ozurlu: 0.0, toplam: 2.0 },
+        { no: "122", ad: "NACİ EROĞLU", dt: "02/03/2008", durum: "", ozursuz: 5.5, ozurlu: 0.0, toplam: 5.5 },
+        { no: "133", ad: "EREN KÖSE", dt: "03/09/2009", durum: "", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 }
+      ],
+      "11-A-Zihin": [
+        { no: "12", ad: "ADEM AYHAN", dt: "28/02/2009", durum: "", ozursuz: 0.0, ozurlu: 3.5, toplam: 3.5 },
+        { no: "30", ad: "İLHAN ABUR", dt: "20/05/2009", durum: "", ozursuz: 3.0, ozurlu: 0.5, toplam: 3.5 },
+        { no: "32", ad: "SÜLEYMAN BERK", dt: "13/05/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "86", ad: "HÜSEYİN DOĞAN", dt: "15/04/2008", durum: "", ozursuz: 7.5, ozurlu: 3.0, toplam: 10.5 },
+        { no: "91", ad: "İSMAİL COŞKUNER", dt: "18/02/2010", durum: "", ozursuz: 2.0, ozurlu: 0.5, toplam: 2.5 },
+        { no: "117", ad: "ADEM ENES KARA", dt: "12/09/2009", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
+        { no: "118", ad: "ALPER KESTEK", dt: "04/02/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "127", ad: "SELİN SU ATASOY", dt: "08/01/2009", durum: "", ozursuz: 0.0, ozurlu: 10.0, toplam: 10.0 },
+        { no: "131", ad: "RUKİYE KILIÇ", dt: "13/09/2009", durum: "", ozursuz: 7.5, ozurlu: 0.0, toplam: 7.5 },
+        { no: "139", ad: "MUSTAFA AĞIRBAŞ", dt: "26/02/2009", durum: "", ozursuz: 0.0, ozurlu: 3.5, toplam: 3.5 }
+      ],
+      "11-B-Zihin": [
+        { no: "18", ad: "AFİFE NİSA ÖZATA", dt: "29/10/2009", durum: "", ozursuz: 2.5, ozurlu: 3.0, toplam: 5.5 },
+        { no: "26", ad: "FATMA SILA ÖLMEZ", dt: "06/09/2009", durum: "", ozursuz: 5.0, ozurlu: 5.0, toplam: 10.0 },
+        { no: "35", ad: "OKTAY TALHA BORAN", dt: "15/08/2010", durum: "", ozursuz: 9.5, ozurlu: 0.0, toplam: 9.5 },
+        { no: "79", ad: "BETÜL YERLİ", dt: "24/04/2009", durum: "", ozursuz: 2.0, ozurlu: 1.0, toplam: 3.0 },
+        { no: "80", ad: "DUYGU ŞENSOY", dt: "13/10/2009", durum: "", ozursuz: 1.5, ozurlu: 0.5, toplam: 2.0 },
+        { no: "81", ad: "HACER ELBASAN", dt: "10/12/2009", durum: "", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
+        { no: "119", ad: "BÜŞRA GÜLER", dt: "05/08/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "128", ad: "SENANUR ÇAPALI", dt: "05/05/2009", durum: "", ozursuz: 2.0, ozurlu: 0.0, toplam: 2.0 },
+        { no: "137", ad: "ESMA AKYÜZ", dt: "09/07/2009", durum: "", ozursuz: 8.0, ozurlu: 1.0, toplam: 9.0 },
+        { no: "138", ad: "HÜSNA AKYÜZ", dt: "09/07/2009", durum: "", ozursuz: 8.0, ozurlu: 1.0, toplam: 9.0 }
+      ],
+      "11-C-Zihin": [
+        { no: "31", ad: "OSMAN KILIÇASLAN", dt: "04/04/2009", durum: "", ozursuz: 1.0, ozurlu: 0.5, toplam: 1.5 },
+        { no: "39", ad: "DERVİŞ KÖSE", dt: "28/03/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "102", ad: "KUDRET AKBAŞ", dt: "10/11/2010", durum: "", ozursuz: 3.5, ozurlu: 9.0, toplam: 12.5 },
+        { no: "105", ad: "MUHAMMET ABDURRAHİM ŞİMŞEK", dt: "23/05/2006", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "109", ad: "ÖMER DİK", dt: "20/08/2010", durum: "", ozursuz: 15.5, ozurlu: 0.0, toplam: 15.5 },
+        { no: "129", ad: "İSA SULU", dt: "22/05/2009", durum: "", ozursuz: 6.0, ozurlu: 0.0, toplam: 6.0 }
+      ],
+      "12-A-Zihin": [
+        { no: "6", ad: "AHMET UYGUN", dt: "01/05/2008", durum: "", ozursuz: 6.0, ozurlu: 0.0, toplam: 6.0 },
+        { no: "25", ad: "METEHAN KIŞKIR", dt: "26/07/2007", durum: "", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
+        { no: "66", ad: "REYHAN YAVAŞ", dt: "01/04/2008", durum: "", ozursuz: 11.0, ozurlu: 0.0, toplam: 11.0 },
+        { no: "88", ad: "ŞENOL EFE KÜRKLÜ", dt: "09/06/2009", durum: "", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 },
+        { no: "89", ad: "EMİNE EBRAR ÇETİN", dt: "19/09/2008", durum: "", ozursuz: 3.0, ozurlu: 0.0, toplam: 3.0 },
+        { no: "113", ad: "ANISA AHANGAR", dt: "09/08/2005", durum: "", ozursuz: 0.0, ozurlu: 5.0, toplam: 5.0 },
+        { no: "121", ad: "FURKAN ÇAĞLAYAN FİDAN", dt: "25/07/2008", durum: "", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 },
+        { no: "123", ad: "LEVENT GEDİK", dt: "21/12/2005", durum: "", ozursuz: 9.5, ozurlu: 0.0, toplam: 9.5 }
+      ],
+      "12-B-Zihin": [
+        { no: "36", ad: "BEKİR MERHAMET SEVİNÇ", dt: "19/04/2010", durum: "", ozursuz: 4.0, ozurlu: 4.0, toplam: 8.0 },
+        { no: "84", ad: "HİKMET YILMAZ", dt: "22/02/2009", durum: "", ozursuz: 28.0, ozurlu: 3.0, toplam: 31.0 },
+        { no: "87", ad: "MUHAMMED FURKAN İNAL", dt: "30/07/2008", durum: "", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 },
+        { no: "95", ad: "HÜMEYRA TAŞKIN", dt: "21/09/2007", durum: "", ozursuz: 4.5, ozurlu: 0.0, toplam: 4.5 },
+        { no: "106", ad: "RAMAZAN KIRLI", dt: "13/10/2007", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
+        { no: "114", ad: "RUKİYE KAYALI", dt: "08/07/2008", durum: "", ozursuz: 9.0, ozurlu: 0.0, toplam: 9.0 },
+        { no: "120", ad: "EMRE GÜL", dt: "07/01/2008", durum: "", ozursuz: 12.5, ozurlu: 5.0, toplam: 17.5 }
+      ],
+      "12-C-Zihin": [
+        { no: "9", ad: "ELENNUR DAĞ", dt: "16/05/2008", durum: "", ozursuz: 1.0, ozurlu: 0.0, toplam: 1.0 },
+        { no: "23", ad: "İBRAHİM EROĞLU", dt: "11/04/2008", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "82", ad: "TUĞRUL SINAV", dt: "24/02/2009", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
+        { no: "90", ad: "ASLI ŞENER", dt: "03/05/2009", durum: "", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 },
+        { no: "94", ad: "İBRAHİM ÇAĞLAR", dt: "18/05/2009", durum: "", ozursuz: 15.0, ozurlu: 0.0, toplam: 15.0 },
+        { no: "112", ad: "OSMAN TORAMAN", dt: "02/11/2008", durum: "", ozursuz: 3.0, ozurlu: 0.0, toplam: 3.0 }
+      ]
+    };
+
+    let okulSinifVerisi = varsayilanSiniflar;
+    let rehabListesi = varsayilanRehabListesi;
+    let izinler = [];
+    let servisYoklamaKayitlari = {};
+    let servisYedekAtamalar = {};
     let aktifKullanici = null;
     let aktifServisTarihi = "";
 
@@ -1198,9 +1354,58 @@
       "2026-12-04": { my: "METİN YONCALIK", s1: "RAYİHA SANCAR", s2: "SEVİLAY ELMAS", s3: "BETÜL ORUÇ", z: "HİLAL EŞ DEMİR / SULTAN ERMİŞ", k1: "BELKIZ ÖLMEZ" }
     };
 
-    let izinler = JSON.parse(localStorage.getItem('okul_izinler') || '[]');
-    let servisYoklamaKayitlari = JSON.parse(localStorage.getItem('okul_servis_yoklamalar') || '{}');
-    let servisYedekAtamalar = JSON.parse(localStorage.getItem('okul_servis_atamalar') || '{}');
+    // CANLI FIREBASE DİNLEYİCİLERİ
+    function firebaseSenkronizasyonunuBaslat() {
+      // 1. Sınıf ve Öğrenci Yoklama Verileri
+      db.ref("okul_sinif_verisi").on("value", snapshot => {
+        const val = snapshot.val();
+        if (val) {
+          okulSinifVerisi = val;
+        } else {
+          db.ref("okul_sinif_verisi").set(varsayilanSiniflar);
+        }
+        ogrencileriYukle();
+        devamsizlariGuncelle();
+        dogumGunleriniHesapla();
+        kritikRiskliOgrencileriGoster();
+        detayOgrenciSecicisiniDoldur();
+      });
+
+      // 2. Rehabilitasyon Öğrenci Listesi
+      db.ref("okul_rehab_listesi").on("value", snapshot => {
+        const val = snapshot.val();
+        if (val) {
+          rehabListesi = val;
+        } else {
+          db.ref("okul_rehab_listesi").set(varsayilanRehabListesi);
+        }
+        rehabilitasyonTablosunuDoldur();
+      });
+
+      // 3. Personel İzin Kayıtları
+      db.ref("okul_izinler").on("value", snapshot => {
+        const val = snapshot.val();
+        izinler = val ? val : [];
+        izinleriGoster();
+        const seciliTarih = document.getElementById('nobet-tarih-secici').value;
+        if (seciliTarih) tariheGoreNobetYukle(seciliTarih);
+        servisModulunuGuncelle();
+      });
+
+      // 4. Servis Yoklamaları
+      db.ref("okul_servis_yoklamalar").on("value", snapshot => {
+        const val = snapshot.val();
+        servisYoklamaKayitlari = val ? val : {};
+        servisModulunuGuncelle();
+      });
+
+      // 5. Servis Yedek Atamaları
+      db.ref("okul_servis_atamalar").on("value", snapshot => {
+        const val = snapshot.val();
+        servisYedekAtamalar = val ? val : {};
+        servisModulunuGuncelle();
+      });
+    }
 
     function isimIzinliMi(adSoyad, tarihStr) {
       if (!adSoyad || !tarihStr) return false;
@@ -1337,17 +1542,12 @@
         servisYoklamaKayitlari[tarihStr][servisNo].durum = durum;
       }
 
-      localStorage.setItem('okul_servis_yoklamalar', JSON.stringify(servisYoklamaKayitlari));
-      servisModulunuGuncelle();
+      db.ref(`okul_servis_yoklamalar/${tarihStr}/${servisNo}/durum`).set(servisYoklamaKayitlari[tarihStr][servisNo].durum);
     }
 
     function servisAciklamaKaydet(servisNo, metin) {
       const tarihStr = aktifServisTarihi;
-      if (!servisYoklamaKayitlari[tarihStr]) servisYoklamaKayitlari[tarihStr] = {};
-      if (!servisYoklamaKayitlari[tarihStr][servisNo]) servisYoklamaKayitlari[tarihStr][servisNo] = { durum: "", aciklama: "" };
-
-      servisYoklamaKayitlari[tarihStr][servisNo].aciklama = metin;
-      localStorage.setItem('okul_servis_yoklamalar', JSON.stringify(servisYoklamaKayitlari));
+      db.ref(`okul_servis_yoklamalar/${tarihStr}/${servisNo}/aciklama`).set(metin);
     }
 
     function yedekServisHocaSecicisiniDoldur() {
@@ -1368,26 +1568,21 @@
       if (!u) return alert("Lütfen görevlendirilecek öğretmeni seçin.");
 
       const hoca = KULLANICILAR[u];
-      servisYedekAtamalar[aktifServisTarihi] = {
+      db.ref(`okul_servis_atamalar/${aktifServisTarihi}`).set({
         username: u,
         ad: hoca.ad
-      };
-      localStorage.setItem('okul_servis_atamalar', JSON.stringify(servisYedekAtamalar));
-      alert(`${hoca.ad} öğretmeni ${aktifServisTarihi} tarihi için yedek servis nöbetçisi olarak görevlendirildi ve yoklama yetkisi açıldı.`);
-      servisModulunuGuncelle();
+      });
+      alert(`${hoca.ad} öğretmeni ${aktifServisTarihi} tarihi için yedek servis nöbetçisi olarak görevlendirildi.`);
     }
 
     function yedekServisNobetcisiSifirla() {
       if (servisYedekAtamalar[aktifServisTarihi]) {
         if (confirm("Bu tarih için yapılan yedek görevlendirmeyi iptal etmek istiyor musunuz?")) {
-          delete servisYedekAtamalar[aktifServisTarihi];
-          localStorage.setItem('okul_servis_atamalar', JSON.stringify(servisYedekAtamalar));
-          servisModulunuGuncelle();
+          db.ref(`okul_servis_atamalar/${aktifServisTarihi}`).remove();
         }
       }
     }
 
-    // REHABİLİTASYON LİSTESİ VE İDARE ÖĞRENCİ EKLEME/SİLME İŞLEMLERİ
     function rehabilitasyonTablosunuDoldur() {
       const tbody = document.getElementById('rehab-tablo-body');
       const rozet = document.getElementById('rehab-toplam-sayi');
@@ -1422,35 +1617,32 @@
       const kurum = document.getElementById('yeni-rehab-kurum').value.trim();
 
       if (!ad || !sinif || !gun || !saat || !kurum) {
-        return alert("Lütfen rehabilitasyon öğrencisinin tüm bilgilerini (Ad Soyad, Sınıf, İzin Günü, İzin Saati ve Kurum) eksiksiz doldurun.");
+        return alert("Lütfen rehabilitasyon öğrencisinin tüm bilgilerini eksiksiz doldurun.");
       }
 
-      rehabListesi.push({
+      const yeniListe = [...rehabListesi, {
         ad: ad.toLocaleUpperCase('tr-TR'),
         sinif: sinif.toLocaleUpperCase('tr-TR'),
         gun: gun,
         saat: saat,
         kurum: kurum.toLocaleUpperCase('tr-TR')
+      }];
+
+      db.ref("okul_rehab_listesi").set(yeniListe).then(() => {
+        document.getElementById('yeni-rehab-ad').value = '';
+        document.getElementById('yeni-rehab-sinif').value = '';
+        document.getElementById('yeni-rehab-gun').value = '';
+        document.getElementById('yeni-rehab-saat').value = '';
+        document.getElementById('yeni-rehab-kurum').value = '';
+        alert(`${ad} isimli öğrenci rehabilitasyon takip çizelgesine eklendi.`);
       });
-
-      localStorage.setItem('okul_rehab_listesi', JSON.stringify(rehabListesi));
-      rehabilitasyonTablosunuDoldur();
-
-      document.getElementById('yeni-rehab-ad').value = '';
-      document.getElementById('yeni-rehab-sinif').value = '';
-      document.getElementById('yeni-rehab-gun').value = '';
-      document.getElementById('yeni-rehab-saat').value = '';
-      document.getElementById('yeni-rehab-kurum').value = '';
-
-      alert(`${ad} isimli öğrenci rehabilitasyon takip çizelgesine başarıyla eklendi.`);
     }
 
     function rehabOgrenciSil(index) {
       const ogr = rehabListesi[index];
       if (confirm(`${ogr.ad} isimli öğrenciyi rehabilitasyon çizelgesinden silmek istediğinize emin misiniz?`)) {
-        rehabListesi.splice(index, 1);
-        localStorage.setItem('okul_rehab_listesi', JSON.stringify(rehabListesi));
-        rehabilitasyonTablosunuDoldur();
+        const yeniListe = rehabListesi.filter((_, i) => i !== index);
+        db.ref("okul_rehab_listesi").set(yeniListe);
       }
     }
 
@@ -1545,7 +1737,7 @@
       if (pInput === kullanici.tc) {
         err.style.display = "none";
         aktifKullanici = { user: uInput, ad: kullanici.ad };
-        localStorage.setItem('oturum_kullanici', JSON.stringify(aktifKullanici));
+        sessionStorage.setItem('oturum_kullanici', JSON.stringify(aktifKullanici));
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('kullanici-karsilama').innerText = `Hoş geldiniz, ${kullanici.ad}`;
         yetkileriUygula();
@@ -1558,7 +1750,7 @@
 
     function cikisYap() {
       if (confirm("Oturumu kapatmak istediğinize emin misiniz?")) {
-        localStorage.removeItem('oturum_kullanici');
+        sessionStorage.removeItem('oturum_kullanici');
         aktifKullanici = null;
         document.getElementById('login-user').value = '';
         document.getElementById('login-pass').value = '';
@@ -1664,171 +1856,17 @@
       if (!ad) return alert('Lütfen personel adını girin.');
       if (!baslangic || !bitis) return alert('Lütfen başlangıç ve bitiş tarihlerini seçin.');
 
-      izinler.push({ ad, tip, baslangic, bitis });
-      localStorage.setItem('okul_izinler', JSON.stringify(izinler));
-      izinleriGoster();
-
-      const seciliTarih = document.getElementById('nobet-tarih-secici').value;
-      if (seciliTarih) tariheGoreNobetYukle(seciliTarih);
-      servisModulunuGuncelle();
-
+      const yeniIzinler = [...izinler, { ad, tip, baslangic, bitis }];
+      db.ref("okul_izinler").set(yeniIzinler);
       document.getElementById('izin-ad').value = '';
     }
 
     function izinSil(index) {
       if (confirm('Bu izin kaydını silmek istediğinize emin misiniz?')) {
-        izinler.splice(index, 1);
-        localStorage.setItem('okul_izinler', JSON.stringify(izinler));
-        izinleriGoster();
-
-        const seciliTarih = document.getElementById('nobet-tarih-secici').value;
-        if (seciliTarih) tariheGoreNobetYukle(seciliTarih);
-        servisModulunuGuncelle();
+        const yeniIzinler = izinler.filter((_, i) => i !== index);
+        db.ref("okul_izinler").set(yeniIzinler);
       }
     }
-
-    const varsayilanSiniflar = {
-      "9-A-Otizm": [
-        { no: "3", ad: "AHMET HÜYÜKLÜ", dt: "06/06/2011", durum: "", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
-        { no: "4", ad: "EMİR KÜPELİ", dt: "19/05/2011", durum: "", ozursuz: 0.0, ozurlu: 0.5, toplam: 0.5 },
-        { no: "5", ad: "TALHA EREN KAVUN", dt: "09/07/2010", durum: "", ozursuz: 2.0, ozurlu: 0.5, toplam: 2.5 }
-      ],
-      "9-B-Otizm": [
-        { no: "8", ad: "MEHMET AKİF KONUK", dt: "10/03/2011", durum: "", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
-        { no: "11", ad: "YİĞİT EFE ŞAHİN", dt: "18/04/2010", durum: "", ozursuz: 6.0, ozurlu: 3.0, toplam: 9.0 }
-      ],
-      "9-A-Zihin": [
-        { no: "1", ad: "KIYMET CEMRE YETİŞİR", dt: "18/07/2011", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "22", ad: "ALİ ÖZ", dt: "03/12/2012", durum: "", ozursuz: 4.5, ozurlu: 3.5, toplam: 8.0 },
-        { no: "55", ad: "BAKİ SAMET KESER", dt: "29/05/2012", durum: "", ozursuz: 2.0, ozurlu: 0.0, toplam: 2.0 },
-        { no: "69", ad: "RECEP SAĞTAŞ", dt: "03/07/2008", durum: "", ozursuz: 4.0, ozurlu: 3.0, toplam: 7.0 },
-        { no: "93", ad: "ŞEVVAL SU UÇAK", dt: "06/09/2010", durum: "", ozursuz: 0.0, ozurlu: 2.0, toplam: 2.0 },
-        { no: "98", ad: "TUANA GÜL USLU", dt: "16/11/2010", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
-        { no: "111", ad: "EMSAL EMİN GÜL", dt: "28/06/2011", durum: "", ozursuz: 5.0, ozurlu: 8.5, toplam: 13.5 },
-        { no: "130", ad: "DOĞAN EREN", dt: "14/06/2012", durum: "", ozursuz: 3.0, ozurlu: 0.0, toplam: 3.0 },
-        { no: "140", ad: "EVLİYA KILIÇ", dt: "20/12/2010", durum: "", ozursuz: 5.0, ozurlu: 1.0, toplam: 6.0 }
-      ],
-      "9-B-Zihin": [
-        { no: "34", ad: "ALEYNA TINMAZ", dt: "04/09/2008", durum: "", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 },
-        { no: "71", ad: "MEDİNE HİDAYET IRK", dt: "25/04/2011", durum: "", ozursuz: 19.0, ozurlu: 0.0, toplam: 19.0 },
-        { no: "73", ad: "MUHAMMET EMİN CAN", dt: "05/04/2012", durum: "", ozursuz: 4.0, ozurlu: 1.0, toplam: 5.0 },
-        { no: "76", ad: "MUHARREM CANDAN", dt: "09/01/2012", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "77", ad: "UMUT EFE KÜRKÇÜ", dt: "25/10/2010", durum: "", ozursuz: 9.0, ozurlu: 0.0, toplam: 9.0 },
-        { no: "78", ad: "AYŞE ÇAĞLAYAN", dt: "30/01/2012", durum: "", ozursuz: 15.0, ozurlu: 7.0, toplam: 22.0 },
-        { no: "103", ad: "MUSAB MUHSİN İNCE", dt: "12/09/2011", durum: "", ozursuz: 0.0, ozurlu: 1.0, toplam: 1.0 },
-        { no: "116", ad: "MERT DEMİR", dt: "09/09/2011", durum: "", ozursuz: 0.0, ozurlu: 2.0, toplam: 2.0 },
-        { no: "125", ad: "ABDÜLSAMET KARAAĞAÇ", dt: "06/07/2011", durum: "", ozursuz: 0.5, ozurlu: 0.0, toplam: 0.5 },
-        { no: "132", ad: "EYÜP KILIÇASLAN", dt: "20/09/2011", durum: "", ozursuz: 8.0, ozurlu: 3.0, toplam: 11.0 }
-      ],
-      "10-A-Otizm": [
-        { no: "50", ad: "EYÜP EYMEN SEVER", dt: "05/11/2009", durum: "", ozursuz: 7.5, ozurlu: 0.0, toplam: 7.5 },
-        { no: "51", ad: "MUSTAFACAN SARI", dt: "11/03/2010", durum: "", ozursuz: 2.5, ozurlu: 0.0, toplam: 2.5 },
-        { no: "52", ad: "MUHAMMED HARUN", dt: "03/01/2010", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
-        { no: "53", ad: "MUHAMMET ADNAN ÇİÇEK", dt: "27/10/2009", durum: "", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 }
-      ],
-      "10-A-Zihin": [
-        { no: "37", ad: "BERAT KARATAŞ", dt: "05/08/2009", durum: "", ozursuz: 14.0, ozurlu: 0.0, toplam: 14.0 },
-        { no: "43", ad: "KERİM YILMAZ", dt: "27/10/2010", durum: "", ozursuz: 4.0, ozurlu: 3.5, toplam: 7.5 },
-        { no: "45", ad: "NARİN UÇAK", dt: "31/05/2007", durum: "", ozursuz: 8.5, ozurlu: 4.0, toplam: 12.5 },
-        { no: "58", ad: "BERİL ŞAHAN", dt: "02/02/2011", durum: "", ozursuz: 0.0, ozurlu: 0.5, toplam: 0.5 },
-        { no: "59", ad: "MEHMET FATİH ER", dt: "21/12/2007", durum: "", ozursuz: 5.5, ozurlu: 3.0, toplam: 8.5 },
-        { no: "64", ad: "HACER ÇALIŞKAN", dt: "01/07/2011", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "141", ad: "LEMAN ER", dt: "20/08/2010", durum: "", ozursuz: 23.0, ozurlu: 0.0, toplam: 23.0 }
-      ],
-      "10-B-Zihin": [
-        { no: "16", ad: "YEMEN ACAR", dt: "01/09/2011", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
-        { no: "38", ad: "CAFER CAN OZAN", dt: "15/07/2011", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
-        { no: "41", ad: "ESİN SULTAN ÇAĞLAYAN", dt: "28/12/2010", durum: "", ozursuz: 8.0, ozurlu: 0.0, toplam: 8.0 },
-        { no: "42", ad: "HACI SEYİT DAĞ", dt: "28/12/2010", durum: "", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 },
-        { no: "65", ad: "NAGİHAN MERCAN", dt: "18/03/2010", durum: "", ozursuz: 0.0, ozurlu: 1.0, toplam: 1.0 },
-        { no: "70", ad: "FADIMANA NUR GÖKTAŞ", dt: "22/02/2009", durum: "", ozursuz: 0.0, ozurlu: 3.0, toplam: 3.0 },
-        { no: "99", ad: "YONCA GÖNÜLTAŞ", dt: "02/09/2011", durum: "", ozursuz: 14.5, ozurlu: 6.0, toplam: 20.5 },
-        { no: "104", ad: "HİLAL GÖNÜLTAŞ", dt: "03/07/2009", durum: "", ozursuz: 11.5, ozurlu: 17.0, toplam: 28.5 }
-      ],
-      "10-C-Zihin": [
-        { no: "40", ad: "ENES KAYNAK", dt: "23/04/2011", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
-        { no: "46", ad: "SEYFİ ALTUNTAŞ", dt: "26/02/2009", durum: "", ozursuz: 1.0, ozurlu: 3.0, toplam: 4.0 },
-        { no: "47", ad: "YAŞAR ÇAKIR", dt: "28/09/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "48", ad: "YUSUF FURKAN DEMİREL", dt: "11/07/2010", durum: "", ozursuz: 1.0, ozurlu: 0.0, toplam: 1.0 },
-        { no: "54", ad: "HAMZA UÇAN", dt: "01/08/2011", durum: "", ozursuz: 8.0, ozurlu: 0.0, toplam: 8.0 },
-        { no: "63", ad: "ŞİFAYİ ARDA YILDIZ", dt: "15/07/2006", durum: "", ozursuz: 2.0, ozurlu: 3.0, toplam: 5.0 }
-      ],
-      "11-12-A-Otizm": [
-        { no: "134", ad: "ENES SARIKAYA", dt: "03/06/2010", durum: "", ozursuz: 6.0, ozurlu: 5.5, toplam: 11.5 },
-        { no: "135", ad: "EMİRHAN YİLDİRİM", dt: "17/06/2009", durum: "", ozursuz: 2.0, ozurlu: 0.0, toplam: 2.0 },
-        { no: "122", ad: "NACİ EROĞLU", dt: "02/03/2008", durum: "", ozursuz: 5.5, ozurlu: 0.0, toplam: 5.5 },
-        { no: "133", ad: "EREN KÖSE", dt: "03/09/2009", durum: "", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 }
-      ],
-      "11-A-Zihin": [
-        { no: "12", ad: "ADEM AYHAN", dt: "28/02/2009", durum: "", ozursuz: 0.0, ozurlu: 3.5, toplam: 3.5 },
-        { no: "30", ad: "İLHAN ABUR", dt: "20/05/2009", durum: "", ozursuz: 3.0, ozurlu: 0.5, toplam: 3.5 },
-        { no: "32", ad: "SÜLEYMAN BERK", dt: "13/05/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "86", ad: "HÜSEYİN DOĞAN", dt: "15/04/2008", durum: "", ozursuz: 7.5, ozurlu: 3.0, toplam: 10.5 },
-        { no: "91", ad: "İSMAİL COŞKUNER", dt: "18/02/2010", durum: "", ozursuz: 2.0, ozurlu: 0.5, toplam: 2.5 },
-        { no: "117", ad: "ADEM ENES KARA", dt: "12/09/2009", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
-        { no: "118", ad: "ALPER KESTEK", dt: "04/02/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "127", ad: "SELİN SU ATASOY", dt: "08/01/2009", durum: "", ozursuz: 0.0, ozurlu: 10.0, toplam: 10.0 },
-        { no: "131", ad: "RUKİYE KILIÇ", dt: "13/09/2009", durum: "", ozursuz: 7.5, ozurlu: 0.0, toplam: 7.5 },
-        { no: "139", ad: "MUSTAFA AĞIRBAŞ", dt: "26/02/2009", durum: "", ozursuz: 0.0, ozurlu: 3.5, toplam: 3.5 }
-      ],
-      "11-B-Zihin": [
-        { no: "18", ad: "AFİFE NİSA ÖZATA", dt: "29/10/2009", durum: "", ozursuz: 2.5, ozurlu: 3.0, toplam: 5.5 },
-        { no: "26", ad: "FATMA SILA ÖLMEZ", dt: "06/09/2009", durum: "", ozursuz: 5.0, ozurlu: 5.0, toplam: 10.0 },
-        { no: "35", ad: "OKTAY TALHA BORAN", dt: "15/08/2010", durum: "", ozursuz: 9.5, ozurlu: 0.0, toplam: 9.5 },
-        { no: "79", ad: "BETÜL YERLİ", dt: "24/04/2009", durum: "", ozursuz: 2.0, ozurlu: 1.0, toplam: 3.0 },
-        { no: "80", ad: "DUYGU ŞENSOY", dt: "13/10/2009", durum: "", ozursuz: 1.5, ozurlu: 0.5, toplam: 2.0 },
-        { no: "81", ad: "HACER ELBASAN", dt: "10/12/2009", durum: "", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
-        { no: "119", ad: "BÜŞRA GÜLER", dt: "05/08/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "128", ad: "SENANUR ÇAPALI", dt: "05/05/2009", durum: "", ozursuz: 2.0, ozurlu: 0.0, toplam: 2.0 },
-        { no: "137", ad: "ESMA AKYÜZ", dt: "09/07/2009", durum: "", ozursuz: 8.0, ozurlu: 1.0, toplam: 9.0 },
-        { no: "138", ad: "HÜSNA AKYÜZ", dt: "09/07/2009", durum: "", ozursuz: 8.0, ozurlu: 1.0, toplam: 9.0 }
-      ],
-      "11-C-Zihin": [
-        { no: "31", ad: "OSMAN KILIÇASLAN", dt: "04/04/2009", durum: "", ozursuz: 1.0, ozurlu: 0.5, toplam: 1.5 },
-        { no: "39", ad: "DERVİŞ KÖSE", dt: "28/03/2010", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "102", ad: "KUDRET AKBAŞ", dt: "10/11/2010", durum: "", ozursuz: 3.5, ozurlu: 9.0, toplam: 12.5 },
-        { no: "105", ad: "MUHAMMET ABDURRAHİM ŞİMŞEK", dt: "23/05/2006", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "109", ad: "ÖMER DİK", dt: "20/08/2010", durum: "", ozursuz: 15.5, ozurlu: 0.0, toplam: 15.5 },
-        { no: "129", ad: "İSA SULU", dt: "22/05/2009", durum: "", ozursuz: 6.0, ozurlu: 0.0, toplam: 6.0 }
-      ],
-      "12-A-Zihin": [
-        { no: "6", ad: "AHMET UYGUN", dt: "01/05/2008", durum: "", ozursuz: 6.0, ozurlu: 0.0, toplam: 6.0 },
-        { no: "25", ad: "METEHAN KIŞKIR", dt: "26/07/2007", durum: "", ozursuz: 4.0, ozurlu: 0.0, toplam: 4.0 },
-        { no: "66", ad: "REYHAN YAVAŞ", dt: "01/04/2008", durum: "", ozursuz: 11.0, ozurlu: 0.0, toplam: 11.0 },
-        { no: "88", ad: "ŞENOL EFE KÜRKLÜ", dt: "09/06/2009", durum: "", ozursuz: 7.0, ozurlu: 0.0, toplam: 7.0 },
-        { no: "89", ad: "EMİNE EBRAR ÇETİN", dt: "19/09/2008", durum: "", ozursuz: 3.0, ozurlu: 0.0, toplam: 3.0 },
-        { no: "113", ad: "ANISA AHANGAR", dt: "09/08/2005", durum: "", ozursuz: 0.0, ozurlu: 5.0, toplam: 5.0 },
-        { no: "121", ad: "FURKAN ÇAĞLAYAN FİDAN", dt: "25/07/2008", durum: "", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 },
-        { no: "123", ad: "LEVENT GEDİK", dt: "21/12/2005", durum: "", ozursuz: 9.5, ozurlu: 0.0, toplam: 9.5 }
-      ],
-      "12-B-Zihin": [
-        { no: "36", ad: "BEKİR MERHAMET SEVİNÇ", dt: "19/04/2010", durum: "", ozursuz: 4.0, ozurlu: 4.0, toplam: 8.0 },
-        { no: "84", ad: "HİKMET YILMAZ", dt: "22/02/2009", durum: "", ozursuz: 28.0, ozurlu: 3.0, toplam: 31.0 },
-        { no: "87", ad: "MUHAMMED FURKAN İNAL", dt: "30/07/2008", durum: "", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 },
-        { no: "95", ad: "HÜMEYRA TAŞKIN", dt: "21/09/2007", durum: "", ozursuz: 4.5, ozurlu: 0.0, toplam: 4.5 },
-        { no: "106", ad: "RAMAZAN KIRLI", dt: "13/10/2007", durum: "", ozursuz: 5.0, ozurlu: 0.0, toplam: 5.0 },
-        { no: "114", ad: "RUKİYE KAYALI", dt: "08/07/2008", durum: "", ozursuz: 9.0, ozurlu: 0.0, toplam: 9.0 },
-        { no: "120", ad: "EMRE GÜL", dt: "07/01/2008", durum: "", ozursuz: 12.5, ozurlu: 5.0, toplam: 17.5 }
-      ],
-      "12-C-Zihin": [
-        { no: "9", ad: "ELENNUR DAĞ", dt: "16/05/2008", durum: "", ozursuz: 1.0, ozurlu: 0.0, toplam: 1.0 },
-        { no: "23", ad: "İBRAHİM EROĞLU", dt: "11/04/2008", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "82", ad: "TUĞRUL SINAV", dt: "24/02/2009", durum: "", ozursuz: 0.0, ozurlu: 0.0, toplam: 0.0 },
-        { no: "90", ad: "ASLI ŞENER", dt: "03/05/2009", durum: "", ozursuz: 8.5, ozurlu: 0.0, toplam: 8.5 },
-        { no: "94", ad: "İBRAHİM ÇAĞLAR", dt: "18/05/2009", durum: "", ozursuz: 15.0, ozurlu: 0.0, toplam: 15.0 },
-        { no: "112", ad: "OSMAN TORAMAN", dt: "02/11/2008", durum: "", ozursuz: 3.0, ozurlu: 0.0, toplam: 3.0 }
-      ]
-    };
-
-    const VERI_VERSIYONU = "v21_rehab_idare_ogrenci_ekleme";
-    let kayitliVersiyon = localStorage.getItem('okul_ogrenciler_versiyon');
-    
-    if (kayitliVersiyon !== VERI_VERSIYONU) {
-      localStorage.setItem('okul_ogrenciler', JSON.stringify(varsayilanSiniflar));
-      localStorage.setItem('okul_ogrenciler_versiyon', VERI_VERSIYONU);
-    }
-
-    let okulSinifVerisi = JSON.parse(localStorage.getItem('okul_ogrenciler')) || varsayilanSiniflar;
 
     function formatSinifAdi(kod) {
       return kod.replace(/-/g, ' ');
@@ -1998,15 +2036,8 @@
 
     function toggleDurum(sinif, index, tiklananDurum) {
       const ogr = okulSinifVerisi[sinif][index];
-      if (ogr.durum === tiklananDurum) {
-        ogr.durum = "";
-      } else {
-        ogr.durum = tiklananDurum;
-      }
-
-      localStorage.setItem('okul_ogrenciler', JSON.stringify(okulSinifVerisi));
-      ogrencileriYukle();
-      devamsizlariGuncelle();
+      const yeniDurum = (ogr.durum === tiklananDurum) ? "" : tiklananDurum;
+      db.ref(`okul_sinif_verisi/${sinif}/${index}/durum`).set(yeniDurum);
     }
 
     function devamsizlariGuncelle() {
@@ -2115,39 +2146,29 @@
         dtFormatted = `${p[2]}/${p[1]}/${p[0]}`;
       }
 
-      if (!okulSinifVerisi[seciliSinif]) okulSinifVerisi[seciliSinif] = [];
-
-      okulSinifVerisi[seciliSinif].push({ 
-        no, 
-        ad: ad.toLocaleUpperCase('tr-TR'), 
-        dt: dtFormatted, 
+      const sinifListesi = okulSinifVerisi[seciliSinif] ? [...okulSinifVerisi[seciliSinif]] : [];
+      sinifListesi.push({
+        no,
+        ad: ad.toLocaleUpperCase('tr-TR'),
+        dt: dtFormatted,
         durum: '',
         ozursuz: 0.0,
         ozurlu: 0.0,
         toplam: 0.0
       });
 
-      localStorage.setItem('okul_ogrenciler', JSON.stringify(okulSinifVerisi));
-      ogrencileriYukle();
-      devamsizlariGuncelle();
-      dogumGunleriniHesapla();
-      kritikRiskliOgrencileriGoster();
-      detayOgrenciSecicisiniDoldur();
-
-      document.getElementById('yeni-ogr-no').value = '';
-      document.getElementById('yeni-ogr-ad').value = '';
-      document.getElementById('yeni-ogr-dt').value = '';
+      db.ref(`okul_sinif_verisi/${seciliSinif}`).set(sinifListesi).then(() => {
+        document.getElementById('yeni-ogr-no').value = '';
+        document.getElementById('yeni-ogr-ad').value = '';
+        document.getElementById('yeni-ogr-dt').value = '';
+        alert("Öğrenci başarıyla sınıfa eklendi.");
+      });
     }
 
     function ogrenciSil(sinif, index) {
       if (confirm('Bu öğrenciyi sınıftan silmek istediğinize emin misiniz?')) {
-        okulSinifVerisi[sinif].splice(index, 1);
-        localStorage.setItem('okul_ogrenciler', JSON.stringify(okulSinifVerisi));
-        ogrencileriYukle();
-        devamsizlariGuncelle();
-        dogumGunleriniHesapla();
-        kritikRiskliOgrencileriGoster();
-        detayOgrenciSecicisiniDoldur();
+        const yeniListe = okulSinifVerisi[sinif].filter((_, i) => i !== index);
+        db.ref(`okul_sinif_verisi/${sinif}`).set(yeniListe);
       }
     }
 
@@ -2250,7 +2271,7 @@
 
     window.onload = function() {
       try {
-        const oturum = localStorage.getItem('oturum_kullanici');
+        const oturum = sessionStorage.getItem('oturum_kullanici');
         if (oturum) {
           aktifKullanici = JSON.parse(oturum);
           document.getElementById('login-overlay').style.display = 'none';
@@ -2289,13 +2310,8 @@
           izinBit.value = bugunStr;
         }
 
-        rehabilitasyonTablosunuDoldur();
-        izinleriGoster();
-        ogrencileriYukle();
-        devamsizlariGuncelle();
-        dogumGunleriniHesapla();
-        kritikRiskliOgrencileriGoster();
-        servisModulunuGuncelle();
+        // Firebase Dinleyicisini Başlat
+        firebaseSenkronizasyonunuBaslat();
 
         setTimeout(() => {
           pwaModalGoster();
