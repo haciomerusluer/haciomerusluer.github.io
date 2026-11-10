@@ -500,7 +500,7 @@
       <div class="card" id="card-servis-yetki-paneli" style="border: 1px solid #93c5fd; background: #f8fbff;">
         <h2>
           <span>🚌 Günün Servis Nöbetçisi & Yoklama Yetkisi</span>
-          <span id="servis-yetki-rozet" class="badge badge-blue">Belirleniyor...</span>
+          <span id="servis-yetki-rozet" class="badge badge-blue">Asıl Servis Nöbetçisi</span>
         </h2>
         <div id="servis-yetki-detay" style="font-size: 0.83rem; color: #334155; line-height: 1.5;"></div>
         
@@ -929,7 +929,7 @@
     </button>
   </nav>
   <script>
-    // GÜVENLİ FIREBASE BAĞLANTISI (Offline-First Zırhlı)
+    // FIREBASE BAĞLANTISI (Güvenli Try/Catch Başlatma)
     let db = null;
     try {
       if (typeof firebase !== 'undefined') {
@@ -947,7 +947,7 @@
         db = firebase.database();
       }
     } catch (e) {
-      console.warn("Firebase başlatılamadı, yerel motor aktif:", e);
+      console.warn("Firebase başlatılamadı:", e);
     }
 
     let deferredPrompt = null;
@@ -1377,56 +1377,478 @@
       "2026-12-04": { my: "METİN YONCALIK", s1: "RAYİHA SANCAR", s2: "SEVİLAY ELMAS", s3: "BETÜL ORUÇ", z: "HİLAL EŞ DEMİR / SULTAN ERMİŞ", k1: "BELKIZ ÖLMEZ" }
     };
 
-    function firebaseSenkronizasyonunuBaslat() {
-      if (!db) return;
+    // GÜVENLİ İZİN KONTROLÜ (Dizi Korumalı)
+    function isimIzinliMi(adSoyad, tarihStr) {
+      if (!adSoyad || !tarihStr) return false;
       try {
-        db.ref("okul_sinif_verisi").on("value", snapshot => {
-          const val = snapshot.val();
-          if (val) {
-            okulSinifVerisi = val;
-            ogrencileriYukle();
-            devamsizlariGuncelle();
-            dogumGunleriniHesapla();
-            kritikRiskliOgrencileriGoster();
-            detayOgrenciSecicisiniDoldur();
-          }
-        });
-
-        db.ref("okul_sinif_yoklamalar").on("value", snapshot => {
-          gunlukYoklamalar = snapshot.val() || {};
-          ogrencileriYukle();
-          devamsizlariGuncelle();
-        });
-
-        db.ref("okul_rehab_listesi").on("value", snapshot => {
-          const val = snapshot.val();
-          if (val) {
-            rehabListesi = val;
-            rehabilitasyonTablosunuDoldur();
-          }
-        });
-
-        db.ref("okul_izinler").on("value", snapshot => {
-          izinler = snapshot.val() || [];
-          izinleriGoster();
-          const seciliNobetTarih = document.getElementById('nobet-tarih-secici').value;
-          if (seciliNobetTarih) tariheGoreNobetYukle(seciliNobetTarih);
-          servisModulunuGuncelle();
-        });
-
-        db.ref("okul_servis_yoklamalar").on("value", snapshot => {
-          servisYoklamaKayitlari = snapshot.val() || {};
-          servisModulunuGuncelle();
-        });
-
-        db.ref("okul_servis_atamalar").on("value", snapshot => {
-          servisYedekAtamalar = snapshot.val() || {};
-          servisModulunuGuncelle();
+        const t = new Date(tarihStr).getTime();
+        const liste = Array.isArray(izinler) ? izinler : Object.values(izinler || {});
+        return liste.some(izin => {
+          if (!izin || !izin.ad || !izin.baslangic || !izin.bitis) return false;
+          const bas = new Date(izin.baslangic).getTime();
+          const bit = new Date(izin.bitis).getTime();
+          const isimEslesiyor = adSoyad.toLocaleLowerCase('tr-TR').includes(izin.ad.toLocaleLowerCase('tr-TR'));
+          return isimEslesiyor && (t >= bas && t <= bit);
         });
       } catch (err) {
-        console.error("Firebase dinleme hatası:", err);
+        return false;
       }
     }
+
+    function gununServisYetkilisiniBul(tarihStr) {
+      try {
+        if (servisYedekAtamalar && servisYedekAtamalar[tarihStr]) {
+          return {
+            hocaUsername: servisYedekAtamalar[tarihStr].username,
+            hocaAd: servisYedekAtamalar[tarihStr].ad,
+            tip: "Yedek Görevlendirme"
+          };
+        }
+
+        const nobetData = nobetVeritabani[tarihStr];
+        if (!nobetData || !nobetData.s1) {
+          return { hocaUsername: "", hocaAd: "Nöbetçi Bulunamadı", tip: "Nöbet Kaydı Yok" };
+        }
+
+        const hocaAd = nobetData.s1;
+        let matchedUsername = "";
+        for (const [u, val] of Object.entries(KULLANICILAR)) {
+          if (hocaAd.toLocaleLowerCase('tr-TR').includes(val.ad.toLocaleLowerCase('tr-TR')) ||
+              val.ad.toLocaleLowerCase('tr-TR').includes(hocaAd.toLocaleLowerCase('tr-TR'))) {
+            matchedUsername = u;
+            break;
+          }
+        }
+
+        const izinli = isimIzinliMi(hocaAd, tarihStr);
+        return {
+          hocaUsername: matchedUsername,
+          hocaAd: hocaAd,
+          izinliMi: izinli,
+          tip: izinli ? "Nöbetçi İzinli / Raporlu!" : "Asıl Servis Nöbetçisi"
+        };
+      } catch (e) {
+        return { hocaUsername: "", hocaAd: "Hata", tip: "Belirlenemedi" };
+      }
+    }
+
+    function nobetBadgeHazirla(isimMetni, tarihStr) {
+      if (!isimMetni) return '';
+      try {
+        const parcalar = isimMetni.split('/').map(p => p.trim());
+        let html = '';
+        parcalar.forEach((ad, i) => {
+          const izinli = isimIzinliMi(ad, tarihStr);
+          if (i > 0) html += ' / ';
+          html += `<span class="badge ${izinli ? 'badge-red' : 'badge-blue'}">${ad}</span>`;
+          if (izinli) html += ` <span class="badge-alert">⚠️ İZİNLİ/RAPORLU</span>`;
+        });
+        return html;
+      } catch (err) {
+        return `<span class="badge badge-blue">${isimMetni}</span>`;
+      }
+    }
+
+    function tariheGoreNobetYukle(tarihStr) {
+      const container = document.getElementById('nobet-listesi');
+      const etiket = document.getElementById('nobet-tarih-etiket');
+      if (!container || !etiket) return;
+
+      try {
+        const d = new Date(tarihStr);
+        etiket.innerText = d.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      } catch (e) {
+        etiket.innerText = tarihStr;
+      }
+
+      const veri = nobetVeritabani[tarihStr];
+      if (!veri) {
+        container.innerHTML = `<div style="padding: 1.5rem 0; text-align: center; color: var(--text-muted); font-size: 0.88rem;">Bu tarih için nöbet kaydı bulunmamaktadır.</div>`;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="list-item"><div><div class="list-title">Nöbetçi Müdür Yrd.</div><div class="list-subtitle">Genel Düzen</div></div><div>${nobetBadgeHazirla(veri.my, tarihStr)}</div></div>
+        <div class="list-item"><div><div class="list-title">Servis Nöbeti & Bahçe</div><div class="list-subtitle">Öğrenci Giriş/Çıkış</div></div><div>${nobetBadgeHazirla(veri.s1, tarihStr)}</div></div>
+        <div class="list-item"><div><div class="list-title">Okul Bahçesi-2 / Bodrum Kat</div><div class="list-subtitle">Öğle Arası Bodrum Nöbeti</div></div><div>${nobetBadgeHazirla(veri.s2, tarihStr)}</div></div>
+        <div class="list-item"><div><div class="list-title">Bodrum Kat / Yemekhane</div><div class="list-subtitle">Öğle Arası Yemekhane Kontrol</div></div><div>${nobetBadgeHazirla(veri.s3, tarihStr)}</div></div>
+        <div class="list-item"><div><div class="list-title">Zemin Kat (Kuzey & Güney)</div><div class="list-subtitle">Zemin Kat Koridorları</div></div><div>${nobetBadgeHazirla(veri.z, tarihStr)}</div></div>
+        <div class="list-item"><div><div class="list-title">1. Kat Nöbetçisi</div><div class="list-subtitle">1. Kat Derslik ve Atölyeler</div></div><div>${nobetBadgeHazirla(veri.k1, tarihStr)}</div></div>
+      `;
+    }
+
+    function servisTarihDegistir(tarihStr) {
+      aktifServisTarihi = tarihStr;
+      servisModulunuGuncelle();
+    }
+
+    function servisModulunuGuncelle() {
+      const tarihStr = aktifServisTarihi;
+      if (!tarihStr) return;
+
+      const yetkili = gununServisYetkilisiniBul(tarihStr);
+      const isIdareci = aktifKullanici && IDARECILER.includes(aktifKullanici.user);
+      const isServisNobetcisi = aktifKullanici && (aktifKullanici.user === yetkili.hocaUsername);
+      const yoklamaGirebilir = isIdareci || isServisNobetcisi;
+
+      const rozet = document.getElementById('servis-yetki-rozet');
+      const detay = document.getElementById('servis-yetki-detay');
+      
+      if (rozet && detay) {
+        if (yetkili.izinliMi && !servisYedekAtamalar[tarihStr]) {
+          rozet.className = "badge badge-red";
+          rozet.innerText = "Nöbetçi İzinli/Raporlu";
+          detay.innerHTML = `
+            <strong>Tarih:</strong> ${tarihStr} <br>
+            <strong>Asıl Görevli:</strong> ${yetkili.hocaAd} <span class="badge-alert">⚠️ İZİNLİ/RAPORLU</span><br>
+            <span style="color:#b91c1c; font-weight:700;">Günün servis nöbetçisi izinli olduğu için idare tarafından yedek görevlendirme yapılması bekleniyor.</span>
+          `;
+        } else {
+          rozet.className = "badge badge-green";
+          rozet.innerText = yetkili.tip;
+          detay.innerHTML = `
+            <strong>Tarih:</strong> ${tarihStr} <br>
+            <strong>Yetkili Servis Nöbetçisi:</strong> <span style="font-size:0.95rem; font-weight:700; color:var(--primary);">${yetkili.hocaAd}</span><br>
+            <strong>Giriş Yetkiniz:</strong> ${yoklamaGirebilir ? '<span style="color:var(--success); font-weight:700;">✔️ Yetkilisiniz (Yoklama Alabilirsiniz)</span>' : '<span style="color:var(--text-muted);">🔒 Sadece Okuma Modu (Yoklama Girişi Kapalı)</span>'}
+          `;
+        }
+      }
+
+      const tbody = document.getElementById('servis-yoklama-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (!servisYoklamaKayitlari[tarihStr]) {
+        servisYoklamaKayitlari[tarihStr] = {};
+      }
+
+      SERVIS_LISTESI.forEach(s => {
+        const kayit = servisYoklamaKayitlari[tarihStr][s.no] || { durum: "", aciklama: "" };
+        const tr = document.createElement('tr');
+
+        let yoklamaHucresi = "";
+        let aciklamaHucresi = "";
+
+        if (yoklamaGirebilir) {
+          yoklamaHucresi = `
+            <div class="status-btns" style="justify-content:center;">
+              <button class="btn-status ${kayit.durum === 'Geldi' ? 'active-geldi' : ''}" onclick="servisDurumAyarla(${s.no}, 'Geldi')">Geldi</button>
+              <button class="btn-status ${kayit.durum === 'Gelmedi' ? 'active-yok' : ''}" onclick="servisDurumAyarla(${s.no}, 'Gelmedi')">Gelmedi</button>
+            </div>
+          `;
+          aciklamaHucresi = `
+            <input type="text" value="${kayit.aciklama || ''}" placeholder="Not ekle..." onchange="servisAciklamaKaydet(${s.no}, this.value)">
+          `;
+        } else {
+          const badgeClass = kayit.durum === 'Geldi' ? 'badge-green' : (kayit.durum === 'Gelmedi' ? 'badge-red' : 'badge-amber');
+          yoklamaHucresi = `
+            <div style="text-align:center;">
+              <span class="badge ${badgeClass}">${kayit.durum || 'Alınmadı'}</span>
+            </div>
+          `;
+          aciklamaHucresi = `<span style="font-size:0.75rem; color:#475569;">${kayit.aciklama || '-'}</span>`;
+        }
+
+        tr.innerHTML = `
+          <td><strong>${s.no}</strong></td>
+          <td><div style="font-weight:600; font-size:0.8rem;">${s.hat}</div><div style="font-size:0.7rem; color:var(--text-muted);">${s.firma}</div></td>
+          <td><span class="badge badge-blue">${s.plaka}</span></td>
+          <td>${s.sofor}</td>
+          <td>${s.rehber}</td>
+          <td>${yoklamaHucresi}</td>
+          <td>${aciklamaHucresi}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function servisDurumAyarla(servisNo, durum) {
+      const tarihStr = aktifServisTarihi;
+      if (!servisYoklamaKayitlari[tarihStr]) servisYoklamaKayitlari[tarihStr] = {};
+      if (!servisYoklamaKayitlari[tarihStr][servisNo]) servisYoklamaKayitlari[tarihStr][servisNo] = { durum: "", aciklama: "" };
+
+      const mevcut = servisYoklamaKayitlari[tarihStr][servisNo].durum;
+      const yeniDurum = (mevcut === durum) ? "" : durum;
+      servisYoklamaKayitlari[tarihStr][servisNo].durum = yeniDurum;
+      servisModulunuGuncelle();
+
+      if (db) {
+        db.ref(`okul_servis_yoklamalar/${tarihStr}/${servisNo}/durum`).set(yeniDurum);
+      }
+    }
+
+    function servisAciklamaKaydet(servisNo, metin) {
+      const tarihStr = aktifServisTarihi;
+      if (!servisYoklamaKayitlari[tarihStr]) servisYoklamaKayitlari[tarihStr] = {};
+      if (!servisYoklamaKayitlari[tarihStr][servisNo]) servisYoklamaKayitlari[tarihStr][servisNo] = { durum: "", aciklama: "" };
+
+      servisYoklamaKayitlari[tarihStr][servisNo].aciklama = metin;
+      if (db) {
+        db.ref(`okul_servis_yoklamalar/${tarihStr}/${servisNo}/aciklama`).set(metin);
+      }
+    }
+
+    function yedekServisHocaSecicisiniDoldur() {
+      const select = document.getElementById('yedek-servis-hoca-sec');
+      if (!select) return;
+      select.innerHTML = '<option value="">-- Öğretmen Seçiniz --</option>';
+      for (const [u, val] of Object.entries(KULLANICILAR)) {
+        const opt = document.createElement('option');
+        opt.value = u;
+        opt.innerText = val.ad;
+        select.appendChild(opt);
+      }
+    }
+
+    function yedekServisNobetcisiAta() {
+      const select = document.getElementById('yedek-servis-hoca-sec');
+      const u = select.value;
+      if (!u) return alert("Lütfen görevlendirilecek öğretmeni seçin.");
+
+      const hoca = KULLANICILAR[u];
+      if (!servisYedekAtamalar) servisYedekAtamalar = {};
+      servisYedekAtamalar[aktifServisTarihi] = { username: u, ad: hoca.ad };
+      servisModulunuGuncelle();
+
+      if (db) {
+        db.ref(`okul_servis_atamalar/${aktifServisTarihi}`).set({ username: u, ad: hoca.ad });
+      }
+      alert(`${hoca.ad} öğretmeni ${aktifServisTarihi} tarihi için yedek servis nöbetçisi olarak görevlendirildi.`);
+    }
+
+    function yedekServisNobetcisiSifirla() {
+      if (servisYedekAtamalar && servisYedekAtamalar[aktifServisTarihi]) {
+        if (confirm("Bu tarih için yapılan yedek görevlendirmeyi iptal etmek istiyor musunuz?")) {
+          delete servisYedekAtamalar[aktifServisTarihi];
+          servisModulunuGuncelle();
+          if (db) {
+            db.ref(`okul_servis_atamalar/${aktifServisTarihi}`).remove();
+          }
+        }
+      }
+    }
+
+    function rehabilitasyonTablosunuDoldur() {
+      const tbody = document.getElementById('rehab-tablo-body');
+      const rozet = document.getElementById('rehab-toplam-sayi');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const liste = Array.isArray(rehabListesi) ? rehabListesi : Object.values(rehabListesi || {});
+      if (rozet) rozet.innerText = `${liste.length} Öğrenci`;
+
+      const isIdareci = aktifKullanici && IDARECILER.includes(aktifKullanici.user);
+
+      liste.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${item.ad}</strong></td>
+          <td><span class="badge badge-blue">${item.sinif}</span></td>
+          <td>${item.gun}</td>
+          <td>${item.saat}</td>
+          <td><span class="badge badge-green">${item.kurum}</span></td>
+          <td class="admin-only" style="text-align:center;">
+            ${isIdareci ? `<button class="btn-delete" style="margin:0; padding:2px 6px;" onclick="rehabOgrenciSil(${index})">✕ Sil</button>` : ''}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function yeniRehabOgrenciEkle() {
+      const ad = document.getElementById('yeni-rehab-ad').value.trim();
+      const sinif = document.getElementById('yeni-rehab-sinif').value.trim();
+      const gun = document.getElementById('yeni-rehab-gun').value.trim();
+      const saat = document.getElementById('yeni-rehab-saat').value.trim();
+      const kurum = document.getElementById('yeni-rehab-kurum').value.trim();
+
+      if (!ad || !sinif || !gun || !saat || !kurum) {
+        return alert("Lütfen rehabilitasyon öğrencisinin tüm bilgilerini eksiksiz doldurun.");
+      }
+
+      if (!Array.isArray(rehabListesi)) rehabListesi = Object.values(rehabListesi || {});
+      rehabListesi.push({
+        ad: ad.toLocaleUpperCase('tr-TR'),
+        sinif: sinif.toLocaleUpperCase('tr-TR'),
+        gun: gun,
+        saat: saat,
+        kurum: kurum.toLocaleUpperCase('tr-TR')
+      });
+
+      rehabilitasyonTablosunuDoldur();
+      if (db) {
+        db.ref("okul_rehab_listesi").set(rehabListesi);
+      }
+
+      document.getElementById('yeni-rehab-ad').value = '';
+      document.getElementById('yeni-rehab-sinif').value = '';
+      document.getElementById('yeni-rehab-gun').value = '';
+      document.getElementById('yeni-rehab-saat').value = '';
+      document.getElementById('yeni-rehab-kurum').value = '';
+      alert(`${ad} isimli öğrenci rehabilitasyon takip çizelgesine eklendi.`);
+    }
+
+    function rehabOgrenciSil(index) {
+      if (!Array.isArray(rehabListesi)) rehabListesi = Object.values(rehabListesi || {});
+      const ogr = rehabListesi[index];
+      if (confirm(`${ogr.ad} isimli öğrenciyi rehabilitasyon çizelgesinden silmek istediğinize emin misiniz?`)) {
+        rehabListesi.splice(index, 1);
+        rehabilitasyonTablosunuDoldur();
+        if (db) {
+          db.ref("okul_rehab_listesi").set(rehabListesi);
+        }
+      }
+    }
+
+    function yetkiliSiniflariGetir() {
+      if (!aktifKullanici) {
+        return Object.keys(SINIF_YETKILERI);
+      }
+      const user = aktifKullanici.user;
+      if (IDARECILER.includes(user)) {
+        return Object.keys(SINIF_YETKILERI);
+      }
+      let izinli = [];
+      for (const [sinif, hocalar] of Object.entries(SINIF_YETKILERI)) {
+        if (hocalar.includes(user)) {
+          izinli.push(sinif);
+        }
+      }
+      return (izinli.length > 0) ? izinli : Object.keys(SINIF_YETKILERI);
+    }
+
+    function sinifSecicisiniDoldur() {
+      const select = document.getElementById('sinif-sec');
+      if (!select) return;
+
+      const izinliSiniflar = yetkiliSiniflariGetir();
+      const seciliEski = select.value;
+      select.innerHTML = '<option value="">-- Sınıf Seçiniz --</option>';
+
+      izinliSiniflar.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.innerText = formatSinifAdi(s);
+        if (s === seciliEski) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    function detayOgrenciSecicisiniDoldur() {
+      const select = document.getElementById('detay-ogr-sec');
+      if (!select) return;
+
+      const izinliSiniflar = yetkiliSiniflariGetir();
+      select.innerHTML = '<option value="">-- Öğrenci Seçiniz --</option>';
+
+      izinliSiniflar.forEach(sinifKey => {
+        const ogrenciler = okulSinifVerisi[sinifKey] || [];
+        if (ogrenciler.length > 0) {
+          const group = document.createElement('optgroup');
+          group.label = formatSinifAdi(sinifKey);
+          ogrenciler.forEach(ogr => {
+            const opt = document.createElement('option');
+            opt.value = `${sinifKey}___${ogr.no}`;
+            opt.innerText = `${ogr.no} - ${ogr.ad}`;
+            select.appendChild(opt);
+          });
+          select.appendChild(group);
+        }
+      });
+    }
+
+    function yetkileriUygula() {
+      const isIdareci = aktifKullanici && IDARECILER.includes(aktifKullanici.user);
+      document.querySelectorAll('.admin-only').forEach(el => {
+        el.style.display = isIdareci ? 'block' : 'none';
+      });
+      document.querySelectorAll('.admin-btn-delete').forEach(el => {
+        el.style.display = isIdareci ? 'inline-block' : 'none';
+      });
+
+      sinifSecicisiniDoldur();
+      detayOgrenciSecicisiniDoldur();
+      yedekServisHocaSecicisiniDoldur();
+      rehabilitasyonTablosunuDoldur();
+      servisModulunuGuncelle();
+    }
+
+    function girisYap() {
+      const uInput = document.getElementById('login-user').value.trim().toLowerCase();
+      const pInput = document.getElementById('login-pass').value.trim();
+      const err = document.getElementById('login-error-msg');
+
+      if (!uInput || !pInput) {
+        err.innerText = "Lütfen kullanıcı adı ve şifrenizi girin.";
+        err.style.display = "block";
+        return;
+      }
+
+      const kullanici = KULLANICILAR[uInput];
+      if (!kullanici) {
+        err.innerText = "Kullanıcı adı bulunamadı!";
+        err.style.display = "block";
+        return;
+      }
+
+      if (pInput === kullanici.tc) {
+        err.style.display = "none";
+        aktifKullanici = { user: uInput, ad: kullanici.ad };
+        localStorage.setItem('oturum_kullanici', JSON.stringify(aktifKullanici));
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('kullanici-karsilama').innerText = `Hoş geldiniz, ${kullanici.ad}`;
+        
+        varsayilanTarihlereGec();
+        yetkileriUygula();
+        ogrencileriYukle();
+      } else {
+        err.innerText = "Şifre (T.C. Kimlik No) hatalı!";
+        err.style.display = "block";
+      }
+    }
+
+    function cikisYap() {
+      if (confirm("Oturumu kapatmak istediğinize emin misiniz?")) {
+        localStorage.removeItem('oturum_kullanici');
+        aktifKullanici = null;
+        document.getElementById('login-user').value = '';
+        document.getElementById('login-pass').value = '';
+        document.getElementById('login-error-msg').style.display = 'none';
+        document.getElementById('login-overlay').style.display = 'flex';
+        yetkileriUygula();
+      }
+    }
+
+    function sekmeDegistir(hedefId) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      
+      const secilenTab = document.getElementById(hedefId);
+      const secilenBtn = document.querySelector(`.nav-item[data-target="${hedefId}"]`);
+      
+      if (secilenTab) secilenTab.classList.add('active');
+      if (secilenBtn) secilenBtn.classList.add('active');
+      window.scrollTo(0, 0);
+
+      if (hedefId === 'dogumgunu') dogumGunleriniHesapla();
+      if (hedefId === 'devamsizlik') {
+        sinifSecicisiniDoldur();
+        kritikRiskliOgrencileriGoster();
+        devamsizlariGuncelle();
+      }
+      if (hedefId === 'servis-rehab') {
+        servisModulunuGuncelle();
+        rehabilitasyonTablosunuDoldur();
+      }
+    }
+
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const hedef = this.getAttribute('data-target');
+        sekmeDegistir(hedef);
+      });
+    });
 
     function yoklamaTarihDegistir(tarihStr) {
       aktifYoklamaTarihi = tarihStr;
@@ -1891,464 +2313,19 @@
       });
     }
 
-    function isimIzinliMi(adSoyad, tarihStr) {
-      if (!adSoyad || !tarihStr) return false;
-      const t = new Date(tarihStr).getTime();
-      return izinler.some(izin => {
-        const bas = new Date(izin.baslangic).getTime();
-        const bit = new Date(izin.bitis).getTime();
-        const isimEslesiyor = adSoyad.toLocaleLowerCase('tr-TR').includes(izin.ad.toLocaleLowerCase('tr-TR'));
-        return isimEslesiyor && (t >= bas && t <= bit);
-      });
-    }
-
-    function gununServisYetkilisiniBul(tarihStr) {
-      if (servisYedekAtamalar[tarihStr]) {
-        return {
-          hocaUsername: servisYedekAtamalar[tarihStr].username,
-          hocaAd: servisYedekAtamalar[tarihStr].ad,
-          tip: "Yedek Görevlendirme (İdarece Atandı)"
-        };
-      }
-
-      const nobetData = nobetVeritabani[tarihStr];
-      if (!nobetData || !nobetData.s1) {
-        return { hocaUsername: "", hocaAd: "Belirlenmedi", tip: "Nöbet Kaydı Yok" };
-      }
-
-      const hocaAd = nobetData.s1;
-      let matchedUsername = "";
-      for (const [u, val] of Object.entries(KULLANICILAR)) {
-        if (hocaAd.toLocaleLowerCase('tr-TR').includes(val.ad.toLocaleLowerCase('tr-TR')) ||
-            val.ad.toLocaleLowerCase('tr-TR').includes(hocaAd.toLocaleLowerCase('tr-TR'))) {
-          matchedUsername = u;
-          break;
-        }
-      }
-
-      const izinli = isimIzinliMi(hocaAd, tarihStr);
-      return {
-        hocaUsername: matchedUsername,
-        hocaAd: hocaAd,
-        izinliMi: izinli,
-        tip: izinli ? "Asıl Nöbetçi İzinli / Raporlu!" : "Asıl Servis Nöbetçisi"
-      };
-    }
-
-    function servisTarihDegistir(tarihStr) {
-      aktifServisTarihi = tarihStr;
-      servisModulunuGuncelle();
-    }
-
-    function servisModulunuGuncelle() {
-      const tarihStr = aktifServisTarihi;
-      if (!tarihStr) return;
-      const yetkili = gununServisYetkilisiniBul(tarihStr);
-      const isIdareci = aktifKullanici && IDARECILER.includes(aktifKullanici.user);
-      const isServisNobetcisi = aktifKullanici && (aktifKullanici.user === yetkili.hocaUsername);
-      const yoklamaGirebilir = isIdareci || isServisNobetcisi;
-
-      const rozet = document.getElementById('servis-yetki-rozet');
-      const detay = document.getElementById('servis-yetki-detay');
-      
-      if (rozet && detay) {
-        if (yetkili.izinliMi && !servisYedekAtamalar[tarihStr]) {
-          rozet.className = "badge badge-red";
-          rozet.innerText = "Nöbetçi İzinli/Raporlu";
-          detay.innerHTML = `
-            <strong>Tarih:</strong> ${tarihStr} <br>
-            <strong>Asıl Görevli:</strong> ${yetkili.hocaAd} <span class="badge-alert">⚠️ İZİNLİ/RAPORLU</span><br>
-            <span style="color:#b91c1c; font-weight:700;">Günün servis nöbetçisi izinli olduğu için idare tarafından yedek görevlendirme yapılması bekleniyor.</span>
-          `;
-        } else {
-          rozet.className = "badge badge-green";
-          rozet.innerText = yetkili.tip;
-          detay.innerHTML = `
-            <strong>Tarih:</strong> ${tarihStr} <br>
-            <strong>Yetkili Servis Nöbetçisi:</strong> <span style="font-size:0.95rem; font-weight:700; color:var(--primary);">${yetkili.hocaAd}</span><br>
-            <strong>Giriş Yetkiniz:</strong> ${yoklamaGirebilir ? '<span style="color:var(--success); font-weight:700;">✔️ Yetkilisiniz (Yoklama Alabilirsiniz)</span>' : '<span style="color:var(--text-muted);">🔒 Sadece Okuma Modu (Yoklama Girişi Kapalı)</span>'}
-          `;
-        }
-      }
-
-      const tbody = document.getElementById('servis-yoklama-tbody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-
-      if (!servisYoklamaKayitlari[tarihStr]) {
-        servisYoklamaKayitlari[tarihStr] = {};
-      }
-
-      SERVIS_LISTESI.forEach(s => {
-        const kayit = servisYoklamaKayitlari[tarihStr][s.no] || { durum: "", aciklama: "" };
-        const tr = document.createElement('tr');
-
-        let yoklamaHucresi = "";
-        let aciklamaHucresi = "";
-
-        if (yoklamaGirebilir) {
-          yoklamaHucresi = `
-            <div class="status-btns" style="justify-content:center;">
-              <button class="btn-status ${kayit.durum === 'Geldi' ? 'active-geldi' : ''}" onclick="servisDurumAyarla(${s.no}, 'Geldi')">Geldi</button>
-              <button class="btn-status ${kayit.durum === 'Gelmedi' ? 'active-yok' : ''}" onclick="servisDurumAyarla(${s.no}, 'Gelmedi')">Gelmedi</button>
-            </div>
-          `;
-          aciklamaHucresi = `
-            <input type="text" value="${kayit.aciklama || ''}" placeholder="Not ekle..." onchange="servisAciklamaKaydet(${s.no}, this.value)">
-          `;
-        } else {
-          const badgeClass = kayit.durum === 'Geldi' ? 'badge-green' : (kayit.durum === 'Gelmedi' ? 'badge-red' : 'badge-amber');
-          yoklamaHucresi = `
-            <div style="text-align:center;">
-              <span class="badge ${badgeClass}">${kayit.durum || 'Alınmadı'}</span>
-            </div>
-          `;
-          aciklamaHucresi = `<span style="font-size:0.75rem; color:#475569;">${kayit.aciklama || '-'}</span>`;
-        }
-
-        tr.innerHTML = `
-          <td><strong>${s.no}</strong></td>
-          <td><div style="font-weight:600; font-size:0.8rem;">${s.hat}</div><div style="font-size:0.7rem; color:var(--text-muted);">${s.firma}</div></td>
-          <td><span class="badge badge-blue">${s.plaka}</span></td>
-          <td>${s.sofor}</td>
-          <td>${s.rehber}</td>
-          <td>${yoklamaHucresi}</td>
-          <td>${aciklamaHucresi}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function servisDurumAyarla(servisNo, durum) {
-      const tarihStr = aktifServisTarihi;
-      if (!servisYoklamaKayitlari[tarihStr]) servisYoklamaKayitlari[tarihStr] = {};
-      if (!servisYoklamaKayitlari[tarihStr][servisNo]) servisYoklamaKayitlari[tarihStr][servisNo] = { durum: "", aciklama: "" };
-
-      const mevcut = servisYoklamaKayitlari[tarihStr][servisNo].durum;
-      const yeniDurum = (mevcut === durum) ? "" : durum;
-      servisYoklamaKayitlari[tarihStr][servisNo].durum = yeniDurum;
-      servisModulunuGuncelle();
-
-      if (db) {
-        db.ref(`okul_servis_yoklamalar/${tarihStr}/${servisNo}/durum`).set(yeniDurum);
-      }
-    }
-
-    function servisAciklamaKaydet(servisNo, metin) {
-      const tarihStr = aktifServisTarihi;
-      if (!servisYoklamaKayitlari[tarihStr]) servisYoklamaKayitlari[tarihStr] = {};
-      if (!servisYoklamaKayitlari[tarihStr][servisNo]) servisYoklamaKayitlari[tarihStr][servisNo] = { durum: "", aciklama: "" };
-
-      servisYoklamaKayitlari[tarihStr][servisNo].aciklama = metin;
-      if (db) {
-        db.ref(`okul_servis_yoklamalar/${tarihStr}/${servisNo}/aciklama`).set(metin);
-      }
-    }
-
-    function yedekServisHocaSecicisiniDoldur() {
-      const select = document.getElementById('yedek-servis-hoca-sec');
-      if (!select) return;
-      select.innerHTML = '<option value="">-- Öğretmen Seçiniz --</option>';
-      for (const [u, val] of Object.entries(KULLANICILAR)) {
-        const opt = document.createElement('option');
-        opt.value = u;
-        opt.innerText = val.ad;
-        select.appendChild(opt);
-      }
-    }
-
-    function yedekServisNobetcisiAta() {
-      const select = document.getElementById('yedek-servis-hoca-sec');
-      const u = select.value;
-      if (!u) return alert("Lütfen görevlendirilecek öğretmeni seçin.");
-
-      const hoca = KULLANICILAR[u];
-      servisYedekAtamalar[aktifServisTarihi] = { username: u, ad: hoca.ad };
-      servisModulunuGuncelle();
-
-      if (db) {
-        db.ref(`okul_servis_atamalar/${aktifServisTarihi}`).set({ username: u, ad: hoca.ad });
-      }
-      alert(`${hoca.ad} öğretmeni ${aktifServisTarihi} tarihi için yedek servis nöbetçisi olarak görevlendirildi.`);
-    }
-
-    function yedekServisNobetcisiSifirla() {
-      if (servisYedekAtamalar[aktifServisTarihi]) {
-        if (confirm("Bu tarih için yapılan yedek görevlendirmeyi iptal etmek istiyor musunuz?")) {
-          delete servisYedekAtamalar[aktifServisTarihi];
-          servisModulunuGuncelle();
-          if (db) {
-            db.ref(`okul_servis_atamalar/${aktifServisTarihi}`).remove();
-          }
-        }
-      }
-    }
-
-    function rehabilitasyonTablosunuDoldur() {
-      const tbody = document.getElementById('rehab-tablo-body');
-      const rozet = document.getElementById('rehab-toplam-sayi');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-
-      if (rozet) rozet.innerText = `${rehabListesi.length} Öğrenci`;
-
-      const isIdareci = aktifKullanici && IDARECILER.includes(aktifKullanici.user);
-
-      rehabListesi.forEach((item, index) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><strong>${item.ad}</strong></td>
-          <td><span class="badge badge-blue">${item.sinif}</span></td>
-          <td>${item.gun}</td>
-          <td>${item.saat}</td>
-          <td><span class="badge badge-green">${item.kurum}</span></td>
-          <td class="admin-only" style="text-align:center;">
-            ${isIdareci ? `<button class="btn-delete" style="margin:0; padding:2px 6px;" onclick="rehabOgrenciSil(${index})">✕ Sil</button>` : ''}
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function yeniRehabOgrenciEkle() {
-      const ad = document.getElementById('yeni-rehab-ad').value.trim();
-      const sinif = document.getElementById('yeni-rehab-sinif').value.trim();
-      const gun = document.getElementById('yeni-rehab-gun').value.trim();
-      const saat = document.getElementById('yeni-rehab-saat').value.trim();
-      const kurum = document.getElementById('yeni-rehab-kurum').value.trim();
-
-      if (!ad || !sinif || !gun || !saat || !kurum) {
-        return alert("Lütfen rehabilitasyon öğrencisinin tüm bilgilerini eksiksiz doldurun.");
-      }
-
-      rehabListesi.push({
-        ad: ad.toLocaleUpperCase('tr-TR'),
-        sinif: sinif.toLocaleUpperCase('tr-TR'),
-        gun: gun,
-        saat: saat,
-        kurum: kurum.toLocaleUpperCase('tr-TR')
-      });
-
-      rehabilitasyonTablosunuDoldur();
-      if (db) {
-        db.ref("okul_rehab_listesi").set(rehabListesi);
-      }
-
-      document.getElementById('yeni-rehab-ad').value = '';
-      document.getElementById('yeni-rehab-sinif').value = '';
-      document.getElementById('yeni-rehab-gun').value = '';
-      document.getElementById('yeni-rehab-saat').value = '';
-      document.getElementById('yeni-rehab-kurum').value = '';
-      alert(`${ad} isimli öğrenci rehabilitasyon takip çizelgesine eklendi.`);
-    }
-
-    function rehabOgrenciSil(index) {
-      const ogr = rehabListesi[index];
-      if (confirm(`${ogr.ad} isimli öğrenciyi rehabilitasyon çizelgesinden silmek istediğinize emin misiniz?`)) {
-        rehabListesi.splice(index, 1);
-        rehabilitasyonTablosunuDoldur();
-        if (db) {
-          db.ref("okul_rehab_listesi").set(rehabListesi);
-        }
-      }
-    }
-
-    function yetkiliSiniflariGetir() {
-      if (!aktifKullanici) {
-        return Object.keys(SINIF_YETKILERI);
-      }
-      const user = aktifKullanici.user;
-      if (IDARECILER.includes(user)) {
-        return Object.keys(SINIF_YETKILERI);
-      }
-      let izinli = [];
-      for (const [sinif, hocalar] of Object.entries(SINIF_YETKILERI)) {
-        if (hocalar.includes(user)) {
-          izinli.push(sinif);
-        }
-      }
-      return (izinli.length > 0) ? izinli : Object.keys(SINIF_YETKILERI);
-    }
-
-    function sinifSecicisiniDoldur() {
-      const select = document.getElementById('sinif-sec');
-      if (!select) return;
-
-      const izinliSiniflar = yetkiliSiniflariGetir();
-      const seciliEski = select.value;
-      select.innerHTML = '<option value="">-- Sınıf Seçiniz --</option>';
-
-      izinliSiniflar.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s;
-        opt.innerText = formatSinifAdi(s);
-        if (s === seciliEski) opt.selected = true;
-        select.appendChild(opt);
-      });
-    }
-
-    function detayOgrenciSecicisiniDoldur() {
-      const select = document.getElementById('detay-ogr-sec');
-      if (!select) return;
-
-      const izinliSiniflar = yetkiliSiniflariGetir();
-      select.innerHTML = '<option value="">-- Öğrenci Seçiniz --</option>';
-
-      izinliSiniflar.forEach(sinifKey => {
-        const ogrenciler = okulSinifVerisi[sinifKey] || [];
-        if (ogrenciler.length > 0) {
-          const group = document.createElement('optgroup');
-          group.label = formatSinifAdi(sinifKey);
-          ogrenciler.forEach(ogr => {
-            const opt = document.createElement('option');
-            opt.value = `${sinifKey}___${ogr.no}`;
-            opt.innerText = `${ogr.no} - ${ogr.ad}`;
-            select.appendChild(opt);
-          });
-          select.appendChild(group);
-        }
-      });
-    }
-
-    function yetkileriUygula() {
-      const isIdareci = aktifKullanici && IDARECILER.includes(aktifKullanici.user);
-      document.querySelectorAll('.admin-only').forEach(el => {
-        el.style.display = isIdareci ? 'block' : 'none';
-      });
-      document.querySelectorAll('.admin-btn-delete').forEach(el => {
-        el.style.display = isIdareci ? 'inline-block' : 'none';
-      });
-
-      sinifSecicisiniDoldur();
-      detayOgrenciSecicisiniDoldur();
-      yedekServisHocaSecicisiniDoldur();
-      rehabilitasyonTablosunuDoldur();
-      servisModulunuGuncelle();
-    }
-
-    function girisYap() {
-      const uInput = document.getElementById('login-user').value.trim().toLowerCase();
-      const pInput = document.getElementById('login-pass').value.trim();
-      const err = document.getElementById('login-error-msg');
-
-      if (!uInput || !pInput) {
-        err.innerText = "Lütfen kullanıcı adı ve şifrenizi girin.";
-        err.style.display = "block";
-        return;
-      }
-
-      const kullanici = KULLANICILAR[uInput];
-      if (!kullanici) {
-        err.innerText = "Kullanıcı adı bulunamadı!";
-        err.style.display = "block";
-        return;
-      }
-
-      if (pInput === kullanici.tc) {
-        err.style.display = "none";
-        aktifKullanici = { user: uInput, ad: kullanici.ad };
-        localStorage.setItem('oturum_kullanici', JSON.stringify(aktifKullanici));
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('kullanici-karsilama').innerText = `Hoş geldiniz, ${kullanici.ad}`;
-        
-        varsayilanTarihlereGec();
-        yetkileriUygula();
-        ogrencileriYukle();
-      } else {
-        err.innerText = "Şifre (T.C. Kimlik No) hatalı!";
-        err.style.display = "block";
-      }
-    }
-
-    function cikisYap() {
-      if (confirm("Oturumu kapatmak istediğinize emin misiniz?")) {
-        localStorage.removeItem('oturum_kullanici');
-        aktifKullanici = null;
-        document.getElementById('login-user').value = '';
-        document.getElementById('login-pass').value = '';
-        document.getElementById('login-error-msg').style.display = 'none';
-        document.getElementById('login-overlay').style.display = 'flex';
-        yetkileriUygula();
-      }
-    }
-
-    function sekmeDegistir(hedefId) {
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-      
-      const secilenTab = document.getElementById(hedefId);
-      const secilenBtn = document.querySelector(`.nav-item[data-target="${hedefId}"]`);
-      
-      if (secilenTab) secilenTab.classList.add('active');
-      if (secilenBtn) secilenBtn.classList.add('active');
-      window.scrollTo(0, 0);
-
-      if (hedefId === 'dogumgunu') dogumGunleriniHesapla();
-      if (hedefId === 'devamsizlik') {
-        sinifSecicisiniDoldur();
-        kritikRiskliOgrencileriGoster();
-        devamsizlariGuncelle();
-      }
-      if (hedefId === 'servis-rehab') {
-        servisModulunuGuncelle();
-        rehabilitasyonTablosunuDoldur();
-      }
-    }
-
-    document.querySelectorAll('.nav-item').forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        const hedef = this.getAttribute('data-target');
-        sekmeDegistir(hedef);
-      });
-    });
-
-    function nobetBadgeHazirla(isimMetni, tarihStr) {
-      const parcalar = isimMetni.split('/').map(p => p.trim());
-      let html = '';
-      parcalar.forEach((ad, i) => {
-        const izinli = isimIzinliMi(ad, tarihStr);
-        if (i > 0) html += ' / ';
-        html += `<span class="badge ${izinli ? 'badge-red' : 'badge-blue'}">${ad}</span>`;
-        if (izinli) html += ` <span class="badge-alert">⚠️ İZİNLİ/RAPORLU</span>`;
-      });
-      return html;
-    }
-
-    function tariheGoreNobetYukle(tarihStr) {
-      const container = document.getElementById('nobet-listesi');
-      const etiket = document.getElementById('nobet-tarih-etiket');
-      const d = new Date(tarihStr);
-      etiket.innerText = d.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-
-      const veri = nobetVeritabani[tarihStr];
-      if (!veri) {
-        container.innerHTML = `<div style="padding: 1.5rem 0; text-align: center; color: var(--text-muted); font-size: 0.88rem;">Bu tarih için nöbet kaydı bulunmamaktadır.</div>`;
-        return;
-      }
-
-      container.innerHTML = `
-        <div class="list-item"><div><div class="list-title">Nöbetçi Müdür Yrd.</div><div class="list-subtitle">Genel Düzen</div></div><div>${nobetBadgeHazirla(veri.my, tarihStr)}</div></div>
-        <div class="list-item"><div><div class="list-title">Servis Nöbeti & Bahçe</div><div class="list-subtitle">Öğrenci Giriş/Çıkış</div></div><div>${nobetBadgeHazirla(veri.s1, tarihStr)}</div></div>
-        <div class="list-item"><div><div class="list-title">Okul Bahçesi-2 / Bodrum Kat</div><div class="list-subtitle">Öğle Arası Bodrum Nöbeti</div></div><div>${nobetBadgeHazirla(veri.s2, tarihStr)}</div></div>
-        <div class="list-item"><div><div class="list-title">Bodrum Kat / Yemekhane</div><div class="list-subtitle">Öğle Arası Yemekhane Kontrol</div></div><div>${nobetBadgeHazirla(veri.s3, tarihStr)}</div></div>
-        <div class="list-item"><div><div class="list-title">Zemin Kat (Kuzey & Güney)</div><div class="list-subtitle">Zemin Kat Koridorları</div></div><div>${nobetBadgeHazirla(veri.z, tarihStr)}</div></div>
-        <div class="list-item"><div><div class="list-title">1. Kat Nöbetçisi</div><div class="list-subtitle">1. Kat Derslik ve Atölyeler</div></div><div>${nobetBadgeHazirla(veri.k1, tarihStr)}</div></div>
-      `;
-    }
-
     function izinleriGoster() {
       const liste = document.getElementById('izin-listesi');
       if (!liste) return;
 
-      if (izinler.length === 0) {
+      const l = Array.isArray(izinler) ? izinler : Object.values(izinler || {});
+      if (l.length === 0) {
         liste.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted);">Kayıtlı izinli/raporlu personel bulunmuyor.</p>';
         return;
       }
 
       const isIdareci = aktifKullanici && IDARECILER.includes(aktifKullanici.user);
       liste.innerHTML = '';
-      izinler.forEach((item, index) => {
+      l.forEach((item, index) => {
         const row = document.createElement('div');
         row.className = 'list-item';
         row.innerHTML = `
@@ -2374,6 +2351,7 @@
       if (!ad) return alert('Lütfen personel adını girin.');
       if (!baslangic || !bitis) return alert('Lütfen başlangıç ve bitiş tarihlerini seçin.');
 
+      if (!Array.isArray(izinler)) izinler = Object.values(izinler || {});
       izinler.push({ ad, tip, baslangic, bitis });
       izinleriGoster();
 
@@ -2386,6 +2364,7 @@
 
     function izinSil(index) {
       if (confirm('Bu izin kaydını silmek istediğinize emin misiniz?')) {
+        if (!Array.isArray(izinler)) izinler = Object.values(izinler || {});
         izinler.splice(index, 1);
         izinleriGoster();
         if (db) {
@@ -2432,7 +2411,7 @@
       try {
         varsayilanTarihlereGec();
 
-        // ÖNCE YEREL VERİLERİ ANINDA ÇİZ (Boş kalmayı engeller)
+        // 1. Önce doğrudan yerel verileri anında çiz
         sinifSecicisiniDoldur();
         detayOgrenciSecicisiniDoldur();
         rehabilitasyonTablosunuDoldur();
@@ -2441,7 +2420,7 @@
         kritikRiskliOgrencileriGoster();
         izinleriGoster();
 
-        // OTURUMU KONTROL ET
+        // 2. Oturumu denetle
         const oturum = localStorage.getItem('oturum_kullanici');
         if (oturum) {
           aktifKullanici = JSON.parse(oturum);
@@ -2452,11 +2431,14 @@
           document.getElementById('login-overlay').style.display = 'flex';
         }
 
-        document.getElementById('login-pass').addEventListener('keypress', function(e) {
-          if (e.key === 'Enter') girisYap();
-        });
+        const passInput = document.getElementById('login-pass');
+        if (passInput) {
+          passInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') girisYap();
+          });
+        }
 
-        // ARKA PLANDA CANLI FIREBASE SENKRONİZASYONUNU BAŞLAT
+        // 3. Arka planda Firebase canlı senkronizasyonunu devreye sok
         firebaseSenkronizasyonunuBaslat();
 
         setTimeout(() => {
