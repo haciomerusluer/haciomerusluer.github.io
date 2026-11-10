@@ -24,32 +24,70 @@
       --danger: #dc2626;
       --warning: #d97706;
       --pink: #db2777;
+      --green-dark: #15803d;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: var(--bg); color: var(--text); padding-bottom: 95px; }
 
-    #install-banner {
+    /* ANA EKRANA EKLEME POP-UP MODAL */
+    #pwa-modal-overlay {
       display: none;
-      background: linear-gradient(135deg, #1e3a8a, #2563eb);
-      color: white;
-      padding: 10px 14px;
-      font-size: 0.82rem;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 1000000;
       align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      justify-content: center;
+      padding: 1.25rem;
     }
-    #install-banner button {
-      background: #ffffff;
-      color: #1e3a8a;
-      border: none;
-      padding: 5px 12px;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 0.78rem;
+    .pwa-modal {
+      background: white;
+      border-radius: 18px;
+      padding: 1.5rem;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      animation: popIn 0.25s ease-out;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .pwa-modal-icon {
+      font-size: 2.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .pwa-modal h3 {
+      font-size: 1.15rem;
+      color: var(--primary);
+      margin-bottom: 0.4rem;
+    }
+    .pwa-modal p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 1.25rem;
+    }
+    .pwa-modal-btns {
+      display: flex;
+      gap: 8px;
+    }
+    .pwa-modal-btns button {
+      flex: 1;
+      padding: 0.7rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
       cursor: pointer;
+      border: none;
     }
+    .btn-pwa-install { background: var(--primary); color: white; }
+    .btn-pwa-dismiss { background: #f1f5f9; color: var(--text-muted); }
 
+    /* GİRİŞ EKRANI */
     #login-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -119,7 +157,7 @@
       justify-content: center;
       text-decoration: none;
       color: var(--text-muted);
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       flex: 1;
       height: 100%;
       cursor: pointer;
@@ -129,7 +167,7 @@
       touch-action: manipulation;
     }
     .nav-item.active { color: var(--primary-light); font-weight: 700; }
-    .nav-icon { font-size: 1.25rem; margin-bottom: 2px; pointer-events: none; }
+    .nav-icon { font-size: 1.2rem; margin-bottom: 2px; pointer-events: none; }
     .nav-item span { pointer-events: none; }
 
     .container { padding: 1rem; max-width: 600px; margin: auto; }
@@ -148,6 +186,9 @@
 
     .card-danger { border: 1px solid #fca5a5; background: #fffdfd; }
     .card-danger h2 { color: #b91c1c; }
+
+    .card-green { border: 1px solid #bbf7d0; background: #f0fdf4; }
+    .card-green h2 { color: var(--green-dark); }
 
     .birthday-card-today {
       background: linear-gradient(135deg, #fdf2f8, #fce7f3);
@@ -208,6 +249,7 @@
     .badge-amber { background: #fef3c7; color: #92400e; }
     .badge-pink { background: #fce7f3; color: #be185d; }
     .badge-purple { background: #f3e8ff; color: #6b21a8; }
+    .badge-green { background: #dcfce7; color: #15803d; }
     .badge-alert {
       display: inline-block;
       margin-top: 4px;
@@ -290,12 +332,19 @@
 </head>
 <body>
 
-  <div id="install-banner">
-    <div>
-      <span style="font-size:1.1rem; margin-right: 5px;">📲</span>
-      <strong>Uygulamayı Ana Ekrana Ekleyin</strong>
+  <!-- YENİ: MODERN ANA EKRANA EKLEME POP-UP'I -->
+  <div id="pwa-modal-overlay">
+    <div class="pwa-modal">
+      <div class="pwa-modal-icon">📲</div>
+      <h3>Ana Ekrana Ekleyin</h3>
+      <p id="pwa-modal-desc">
+        Hacı Ömer Usluer ÖEMO Okul Portalı'nı telefonunuza veya masaüstünüze uygulama olarak ekleyip tek tıkla tam ekran kullanabilirsiniz.
+      </p>
+      <div class="pwa-modal-btns">
+        <button type="button" class="btn-pwa-dismiss" onclick="pwaModalKapat()">Daha Sonra</button>
+        <button type="button" class="btn-pwa-install" id="btn-pwa-install-act" onclick="anaEkranaYukle()">Hemen Ekle</button>
+      </div>
     </div>
-    <button id="btn-install-pwa" onclick="anaEkranaYukle()">Yükle</button>
   </div>
 
   <div id="login-overlay">
@@ -435,7 +484,6 @@
           <label>Sınıf / Şube Seçiniz</label>
           <select id="sinif-sec" onchange="ogrencileriYukle()">
             <option value="">-- Sınıf Seçiniz --</option>
-            <!-- Yetkiye Göre Dinamik Olarak Doldurulacak -->
           </select>
         </div>
 
@@ -444,7 +492,7 @@
         </div>
       </div>
 
-      <!-- YENİ BÖLÜM: DETAYLI DEVAMSIZLIK TAKİBİ -->
+      <!-- DETAYLI DEVAMSIZLIK TAKİBİ -->
       <div class="card" style="border: 1px solid #bfdbfe; background: #fafcff;">
         <h2>
           <span>🔎 Detaylı Devamsızlık Takibi</span>
@@ -534,11 +582,11 @@
           <span class="badge badge-blue">2026-2027</span>
         </h2>
         <div style="font-size: 0.8rem; line-height: 1.5; color: #334155;">
-          <p><strong>Kurul Başkanı:</strong> Metin YONCALIK (Müdür Yrd.)[cite: 37, 39]</p>
-          <p><strong>Danışman Öğretmenler:</strong> Rayiha SANCAR, İsa BAYAR, Selmani Fahrisi AKMAN[cite: 37, 39]</p>
-          <p><strong>Öğrenci Temsilcileri:</strong> Osman KILIÇASLAN, İbrahim EROĞLU[cite: 37, 39]</p>
-          <p><strong>Okul Aile Birliği:</strong> Sevil ŞENSOY[cite: 37, 39]</p>
-          <p style="margin-top: 4px; font-size: 0.75rem; color: var(--text-muted);"><strong>Onay:</strong> İbrahim AKDERE (Okul Müdürü)[cite: 37, 39]</p>
+          <p><strong>Kurul Başkanı:</strong> Metin YONCALIK (Müdür Yrd.)[cite: 18, 20]</p>
+          <p><strong>Danışman Öğretmenler:</strong> Rayiha SANCAR, İsa BAYAR, Selmani Fahrisi AKMAN[cite: 18, 20]</p>
+          <p><strong>Öğrenci Temsilcileri:</strong> Osman KILIÇASLAN, İbrahim EROĞLU[cite: 18, 20]</p>
+          <p><strong>Okul Aile Birliği:</strong> Sevil ŞENSOY[cite: 18, 20]</p>
+          <p style="margin-top: 4px; font-size: 0.75rem; color: var(--text-muted);"><strong>Onay:</strong> İbrahim AKDERE (Okul Müdürü)[cite: 18, 20]</p>
         </div>
       </div>
 
@@ -549,42 +597,42 @@
         </h2>
         
         <div class="list-item">
-          <div><div class="list-title">Tabiat ve Yaşanabilir Çevre Kulübü</div><div class="list-subtitle">Doğa - Çevre - Toplum[cite: 39]</div></div>
+          <div><div class="list-title">Tabiat ve Yaşanabilir Çevre Kulübü</div><div class="list-subtitle">Doğa - Çevre - Toplum Alanı[cite: 20]</div></div>
           <span class="badge badge-blue">İsa BAYAR</span>
         </div>
 
         <div class="list-item">
-          <div><div class="list-title">Beyazay Kulübü</div><div class="list-subtitle">Kültür Dünyamız & Farkındalık[cite: 39]</div></div>
+          <div><div class="list-title">Beyazay Kulübü</div><div class="list-subtitle">Kültür Dünyamız & Farkındalık Alanı[cite: 20]</div></div>
           <span class="badge badge-blue">Büşra TEMEL TURHAN</span>
         </div>
 
         <div class="list-item">
-          <div><div class="list-title">Yeşilay Kulübü</div><div class="list-subtitle">Doğa - Çevre - Sağlık[cite: 39]</div></div>
+          <div><div class="list-title">Yeşilay Kulübü</div><div class="list-subtitle">Doğa - Çevre - Sağlık Alanı[cite: 20]</div></div>
           <span class="badge badge-blue">Nuray AKKAN</span>
         </div>
 
         <div class="list-item">
-          <div><div class="list-title">Siberay Kulübü</div><div class="list-subtitle">Bilim ve Dijital Yetkinlik[cite: 39]</div></div>
+          <div><div class="list-title">Siberay Kulübü</div><div class="list-subtitle">Bilim ve Dijital Yetkinlik Alanı[cite: 20]</div></div>
           <span class="badge badge-blue">Mustafa AKBAL / Serdar SAÇLI</span>
         </div>
 
         <div class="list-item">
-          <div><div class="list-title">Kızılay Kulübü</div><div class="list-subtitle">Sosyal Sorumluluk & Yardım[cite: 38, 39]</div></div>
+          <div><div class="list-title">Kızılay Kulübü</div><div class="list-subtitle">Sosyal Sorumluluk & Yardım Alanı[cite: 19, 20]</div></div>
           <span class="badge badge-blue">Rayiha SANCAR</span>
         </div>
 
         <div class="list-item">
-          <div><div class="list-title">Tarih ve Kültürel Miras Kulübü</div><div class="list-subtitle">Milli Kültür & Değerler[cite: 38, 39]</div></div>
+          <div><div class="list-title">Tarih ve Kültürel Miras Kulübü</div><div class="list-subtitle">Milli Kültür & Değerler Alanı[cite: 19, 20]</div></div>
           <span class="badge badge-blue">Dilek EROĞLU</span>
         </div>
 
         <div class="list-item">
-          <div><div class="list-title">Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü</div><div class="list-subtitle">Spor ve Kapsayıcı Yaşam[cite: 39]</div></div>
+          <div><div class="list-title">Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü</div><div class="list-subtitle">Spor ve Kapsayıcı Yaşam Alanı[cite: 20]</div></div>
           <span class="badge badge-blue">Abdulkadir KAPLAN</span>
         </div>
 
         <div class="list-item">
-          <div><div class="list-title">Yaşam Becerileri Kulübü</div><div class="list-subtitle">Sosyal Yaşam & Güvenlik[cite: 38, 39]</div></div>
+          <div><div class="list-title">Yaşam Becerileri Kulübü</div><div class="list-subtitle">Sosyal Yaşam & Güvenlik Alanı[cite: 19, 20]</div></div>
           <span class="badge badge-blue">Belkız ÖLMEZ</span>
         </div>
       </div>
@@ -598,28 +646,28 @@
         <div class="list-item">
           <div>
             <div class="list-title">Cumhuriyet Bayramı (29 Ekim)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü[cite: 37]<br><strong>Görevliler:</strong> Dilek EROĞLU, Tuğba ESKİN, Sultan BARUT, Hilal EŞ DEMİR[cite: 37]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü[cite: 18]<br><strong>Görevliler:</strong> Dilek EROĞLU, Tuğba ESKİN, Sultan BARUT, Hilal EŞ DEMİR[cite: 18]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Kızılay Haftası (29 Ekim - 4 Kasım)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Kızılay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Rayiha SANCAR, Ayten GÖKTAŞ, Seda KIZMAZ, Mustafa AKBAL[cite: 37]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Kızılay Kulübü[cite: 18]<br><strong>Görevliler:</strong> Rayiha SANCAR, Ayten GÖKTAŞ, Seda KIZMAZ, Mustafa AKBAL[cite: 18]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Atatürk Haftası (10 - 16 Kasım)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Gülçin GÜLER GÜR, Serap YILMAZ, Merve UĞUR[cite: 37]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü[cite: 18]<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Gülçin GÜLER GÜR, Serap YILMAZ, Merve UĞUR[cite: 18]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Afet Eğitimi ve Hazırlık Günü (12 Kasım)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tabiat ve Yaşanabilir Çevre (Tatbikat Yapılacak)[cite: 37]<br><strong>Görevliler:</strong> İsa BAYAR, Resul DEMİR, Yusuf Ertuğrul DURU[cite: 37]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tabiat ve Yaşanabilir Çevre (Tatbikat Yapılacak)[cite: 18]<br><strong>Görevliler:</strong> İsa BAYAR, Resul DEMİR, Yusuf Ertuğrul DURU[cite: 18]</div>
           </div>
         </div>
 
@@ -633,76 +681,170 @@
         <div class="list-item">
           <div>
             <div class="list-title">Dünya Engelliler Günü (3 Aralık)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler[cite: 37]<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır[cite: 37]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler[cite: 18]<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır[cite: 18]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Sağlıklı Yaşam Farkındalık Haftası (Şubat)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü[cite: 37]<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Selmani Fahrisi AKMAN, Gülay ULUDAĞ, Nuray AKKAN[cite: 37]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü[cite: 18]<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Selmani Fahrisi AKMAN, Gülay ULUDAĞ, Nuray AKKAN[cite: 18]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Yeşilay Haftası (1 Mart Haftası)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Yeşilay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Nuray AKKAN, Banu ÜNLÜ, Hilal EŞ DEMİR, Rayiha SANCAR[cite: 37]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Yeşilay Kulübü[cite: 18]<br><strong>Görevliler:</strong> Nuray AKKAN, Banu ÜNLÜ, Hilal EŞ DEMİR, Rayiha SANCAR[cite: 18]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Dünya Down Sendromu Günü (21 Mart)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Ayten GÖKTAŞ, Yusuf Ertuğrul DURU, Selmani Fahrisi AKMAN[cite: 37]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü[cite: 18]<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Ayten GÖKTAŞ, Yusuf Ertuğrul DURU, Selmani Fahrisi AKMAN[cite: 18]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Dünya Otizm Farkındalık Günü (2 Nisan)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü[cite: 37]<br><strong>Görevliler:</strong> Dilek EROĞLU, Serap YILMAZ, Sümeyra CANPOLAT, Merve UĞUR, Gülçin GÜLER GÜR, Sevilay ELMAS, Betül ORUÇ, Furkan EROĞLU, Sultan ERMİŞ[cite: 37]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü[cite: 18]<br><strong>Görevliler:</strong> Dilek EROĞLU, Serap YILMAZ, Sümeyra CANPOLAT, Merve UĞUR, Gülçin GÜLER GÜR, Sevilay ELMAS, Betül ORUÇ, Furkan EROĞLU, Sultan ERMİŞ[cite: 18]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Bilim ve Problem Çözme Günü (Nisan)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Mustafa AKBAL, Serdar SAÇLI, Aysun KARACAER, Sultan ERMİŞ[cite: 37]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü[cite: 18]<br><strong>Görevliler:</strong> Mustafa AKBAL, Serdar SAÇLI, Aysun KARACAER, Sultan ERMİŞ[cite: 18]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Trafik ve İlkyardım Haftası (Mayıs İlk Hafta)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü[cite: 37]<br><strong>Görevliler:</strong> Belkız ÖLMEZ, Şehnaz AKTAŞ, Aysun KARACAER, Serdar SAÇLI[cite: 37]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü[cite: 18]<br><strong>Görevliler:</strong> Belkız ÖLMEZ, Şehnaz AKTAŞ, Aysun KARACAER, Serdar SAÇLI[cite: 18]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Engelliler Haftası (10 - 16 Mayıs)</div>
-            <div class="list-subtitle"><strong>Sorumlular:</strong> İsa BAYAR, Gülay ULUDAĞ, Banu ÜNLÜ, Sultan BARUT, Sümeyra CANPOLAT, Şehnaz AKTAŞ (Tüm Öğretmenler Görev Alır)[cite: 37]</div>
+            <div class="list-subtitle"><strong>Sorumlular:</strong> İsa BAYAR, Gülay ULUDAĞ, Banu ÜNLÜ, Sultan BARUT, Sümeyra CANPOLAT, Şehnaz AKTAŞ (Tüm Öğretmenler Görev Alır)[cite: 18]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">19 Mayıs Atatürk'ü Anma Gençlik ve Spor Bayramı</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam Kulübü[cite: 37]<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Resul DEMİR, Tuğba ESKİN, Furkan EROĞLU, Belkız ÖLMEZ, Seda KIZMAZ[cite: 37]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam Kulübü[cite: 18]<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Resul DEMİR, Tuğba ESKİN, Furkan EROĞLU, Belkız ÖLMEZ, Seda KIZMAZ[cite: 18]</div>
           </div>
         </div>
 
         <div class="list-item">
           <div>
             <div class="list-title">Mezuniyet Programı (Haziran)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler[cite: 37]<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır[cite: 37]</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler[cite: 18]<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır[cite: 18]</div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: YEŞİL VATAN TEMATİK TAKVİMİ -->
+    <section id="yesilvatan" class="tab-content">
+      <div class="card card-green">
+        <h2>
+          <span>🌱 Yeşil Vatan Tematik Takvimi</span>
+          <span class="badge badge-green">2026-2027</span>
+        </h2>
+        <p style="font-size: 0.8rem; color: #166534; line-height: 1.45; margin-bottom: 0.8rem;">
+          Milli Eğitim Bakanlığı Yeşil Vatan Projesi kapsamında okulumuzda ay ay yürütülecek tematik çalışmalar, sorumlu kulüpler ve görevli öğretmenler aşağıda belirtilmiştir.
+        </p>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">🌱 Eylül: Tohum, Toprak ve Temiz Hava Ayı</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü</div>
+          </div>
+          <span class="badge badge-green">Belkız ÖLMEZ</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">🏃 Ekim: Afetler ve Dayanıklılık Ayı</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tabiat ve Yaşanabilir Çevre Kulübü</div>
+          </div>
+          <span class="badge badge-green">İsa BAYAR</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">🌲 Kasım: Orman Ayı</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü</div>
+          </div>
+          <span class="badge badge-green">Abdülkadir KAPLAN</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">⚡ Aralık: Tasarruf ve Tüketim Bilinci Ayı</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Yeşilay Kulübü</div>
+          </div>
+          <span class="badge badge-green">Nuray AKKAN</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">🌍 Ocak: İklim Değişikliği Ayı</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü</div>
+          </div>
+          <span class="badge badge-green">Dilek EROĞLU</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">🤲 Şubat: Sürdürülebilirlik Ayı</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Kızılay Kulübü</div>
+          </div>
+          <span class="badge badge-green">Rayiha SANCAR</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">💧 Mart: Su Verimliliği Ayı</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü</div>
+          </div>
+          <span class="badge badge-green">Serdar SAÇLI / Mustafa AKBAL</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">♻️ Nisan: Sıfır Atık Ayı</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü</div>
+          </div>
+          <span class="badge badge-green">Serdar SAÇLI / Mustafa AKBAL</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">🌾 Mayıs: Ekolojik Tarım ve Biyoçeşitlilik Ayı</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü</div>
+          </div>
+          <span class="badge badge-green">Büşra TEMEL TURHAN</span>
+        </div>
+
+        <div class="list-item">
+          <div>
+            <div class="list-title">🍃 Haziran: Çevre Ayı</div>
+            <div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü</div>
+          </div>
+          <span class="badge badge-green">Belkız ÖLMEZ</span>
         </div>
       </div>
     </section>
   </div>
 
+  <!-- ALT MENÜ -->
   <nav class="nav-bar">
     <button type="button" class="nav-item active" data-target="nobet">
       <span class="nav-icon">🛡️</span>
@@ -724,14 +866,34 @@
       <span class="nav-icon">🎖️</span>
       <span>Ajanda</span>
     </button>
+    <button type="button" class="nav-item" data-target="yesilvatan">
+      <span class="nav-icon">🌱</span>
+      <span>Yeşil Vatan</span>
+    </button>
   </nav>
   <script>
     let deferredPrompt = null;
+
+    // POP-UP GÖSTERİM KONTROLÜ
+    function pwaModalGoster() {
+      const modal = document.getElementById('pwa-modal-overlay');
+      const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+      // Zaten yüklü değilse ve kullanıcı daha önce kapatmadıysa göster
+      if (!isStandalone && !sessionStorage.getItem('pwa_dismissed')) {
+        if (modal) modal.style.display = 'flex';
+      }
+    }
+
+    function pwaModalKapat() {
+      const modal = document.getElementById('pwa-modal-overlay');
+      if (modal) modal.style.display = 'none';
+      sessionStorage.setItem('pwa_dismissed', 'true');
+    }
+
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      const banner = document.getElementById('install-banner');
-      if (banner) banner.style.display = 'flex';
+      pwaModalGoster();
     });
 
     function anaEkranaYukle() {
@@ -739,12 +901,13 @@
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then((choiceResult) => {
           if (choiceResult.outcome === 'accepted') {
-            document.getElementById('install-banner').style.display = 'none';
+            pwaModalKapat();
           }
           deferredPrompt = null;
         });
       } else {
-        alert("Uygulamayı ana ekrana eklemek için:\n\n1. Tarayıcınızın altındaki 'Paylaş' simgesine basın.\n2. 'Ana Ekrana Ekle' seçeneğini seçin.");
+        // iPhone / Safari veya desteklenmeyen tarayıcılar için
+        alert("Uygulamayı Ana Ekrana Eklemek İçin:\n\n1. Safari altındaki 'Paylaş' (kare ve yukarı ok) simgesine dokunun.\n2. Açılan menüden 'Ana Ekrana Ekle' seçeneğini seçin.");
       }
     }
 
@@ -786,14 +949,13 @@
       "tugbaeskin": { ad: "Tuğba ESKİN", tc: "45676948942" },
       "yakupsert": { ad: "Yakup SERT", tc: "71614083864" },
       "yusufertugrulduru": { ad: "Yusuf Ertuğrul DURU", tc: "23387689804" },
-      // YENİ EKLENEN ÖĞRETMENLER
       "sevilayelmas": { ad: "Sevilay ELMAS", tc: "60100256448" },
       "betuloruc": { ad: "Betül ORUÇ", tc: "42928661536" }
     };
 
     const IDARECILER = ["ibrahimakdere", "ibrahimipek", "metinyoncalik", "resulsahiner", "sevkibaran"];
 
-    // SINIF - ÖĞRETMEN EŞLEŞTİRME TABLOSU
+    // SINIF - ÖĞRETMEN YETKİLENDİRMESİ
     const SINIF_YETKILERI = {
       "9-A-Otizm": ["gulcingulergur", "sevilayelmas"],
       "9-B-Otizm": ["sultanermis", "sumeyracanpolat"],
@@ -1207,7 +1369,7 @@
       ]
     };
 
-    const VERI_VERSIYONU = "v13_sinif_yetkilendirme_detay";
+    const VERI_VERSIYONU = "v16_pwa_popup_ve_yesilvatan";
     let kayitliVersiyon = localStorage.getItem('okul_ogrenciler_versiyon');
     
     if (kayitliVersiyon !== VERI_VERSIYONU) {
@@ -1307,7 +1469,6 @@
       statTablosu.innerHTML = tHtml;
     }
 
-    // DETAYLI AYLIK DEVAMSIZLIK GÖSTERİMİ
     function ogrenciDetayDevamsizlikGoster() {
       const val = document.getElementById('detay-ogr-sec').value;
       const resContainer = document.getElementById('detay-ogr-sonuc');
@@ -1330,7 +1491,6 @@
       const ozurlu = ogr.ozurlu !== undefined ? ogr.ozurlu : 0;
       const toplam = ogr.toplam !== undefined ? ogr.toplam : (ozursuz + ozurlu);
 
-      // Dönem aylık dağılım projeksiyonu (Eylül, Ekim, Kasım dökümü)
       const eylulOzursuz = (ozursuz * 0.25).toFixed(1);
       const ekimOzursuz = (ozursuz * 0.45).toFixed(1);
       const kasimOzursuz = (ozursuz - parseFloat(eylulOzursuz) - parseFloat(ekimOzursuz)).toFixed(1);
@@ -1677,11 +1837,18 @@
       dogumGunleriniHesapla();
       kritikRiskliOgrencileriGoster();
 
+      // iOS Safari için açılır pop-up kontrolü
       const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
       const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
-      if (isIos && !isStandalone) {
-        const banner = document.getElementById('install-banner');
-        if (banner) banner.style.display = 'flex';
+      if (isIos && !isStandalone && !sessionStorage.getItem('pwa_dismissed')) {
+        const desc = document.getElementById('pwa-modal-desc');
+        if (desc) {
+          desc.innerHTML = "Uygulamayı telefonunuza yüklemek için alttaki <strong>Paylaş</strong> simgesine dokunup <strong>'Ana Ekrana Ekle'</strong> deyin.";
+        }
+        const actBtn = document.getElementById('btn-pwa-install-act');
+        if (actBtn) actBtn.innerText = "Nasıl Eklenir?";
+        const modal = document.getElementById('pwa-modal-overlay');
+        if (modal) modal.style.display = 'flex';
       }
 
       if ('serviceWorker' in navigator) {
