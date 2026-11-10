@@ -161,7 +161,7 @@
       justify-content: center;
       text-decoration: none;
       color: var(--text-muted);
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       flex: 1;
       height: 100%;
       cursor: pointer;
@@ -171,10 +171,10 @@
       touch-action: manipulation;
     }
     .nav-item.active { color: var(--primary-light); font-weight: 700; }
-    .nav-icon { font-size: 1.2rem; margin-bottom: 2px; pointer-events: none; }
+    .nav-icon { font-size: 1.15rem; margin-bottom: 2px; pointer-events: none; }
     .nav-item span { pointer-events: none; }
 
-    .container { padding: 1rem; max-width: 600px; margin: auto; }
+    .container { padding: 1rem; max-width: 760px; margin: auto; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
@@ -197,7 +197,6 @@
       gap: 6px;
     }
 
-    /* SAĞ ÜST YAZDIR/PDF VE WORD BUTONLARI */
     .export-actions {
       display: inline-flex;
       align-items: center;
@@ -217,18 +216,9 @@
       gap: 3px;
       transition: background 0.15s;
     }
-    .btn-export:hover {
-      background: #e2e8f0;
-      color: var(--primary);
-    }
-    .btn-export-word {
-      background: #eff6ff;
-      border-color: #bfdbfe;
-      color: #1d4ed8;
-    }
-    .btn-export-word:hover {
-      background: #dbeafe;
-    }
+    .btn-export:hover { background: #e2e8f0; color: var(--primary); }
+    .btn-export-word { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+    .btn-export-word:hover { background: #dbeafe; }
 
     .card-danger { border: 1px solid #fca5a5; background: #fffdfd; }
     .card-danger h2 { color: #b91c1c; }
@@ -376,7 +366,15 @@
     .stat-table th { background: #f8fafc; color: var(--text-muted); font-weight: 600; }
     .stat-table tr:last-child td { border-bottom: none; }
 
-    /* YAZDIRMA (PRINT / PDF) STİLLERİ */
+    .table-servis input[type="text"] {
+      width: 100%;
+      min-width: 110px;
+      padding: 4px 6px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+
     @media print {
       body { background: white; color: black; padding: 0; }
       #pwa-top-bar, #pwa-modal-overlay, #login-overlay, header, .nav-bar, .date-selector-bar, .export-actions, .status-btns, .btn, .btn-sm {
@@ -445,7 +443,7 @@
   </header>
 
   <div class="container">
-    <!-- TAB 1: NÖBET & SERVİS KONTROL -->
+    <!-- TAB 1: NÖBET -->
     <section id="nobet" class="tab-content active">
       <div class="date-selector-bar">
         <label for="nobet-tarih-secici" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Tarih Seç:</label>
@@ -463,36 +461,6 @@
         <div id="nobet-listesi"></div>
       </div>
 
-      <!-- SABAH SERVİS KONTROL ÇİZELGESİ -->
-      <div class="card" id="card-servis-kontrol">
-        <h2>
-          <span>🚌 Sabah Servis Kontrol Çizelgesi</span>
-          <div class="export-actions">
-            <button class="btn btn-sm btn-outline" onclick="toggleServisListesi()">Göster/Gizle</button>
-            <button class="btn-export" onclick="modulYazdir('card-servis-kontrol', 'Sabah_Servis_Cizelgesi')">🖨️ PDF</button>
-            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-servis-kontrol', 'Sabah_Servis_Cizelgesi')">📄 Word</button>
-          </div>
-        </h2>
-        <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.6rem;">
-          Taşımalı servis araçları kontrol listesi (17 Güzergah). Nöbetçi öğretmen sabah inişlerde kontrol eder.
-        </p>
-        <div id="servis-listesi-alani" style="display: none; overflow-x: auto;">
-          <table class="stat-table">
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Güzergah</th>
-                <th>Plaka</th>
-                <th>Şoför</th>
-                <th>Rehber Personel</th>
-                <th>Yüklenici</th>
-              </tr>
-            </thead>
-            <tbody id="servis-tablo-body"></tbody>
-          </table>
-        </div>
-      </div>
-
       <div class="card" id="card-nobet-talimat">
         <h2>
           <span>📌 Nöbetçi Öğretmen Görev Hatırlatması</span>
@@ -506,45 +474,134 @@
           <li>Okulda ilk ders başlamadan 30 dakika önce hazır bulunur, okulun genel kontrolünü yapar, eksikleri okul yönetimine bildirir ve son ders bitiminden 30 dakika sonra gerekli kontrolleri yaparak nöbet görevini tamamlar.</li>
           <li>Nöbetçi öğretmenler nöbet saatleri içerisinde nöbet yerinde bulunur. Ani ve benzeri mazeretin meydana gelmesi halinde, yetkili amirin müsaadesi ile nöbeti kendisinden sonra gelene devredebilir.</li>
           <li>Sabah gelindiğinde; nöbet/görev bölgesi kontrol ederek nöbet defterini imzalamak. Nöbeti sonunda nöbet defterine nöbeti süresi içindeki önemli olayları ve aldığı önlemleri belirten raporu yazmak ve imzalamak. Ayrıca tutanak tutulması gereken durumlarda tutanak tutar.</li>
-          <li>Nöbet bölgesinde öğrencileri gözetlemek, öğrenciler arasında oluşabilecek kavga tartışma gibi durumları önlemek, gerektiğinde nöbetçi müdür yardımcısına bilgi vermek.</li>
-          <li>Teneffüs anında yaralanan öğrencilere ilk yardım yapmak, acil durumlarda nöbetçi müdür yardımcısına bildirmek ve daha acil durumlarda hemen 112 acil yardım numarasını aramak.</li>
-          <li>Teneffüslerde öğrencilerin derslere zamanında ve güvenli şekilde giriş-çıkışları için gerekli tedbirleri almak ve nöbet bölgesindeki tüm öğrenciler sınıflara girmeden nöbet bölgesini terk etmemek.</li>
-          <li>Ders zili çaldıktan sonra tüm öğretmenlerle birlikte derse girerler. Sigara ve çay içmek için ayrıca beklemezler.</li>
-          <li>Ders zili çaldığında, öğretmenleri derse girmeleri için uyarmak, derse zamanında girmeyenleri, girmemekte ısrar edenleri nöbet defterine yazmak ve okul yönetimine bildirmek.</li>
-          <li>Raporlu/izinli olan öğretmenlerin durumlarını nöbetçi müdür yardımcısının önerileri doğrultusunda nöbet defterine ve sınıf defterine işlemek.</li>
-          <li>Bahçe nöbet görevini yerine getiren öğretmenler ön ana giriş kapısının olduğu bölgede trafikle ilgili tedbirleri almak.</li>
-          <li>Velilerin katlara çıkmamasını, sınıflara girmemesini sağlamak, gerekli durumda velilere ve ziyaretçilere rehberlik etmek.</li>
-          <li>Sabah ilk girişte öğrencilerin düzenli olarak sınıflara girmelerini sağlamak, son ders çıkışında öğrencilerin okulu boşaltmalarını organize etmek, kapıda ve koridorlarda yığılmaları önlemek.</li>
-          <li>Öğrencilerin okul bahçesi dışına çıkmamasını sağlamak, çıkanları tespit edip okul idaresine bildirmek.</li>
-          <li>Yağmurlu ve karlı havalarda gerekli önlemler almak.</li>
-          <li>Okulun günlük havalandırma, ısıtma ve temizlik işlerinin zamanında yapılıp yapılmadığını kontrol eder, eksiklerin giderilmesi için gerekli tedbirleri alır.</li>
-          <li>Bayrak törenlerinin zamanında gereken önemin verilerek yapılmasını sağlar.</li>
-          <li>Okulun eğitim, öğretim ve disiplin gibi işlerinin düzenli olarak yürütülmesinde, okul yöneticilerine yardımcı olur.</li>
-          <li>Taşımalı okul servis araçları ile okula gelen çocukların iniş ve binişte isim listelerine göre kontrol etmek.</li>
-          <li>Taşıma araçlarının ve şoförlerin araç takip çizelgesine uygun olup olmadığını kontrol eder.</li>
+          <li>Taşımalı okul servis araçları ile okula gelen çocukların iniş ve binişte isim listelerine göre kontrol etmek. Araç takip çizelgesine uygun olup olmadığını kontrol eder.</li>
           <li>Öğrencilerinin öğle yemeklerini düzenli şekilde yiyebilmeleri için gerekli tedbirleri almak.</li>
-          <li>Yemekleri kontrol ederek çizelgeye işlemek, yemeklerin sağlıksız ve eksik olması halinde okul idaresine bilgi vermek.</li>
           <li>Olumsuz herhangi bir durumda Nöbetçi Müdür Yardımcısına haber verir ve durumu kayıt altına alır.</li>
         </ul>
       </div>
     </section>
 
-    <!-- TAB 2: TATİLLER, İZİNLİLER & REHABİLİTASYON TAKİBİ -->
-    <section id="izinler" class="tab-content">
+    <!-- TAB 2: SERVİS & REHABİLİTASYON -->
+    <section id="servis-rehab" class="tab-content">
+      <div class="date-selector-bar">
+        <label for="servis-tarih-secici" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Servis Tarihi:</label>
+        <input type="date" id="servis-tarih-secici" onchange="servisTarihDegistir(this.value)">
+      </div>
+
+      <div class="card" id="card-servis-yetki-paneli" style="border: 1px solid #93c5fd; background: #f8fbff;">
+        <h2>
+          <span>🚌 Günün Servis Nöbetçisi & Yoklama Yetkisi</span>
+          <span id="servis-yetki-rozet" class="badge badge-blue">Belirleniyor...</span>
+        </h2>
+        <div id="servis-yetki-detay" style="font-size: 0.83rem; color: #334155; line-height: 1.5;"></div>
+        
+        <div id="idareci-servis-atama-alani" class="admin-only" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #bfdbfe;">
+          <label style="display:block; font-size: 0.78rem; font-weight:700; color: var(--primary); margin-bottom: 4px;">
+            ⚠️ Nöbetçi İzinli/Raporlu ise Yedek Servis Nöbetçisi Görevlendir:
+          </label>
+          <div style="display:flex; gap:6px;">
+            <select id="yedek-servis-hoca-sec" style="flex:1; padding: 5px; font-size: 0.8rem; border: 1px solid var(--border); border-radius: 6px;">
+              <option value="">-- Öğretmen Seçiniz --</option>
+            </select>
+            <button class="btn btn-sm" onclick="yedekServisNobetcisiAta()">Ata & Yetki Ver</button>
+            <button class="btn-delete" onclick="yedekServisNobetcisiSifirla()">İptal Et</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 17 SERVİS GÜZERGAHI KONTROL FORMU -->
+      <div class="card" id="card-servis-yoklama">
+        <h2>
+          <span>📋 Sabah Servis Kontrol ve Yoklama Çizelgesi (17 Güzergah)</span>
+          <div class="export-actions">
+            <button class="btn-export" onclick="modulYazdir('card-servis-yoklama', 'Sabah_Servis_Yoklama_Cizelgesi')">🖨️ PDF</button>
+            <button class="btn-export btn-export-word" onclick="modulWordIndir('card-servis-yoklama', 'Sabah_Servis_Yoklama_Cizelgesi')">📄 Word</button>
+          </div>
+        </h2>
+        <p style="font-size: 0.77rem; color: var(--text-muted); margin-bottom: 0.7rem;">
+          Yalnızca o günün servis nöbetçisi veya okul idaresi yoklama girişi yapabilir. Yapılan yoklamalar ve açıklamalar anlık olarak kaydedilir.
+        </p>
+        <div style="overflow-x: auto;">
+          <table class="stat-table table-servis">
+            <thead>
+              <tr>
+                <th style="width:30px;">No</th>
+                <th>Güzergah</th>
+                <th>Plaka</th>
+                <th>Şoför</th>
+                <th>Rehber Personel</th>
+                <th style="width:130px; text-align:center;">Günlük Yoklama</th>
+                <th>Açıklama</th>
+              </tr>
+            </thead>
+            <tbody id="servis-yoklama-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- REHABİLİTASYON TAKİP ÇİZELGESİ -->
       <div class="card" id="card-rehab-takip" style="border: 1px solid #bbf7d0; background: #fdfefe;">
         <h2>
-          <span>🏥 Rehabilitasyon Takip Çizelgesi</span>
+          <span>🏥 Öğrenci Rehabilitasyon Takip Çizelgesi</span>
           <div class="export-actions">
+            <span id="rehab-toplam-sayi" class="badge badge-green" style="font-size:0.75rem;">12 Öğrenci</span>
             <button class="btn-export" onclick="modulYazdir('card-rehab-takip', 'Rehabilitasyon_Takip_Cizelgesi')">🖨️ PDF</button>
             <button class="btn-export btn-export-word" onclick="modulWordIndir('card-rehab-takip', 'Rehabilitasyon_Takip_Cizelgesi')">📄 Word</button>
           </div>
         </h2>
-        <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.8rem;">
-          Özel eğitim rehabilitasyon merkezlerine izinli giden öğrencilerin sabit gün ve saat takip listesi.
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.6rem;">
+          Özel eğitim rehabilitasyon merkezlerine giden öğrencilerin sabit gün, saat ve kurum izin takip listesi.
         </p>
-        <div id="rehab-listesi-alani"></div>
+        <div style="overflow-x: auto;">
+          <table class="stat-table">
+            <thead>
+              <tr>
+                <th>Öğrenci Adı Soyadı</th>
+                <th>Sınıfı</th>
+                <th>İzin Günü</th>
+                <th>İzin Saati</th>
+                <th>Kurum</th>
+                <th class="admin-only" style="width:40px; text-align:center;">İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="rehab-tablo-body"></tbody>
+          </table>
+        </div>
       </div>
 
+      <!-- YENİ: İDARE REHABİLİTASYON ÖĞRENCİ EKLEME KARTI -->
+      <div class="card admin-only" id="card-rehab-ekle" style="border: 1px solid #c7d2fe; background: #fcfdff;">
+        <h2>➕ Rehabilitasyon Çizelgesine Öğrenci Ekle (İdare)</h2>
+        <div class="row-2">
+          <div class="input-group">
+            <label>Öğrenci Adı Soyadı</label>
+            <input type="text" id="yeni-rehab-ad" placeholder="Örn: Ahmet YILMAZ">
+          </div>
+          <div class="input-group">
+            <label>Sınıfı</label>
+            <input type="text" id="yeni-rehab-sinif" placeholder="Örn: 10/B veya 9-A Otizm">
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="input-group">
+            <label>İzin Günü</label>
+            <input type="text" id="yeni-rehab-gun" placeholder="Örn: Her Salı ve Perşembe">
+          </div>
+          <div class="input-group">
+            <label>İzin Saati</label>
+            <input type="text" id="yeni-rehab-saat" placeholder="Örn: Okul Çıkışı veya 09:00 - 12:00">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Kurum Adı</label>
+          <input type="text" id="yeni-rehab-kurum" placeholder="Örn: GÜLŞAH / İLK DENGE / İLKADIM">
+        </div>
+        <button class="btn btn-outline" style="width: 100%; font-weight:700;" onclick="yeniRehabOgrenciEkle()">Öğrenciyi Rehabilitasyon Listesine Kaydet</button>
+      </div>
+    </section>
+
+    <!-- TAB 3: TATİLLER & İZİNLİLER -->
+    <section id="izinler" class="tab-content">
       <div class="card" id="card-personel-izin">
         <h2>
           <span>📅 İzinli / Raporlu Personel</span>
@@ -609,7 +666,7 @@
       </div>
     </section>
 
-    <!-- TAB 3: DEVAMSIZLIK -->
+    <!-- TAB 4: DEVAMSIZLIK -->
     <section id="devamsizlik" class="tab-content">
       <div class="card" id="card-gunluk-yoklama">
         <h2>
@@ -710,7 +767,7 @@
       </div>
     </section>
 
-    <!-- TAB 4: DOĞUM GÜNLERİ -->
+    <!-- TAB 5: DOĞUM GÜNLERİ -->
     <section id="dogumgunu" class="tab-content">
       <div id="bugun-dogumgunu-alani"></div>
 
@@ -729,7 +786,7 @@
       </div>
     </section>
 
-    <!-- TAB 5: AJANDA, KULÜPLER & KURULLAR -->
+    <!-- TAB 6: AJANDA, KULÜPLER & KURULLAR -->
     <section id="ajanda" class="tab-content">
       <div class="card" id="card-sosyal-kurul" style="border: 1px solid #c7d2fe; background: #fdfefe;">
         <h2>
@@ -740,11 +797,11 @@
           </div>
         </h2>
         <div style="font-size: 0.8rem; line-height: 1.5; color: #334155;">
-          <p><strong>Kurul Başkanı:</strong> Metin YONCALIK (Müdür Yrd.)[cite: 37]</p>
-          <p><strong>Danışman Öğretmenler:</strong> Rayiha SANCAR, İsa BAYAR, Selmani Fahrisi AKMAN[cite: 37]</p>
-          <p><strong>Öğrenci Temsilcileri:</strong> Osman KILIÇASLAN, İbrahim EROĞLU[cite: 37]</p>
-          <p><strong>Okul Aile Birliği:</strong> Sevil ŞENSOY[cite: 37]</p>
-          <p style="margin-top: 4px; font-size: 0.75rem; color: var(--text-muted);"><strong>Onay:</strong> İbrahim AKDERE (Okul Müdürü)[cite: 37]</p>
+          <p><strong>Kurul Başkanı:</strong> Metin YONCALIK (Müdür Yrd.)</p>
+          <p><strong>Danışman Öğretmenler:</strong> Rayiha SANCAR, İsa BAYAR, Selmani Fahrisi AKMAN</p>
+          <p><strong>Öğrenci Temsilcileri:</strong> Osman KILIÇASLAN, İbrahim EROĞLU</p>
+          <p><strong>Okul Aile Birliği:</strong> Sevil ŞENSOY</p>
+          <p style="margin-top: 4px; font-size: 0.75rem; color: var(--text-muted);"><strong>Onay:</strong> İbrahim AKDERE (Okul Müdürü)</p>
         </div>
       </div>
 
@@ -757,45 +814,14 @@
           </div>
         </h2>
         
-        <div class="list-item">
-          <div><div class="list-title">Tabiat ve Yaşanabilir Çevre Kulübü</div><div class="list-subtitle">Doğa - Çevre - Toplum Alanı</div></div>
-          <span class="badge badge-blue">İsa BAYAR</span>
-        </div>
-
-        <div class="list-item">
-          <div><div class="list-title">Beyazay Kulübü</div><div class="list-subtitle">Kültür Dünyamız & Farkındalık Alanı</div></div>
-          <span class="badge badge-blue">Büşra TEMEL TURHAN</span>
-        </div>
-
-        <div class="list-item">
-          <div><div class="list-title">Yeşilay Kulübü</div><div class="list-subtitle">Doğa - Çevre - Sağlık Alanı</div></div>
-          <span class="badge badge-blue">Nuray AKKAN</span>
-        </div>
-
-        <div class="list-item">
-          <div><div class="list-title">Siberay Kulübü</div><div class="list-subtitle">Bilim ve Dijital Yetkinlik Alanı</div></div>
-          <span class="badge badge-blue">Mustafa AKBAL / Serdar SAÇLI</span>
-        </div>
-
-        <div class="list-item">
-          <div><div class="list-title">Kızılay Kulübü</div><div class="list-subtitle">Sosyal Sorumluluk & Yardım Alanı</div></div>
-          <span class="badge badge-blue">Rayiha SANCAR</span>
-        </div>
-
-        <div class="list-item">
-          <div><div class="list-title">Tarih ve Kültürel Miras Kulübü</div><div class="list-subtitle">Milli Kültür & Değerler Alanı</div></div>
-          <span class="badge badge-blue">Dilek EROĞLU</span>
-        </div>
-
-        <div class="list-item">
-          <div><div class="list-title">Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü</div><div class="list-subtitle">Spor ve Kapsayıcı Yaşam Alanı</div></div>
-          <span class="badge badge-blue">Abdulkadir KAPLAN</span>
-        </div>
-
-        <div class="list-item">
-          <div><div class="list-title">Yaşam Becerileri Kulübü</div><div class="list-subtitle">Sosyal Yaşam & Güvenlik Alanı</div></div>
-          <span class="badge badge-blue">Belkız ÖLMEZ</span>
-        </div>
+        <div class="list-item"><div><div class="list-title">Tabiat ve Yaşanabilir Çevre Kulübü</div><div class="list-subtitle">Doğa - Çevre - Toplum Alanı</div></div><span class="badge badge-blue">İsa BAYAR</span></div>
+        <div class="list-item"><div><div class="list-title">Beyazay Kulübü</div><div class="list-subtitle">Kültür Dünyamız & Farkındalık Alanı</div></div><span class="badge badge-blue">Büşra TEMEL TURHAN</span></div>
+        <div class="list-item"><div><div class="list-title">Yeşilay Kulübü</div><div class="list-subtitle">Doğa - Çevre - Sağlık Alanı</div></div><span class="badge badge-blue">Nuray AKKAN</span></div>
+        <div class="list-item"><div><div class="list-title">Siberay Kulübü</div><div class="list-subtitle">Bilim ve Dijital Yetkinlik Alanı</div></div><span class="badge badge-blue">Mustafa AKBAL / Serdar SAÇLI</span></div>
+        <div class="list-item"><div><div class="list-title">Kızılay Kulübü</div><div class="list-subtitle">Sosyal Sorumluluk & Yardım Alanı</div></div><span class="badge badge-blue">Rayiha SANCAR</span></div>
+        <div class="list-item"><div><div class="list-title">Tarih ve Kültürel Miras Kulübü</div><div class="list-subtitle">Milli Kültür & Değerler Alanı</div></div><span class="badge badge-blue">Dilek EROĞLU</span></div>
+        <div class="list-item"><div><div class="list-title">Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü</div><div class="list-subtitle">Spor ve Kapsayıcı Yaşam Alanı</div></div><span class="badge badge-blue">Abdulkadir KAPLAN</span></div>
+        <div class="list-item"><div><div class="list-title">Yaşam Becerileri Kulübü</div><div class="list-subtitle">Sosyal Yaşam & Güvenlik Alanı</div></div><span class="badge badge-blue">Belkız ÖLMEZ</span></div>
       </div>
 
       <div class="card" id="card-belirli-gunler">
@@ -807,114 +833,25 @@
           </div>
         </h2>
 
-        <div class="list-item">
-          <div>
-            <div class="list-title">Cumhuriyet Bayramı (29 Ekim)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü[cite: 37]<br><strong>Görevliler:</strong> Dilek EROĞLU, Tuğba ESKİN, Sultan BARUT, Hilal EŞ DEMİR[cite: 37]</div>
-          </div>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Kızılay Haftası (29 Ekim - 4 Kasım)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Kızılay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Rayiha SANCAR, Ayten GÖKTAŞ, Seda KIZMAZ, Mustafa AKBAL[cite: 37]</div>
-          </div>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Atatürk Haftası (10 - 16 Kasım)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Gülçin GÜLER GÜR, Serap YILMAZ, Merve UĞUR[cite: 37]</div>
-          </div>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Afet Eğitimi ve Hazırlık Günü (12 Kasım)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tabiat ve Yaşanabilir Çevre (Tatbikat Yapılacak)[cite: 37]<br><strong>Görevliler:</strong> İsa BAYAR, Resul DEMİR, Yusuf Ertuğrul DURU[cite: 37]</div>
-          </div>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Öğretmenler Günü (24 Kasım)</div>
-            <div class="list-subtitle">Okul Kutlama Programı</div>
-          </div>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Dünya Engelliler Günü (3 Aralık)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler[cite: 37]<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır[cite: 37]</div>
-          </div>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Sağlıklı Yaşam Farkındalık Haftası (Şubat)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü[cite: 37]<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Selmani Fahrisi AKMAN, Gülay ULUDAĞ, Nuray AKKAN[cite: 37]</div>
-          </div>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Yeşilay Haftası (1 Mart Haftası)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Yeşilay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Nuray AKKAN, Banu ÜNLÜ, Hilal EŞ DEMİR, Rayiha SANCAR[cite: 37]</div>
-          </div>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Dünya Down Sendromu Günü (21 Mart)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Ayten GÖKTAŞ, Yusuf Ertuğrul DURU, Selmani Fahrisi AKMAN[cite: 37]</div>
-          </div>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Dünya Otizm Farkındalık Günü (2 Nisan)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü[cite: 37]<br><strong>Görevliler:</strong> Dilek EROĞLU, Serap YILMAZ, Sümeyra CANPOLAT, Merve UĞUR, Gülçin GÜLER GÜR, Sevilay ELMAS, Betül ORUÇ, Furkan EROĞLU, Sultan ERMİŞ[cite: 37]</div>
-          </div>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Bilim ve Problem Çözme Günü (Nisan)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü[cite: 37]<br><strong>Görevliler:</strong> Mustafa AKBAL, Serdar SAÇLI, Aysun KARACAER, Sultan ERMİŞ[cite: 37]</div>
-          </div>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Trafik ve İlkyardım Haftası (Mayıs İlk Hafta)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü[cite: 37]<br><strong>Görevliler:</strong> Belkız ÖLMEZ, Şehnaz AKTAŞ, Aysun KARACAER, Serdar SAÇLI[cite: 37]</div>
-          </div>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Engelliler Haftası (10 - 16 Mayıs)</div>
-            <div class="list-subtitle"><strong>Sorumlular:</strong> İsa BAYAR, Gülay ULUDAĞ, Banu ÜNLÜ, Sultan BARUT, Sümeyra CANPOLAT, Şehnaz AKTAŞ (Tüm Öğretmenler Görev Alır)[cite: 37]</div>
-          </div>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">19 Mayıs Atatürk'ü Anma Gençlik ve Spor Bayramı</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam Kulübü[cite: 37]<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Resul DEMİR, Tuğba ESKİN, Furkan EROĞLU, Belkız ÖLMEZ, Seda KIZMAZ[cite: 37]</div>
-          </div>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">Mezuniyet Programı (Haziran)</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler[cite: 37]<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır[cite: 37]</div>
-          </div>
-        </div>
+        <div class="list-item"><div><div class="list-title">Cumhuriyet Bayramı (29 Ekim)</div><div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü<br><strong>Görevliler:</strong> Dilek EROĞLU, Tuğba ESKİN, Sultan BARUT, Hilal EŞ DEMİR</div></div></div>
+        <div class="list-item"><div><div class="list-title">Kızılay Haftası (29 Ekim - 4 Kasım)</div><div class="list-subtitle"><strong>Kulüp:</strong> Kızılay Kulübü<br><strong>Görevliler:</strong> Rayiha SANCAR, Ayten GÖKTAŞ, Seda KIZMAZ, Mustafa AKBAL</div></div></div>
+        <div class="list-item"><div><div class="list-title">Atatürk Haftası (10 - 16 Kasım)</div><div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Gülçin GÜLER GÜR, Serap YILMAZ, Merve UĞUR</div></div></div>
+        <div class="list-item"><div><div class="list-title">Afet Eğitimi ve Hazırlık Günü (12 Kasım)</div><div class="list-subtitle"><strong>Kulüp:</strong> Tabiat ve Yaşanabilir Çevre (Tatbikat Yapılacak)<br><strong>Görevliler:</strong> İsa BAYAR, Resul DEMİR, Yusuf Ertuğrul DURU</div></div></div>
+        <div class="list-item"><div><div class="list-title">Öğretmenler Günü (24 Kasım)</div><div class="list-subtitle">Okul Kutlama Programı</div></div></div>
+        <div class="list-item"><div><div class="list-title">Dünya Engelliler Günü (3 Aralık)</div><div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır</div></div></div>
+        <div class="list-item"><div><div class="list-title">Sağlıklı Yaşam Farkındalık Haftası (Şubat)</div><div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Selmani Fahrisi AKMAN, Gülay ULUDAĞ, Nuray AKKAN</div></div></div>
+        <div class="list-item"><div><div class="list-title">Yeşilay Haftası (1 Mart Haftası)</div><div class="list-subtitle"><strong>Kulüp:</strong> Yeşilay Kulübü<br><strong>Görevliler:</strong> Nuray AKKAN, Banu ÜNLÜ, Hilal EŞ DEMİR, Rayiha SANCAR</div></div></div>
+        <div class="list-item"><div><div class="list-title">Dünya Down Sendromu Günü (21 Mart)</div><div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü<br><strong>Görevliler:</strong> Büşra TEMEL TURHAN, Ayten GÖKTAŞ, Yusuf Ertuğrul DURU, Selmani Fahrisi AKMAN</div></div></div>
+        <div class="list-item"><div><div class="list-title">Dünya Otizm Farkındalık Günü (2 Nisan)</div><div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü<br><strong>Görevliler:</strong> Dilek EROĞLU, Serap YILMAZ, Sümeyra CANPOLAT, Merve UĞUR, Gülçin GÜLER GÜR, Sevilay ELMAS, Betül ORUÇ, Furkan EROĞLU, Sultan ERMİŞ</div></div></div>
+        <div class="list-item"><div><div class="list-title">Bilim ve Problem Çözme Günü (Nisan)</div><div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü<br><strong>Görevliler:</strong> Mustafa AKBAL, Serdar SAÇLI, Aysun KARACAER, Sultan ERMİŞ</div></div></div>
+        <div class="list-item"><div><div class="list-title">Trafik ve İlkyardım Haftası (Mayıs İlk Hafta)</div><div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü<br><strong>Görevliler:</strong> Belkız ÖLMEZ, Şehnaz AKTAŞ, Aysun KARACAER, Serdar SAÇLI</div></div></div>
+        <div class="list-item"><div><div class="list-title">Engelliler Haftası (10 - 16 Mayıs)</div><div class="list-subtitle"><strong>Sorumlular:</strong> İsa BAYAR, Gülay ULUDAĞ, Banu ÜNLÜ, Sultan BARUT, Sümeyra CANPOLAT, Şehnaz AKTAŞ (Tüm Öğretmenler Görev Alır)</div></div></div>
+        <div class="list-item"><div><div class="list-title">19 Mayıs Atatürk'ü Anma Gençlik ve Spor Bayramı</div><div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam Kulübü<br><strong>Görevliler:</strong> Abdulkadir KAPLAN, Resul DEMİR, Tuğba ESKİN, Furkan EROĞLU, Belkız ÖLMEZ, Seda KIZMAZ</div></div></div>
+        <div class="list-item"><div><div class="list-title">Mezuniyet Programı (Haziran)</div><div class="list-subtitle"><strong>Kulüp:</strong> Tüm Kulüpler<br><strong>Görevliler:</strong> Tüm Öğretmenler Programda Görev Alır</div></div></div>
       </div>
     </section>
 
-    <!-- TAB 6: YEŞİL VATAN TEMATİK TAKVİMİ -->
+    <!-- TAB 7: YEŞİL VATAN TEMATİK TAKVİMİ -->
     <section id="yesilvatan" class="tab-content">
       <div class="card card-green" id="card-yesil-vatan">
         <h2>
@@ -928,85 +865,16 @@
           Milli Eğitim Bakanlığı Yeşil Vatan Projesi kapsamında okulumuzda ay ay yürütülecek tematik çalışmalar, sorumlu kulüpler ve görevli öğretmenler aşağıda belirtilmiştir.
         </p>
 
-        <div class="list-item">
-          <div>
-            <div class="list-title">🌱 Eylül: Tohum, Toprak ve Temiz Hava Ayı</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü</div>
-          </div>
-          <span class="badge badge-green">Belkız ÖLMEZ</span>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">🏃 Ekim: Afetler ve Dayanıklılık Ayı</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tabiat ve Yaşanabilir Çevre Kulübü</div>
-          </div>
-          <span class="badge badge-green">İsa BAYAR</span>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">🌲 Kasım: Orman Ayı</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü</div>
-          </div>
-          <span class="badge badge-green">Abdülkadir KAPLAN</span>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">⚡ Aralık: Tasarruf ve Tüketim Bilinci Ayı</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Yeşilay Kulübü</div>
-          </div>
-          <span class="badge badge-green">Nuray AKKAN</span>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">🌍 Ocak: İklim Değişikliği Ayı</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü</div>
-          </div>
-          <span class="badge badge-green">Dilek EROĞLU</span>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">🤲 Şubat: Sürdürülebilirlik Ayı</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Kızılay Kulübü</div>
-          </div>
-          <span class="badge badge-green">Rayiha SANCAR</span>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">💧 Mart: Su Verimliliği Ayı</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü</div>
-          </div>
-          <span class="badge badge-green">Serdar SAÇLI / Mustafa AKBAL</span>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">♻️ Nisan: Sıfır Atık Ayı</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü</div>
-          </div>
-          <span class="badge badge-green">Serdar SAÇLI / Mustafa AKBAL</span>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">🌾 Mayıs: Ekolojik Tarım ve Biyoçeşitlilik Ayı</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü</div>
-          </div>
-          <span class="badge badge-green">Büşra TEMEL TURHAN</span>
-        </div>
-
-        <div class="list-item">
-          <div>
-            <div class="list-title">🍃 Haziran: Çevre Ayı</div>
-            <div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü</div>
-          </div>
-          <span class="badge badge-green">Belkız ÖLMEZ</span>
-        </div>
+        <div class="list-item"><div><div class="list-title">🌱 Eylül: Tohum, Toprak ve Temiz Hava Ayı</div><div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü</div></div><span class="badge badge-green">Belkız ÖLMEZ</span></div>
+        <div class="list-item"><div><div class="list-title">🏃 Ekim: Afetler ve Dayanıklılık Ayı</div><div class="list-subtitle"><strong>Kulüp:</strong> Tabiat ve Yaşanabilir Çevre Kulübü</div></div><span class="badge badge-green">İsa BAYAR</span></div>
+        <div class="list-item"><div><div class="list-title">🌲 Kasım: Orman Ayı</div><div class="list-subtitle"><strong>Kulüp:</strong> Sağlıklı Yaşam ve Fiziksel Aktivite Kulübü</div></div><span class="badge badge-green">Abdülkadir KAPLAN</span></div>
+        <div class="list-item"><div><div class="list-title">⚡ Aralık: Tasarruf ve Tüketim Bilinci Ayı</div><div class="list-subtitle"><strong>Kulüp:</strong> Yeşilay Kulübü</div></div><span class="badge badge-green">Nuray AKKAN</span></div>
+        <div class="list-item"><div><div class="list-title">🌍 Ocak: İklim Değişikliği Ayı</div><div class="list-subtitle"><strong>Kulüp:</strong> Tarih ve Kültürel Miras Kulübü</div></div><span class="badge badge-green">Dilek EROĞLU</span></div>
+        <div class="list-item"><div><div class="list-title">🤲 Şubat: Sürdürülebilirlik Ayı</div><div class="list-subtitle"><strong>Kulüp:</strong> Kızılay Kulübü</div></div><span class="badge badge-green">Rayiha SANCAR</span></div>
+        <div class="list-item"><div><div class="list-title">💧 Mart: Su Verimliliği Ayı</div><div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü</div></div><span class="badge badge-green">Serdar SAÇLI / Mustafa AKBAL</span></div>
+        <div class="list-item"><div><div class="list-title">♻️ Nisan: Sıfır Atık Ayı</div><div class="list-subtitle"><strong>Kulüp:</strong> Siberay Kulübü</div></div><span class="badge badge-green">Serdar SAÇLI / Mustafa AKBAL</span></div>
+        <div class="list-item"><div><div class="list-title">🌾 Mayıs: Ekolojik Tarım ve Biyoçeşitlilik Ayı</div><div class="list-subtitle"><strong>Kulüp:</strong> Beyazay Kulübü</div></div><span class="badge badge-green">Büşra TEMEL TURHAN</span></div>
+        <div class="list-item"><div><div class="list-title">🍃 Haziran: Çevre Ayı</div><div class="list-subtitle"><strong>Kulüp:</strong> Yaşam Becerileri Kulübü</div></div><span class="badge badge-green">Belkız ÖLMEZ</span></div>
       </div>
     </section>
   </div>
@@ -1015,6 +883,10 @@
     <button type="button" class="nav-item active" data-target="nobet">
       <span class="nav-icon">🛡️</span>
       <span>Nöbet</span>
+    </button>
+    <button type="button" class="nav-item" data-target="servis-rehab">
+      <span class="nav-icon">🚌</span>
+      <span>Servis & Rehab</span>
     </button>
     <button type="button" class="nav-item" data-target="izinler">
       <span class="nav-icon">📅</span>
@@ -1026,7 +898,7 @@
     </button>
     <button type="button" class="nav-item" data-target="dogumgunu">
       <span class="nav-icon">🎂</span>
-      <span>Doğum Günü</span>
+      <span>Doğum</span>
     </button>
     <button type="button" class="nav-item" data-target="ajanda">
       <span class="nav-icon">🎖️</span>
@@ -1034,18 +906,17 @@
     </button>
     <button type="button" class="nav-item" data-target="yesilvatan">
       <span class="nav-icon">🌱</span>
-      <span>Yeşil Vatan</span>
+      <span>Yeşil</span>
     </button>
   </nav>
   <script>
     let deferredPrompt = null;
 
-    // YAZDIRMA / PDF KAYDETME FONKSİYONU
     function modulYazdir(cardId, dosyaAdi) {
       const card = document.getElementById(cardId);
       if (!card) return;
 
-      const printWindow = window.open('', '', 'width=800,height=900');
+      const printWindow = window.open('', '', 'width=850,height=900');
       printWindow.document.write(`
         <!DOCTYPE html>
         <html>
@@ -1053,7 +924,7 @@
           <title>${dosyaAdi}</title>
           <style>
             body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 25px; color: #0f172a; }
-            h2 { color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; font-size: 1.2rem; }
+            h2 { color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; font-size: 1.15rem; }
             .export-actions, .btn, .btn-sm { display: none !important; }
             table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
             th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
@@ -1081,7 +952,6 @@
       }, 350);
     }
 
-    // WORD BELGESİ (.DOC) İNDİRME FONKSİYONU
     function modulWordIndir(cardId, dosyaAdi) {
       const card = document.getElementById(cardId);
       if (!card) return;
@@ -1096,7 +966,7 @@
           <title>${dosyaAdi}</title>
           <style>
             body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; color: #000000; }
-            h2 { color: #1e3a8a; font-size: 14pt; border-bottom: 1.5pt solid #1e3a8a; padding-bottom: 4pt; }
+            h2 { color: #1e3a8a; font-size: 13pt; border-bottom: 1.5pt solid #1e3a8a; padding-bottom: 4pt; }
             table { width: 100%; border-collapse: collapse; margin-top: 10pt; font-size: 10pt; }
             th, td { border: 1pt solid #999999; padding: 6pt 8pt; text-align: left; }
             th { background-color: #f1f5f9; font-weight: bold; }
@@ -1116,10 +986,7 @@
         </html>
       `;
 
-      const blob = new Blob(['\ufeff' + htmlContent], {
-        type: 'application/msword'
-      });
-
+      const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -1130,7 +997,6 @@
       URL.revokeObjectURL(url);
     }
 
-    // PWA & CİHAZ YÖNETİMİ
     function cihazTespitiYap() {
       const ua = navigator.userAgent || navigator.vendor || window.opera;
       const isIos = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -1158,13 +1024,13 @@
         const actBtn = document.getElementById('btn-pwa-install-act');
 
         if (isIos) {
-          if (desc) desc.innerHTML = "iPhone / iPad için:<br>1. Safari altındaki <strong>'Paylaş' (yukarı ok)</strong> simgesine dokunun.<br>2. Menüden <strong>'Ana Ekrana Ekle'</strong>yi seçin.";
+          if (desc) desc.innerHTML = "iPhone / iPad için:<br>1. Safari altındaki <strong>'Paylaş'</strong> simgesine dokunun.<br>2. Menüden <strong>'Ana Ekrana Ekle'</strong>yi seçin.";
           if (actBtn) actBtn.innerText = "Anladım";
         } else if (isWindows) {
           if (desc) desc.innerHTML = "Windows PC için:<br>Tarayıcı adres çubuğunun sağındaki <strong>'Uygulamayı Yükle'</strong> simgesine tıklayarak masaüstünüze ekleyebilirsiniz.";
           if (actBtn) actBtn.innerText = "Yükle";
         } else {
-          if (desc) desc.innerHTML = "Android telefonunuza veya tabletinize tek tıkla uygulama olarak kurmak için <strong>'Hemen Ekle'</strong> butonuna dokunun.";
+          if (desc) desc.innerHTML = "Android cihazınıza tek tıkla uygulama olarak kurmak için <strong>'Hemen Ekle'</strong> butonuna dokunun.";
           if (actBtn) actBtn.innerText = "Hemen Ekle";
         }
 
@@ -1209,7 +1075,6 @@
       }
     }
 
-    // KULLANICI KİMLİK VERİTABANI
     const KULLANICILAR = {
       "abdulkadirkaplan": { ad: "Abdulkadir KAPLAN", tc: "17564124752" },
       "aysunkaracaer": { ad: "Aysun KARACAER", tc: "27386558970" },
@@ -1271,83 +1136,323 @@
       "12-C-Zihin": ["gulayuludag"]
     };
 
-    const REHABILITASYON_LISTESI = [
-      { ad: "HÜSEYİN DOĞAN", sinif: "11/A", gun: "ÇİZELGE", saat: "Çizelgede Belirtilen Gün ve Saatler", kurum: "İLK DENGE" },
-      { ad: "UMUT EFE KÜRKCÜ", sinif: "9/B", gun: "ÇİZELGE", saat: "Çizelgede Belirtilen Gün ve Saatler", kurum: "İLK DENGE" },
-      { ad: "SELİN SU ATASOY", sinif: "11/A", gun: "Her Salı ve Perşembe", saat: "Okul Çıkışı", kurum: "GÜLŞAH" },
-      { ad: "YEMEN ACAR", sinif: "10/B", gun: "Her Salı", saat: "Okul Çıkışı", kurum: "GÜLŞAH" },
-      { ad: "MUHAMMET ABDURRAHİM ŞİMŞEK", sinif: "11/C", gun: "Her Perşembe", saat: "09:00 - 12:00 Arası", kurum: "GÜLŞAH" },
-      { ad: "MUHAMMET ADNAN ÇİÇEK", sinif: "10-A Otizm", gun: "ÇİZELGE", saat: "Çizelgede Belirtilen Gün ve Saatler", kurum: "İLK DENGE" },
-      { ad: "ŞENOL EFE KÜRKLÜ", sinif: "12/A", gun: "ÇİZELGE", saat: "Çizelgede Belirtilen Gün ve Saatler", kurum: "İLK DENGE" },
-      { ad: "FADİMANA NUR GÖKTAŞ", sinif: "10/B", gun: "Her Salı ve Perşembe", saat: "Okul Çıkışı", kurum: "GÜLŞAH" },
-      { ad: "ESİN SULTAN ÇAĞLAYAN", sinif: "10/B", gun: "Her Çarşamba", saat: "09:00 - 12:00 Arası", kurum: "GÜLŞAH" },
-      { ad: "FURKAN ÇAĞLAYAN FİDAN", sinif: "12/A", gun: "Her Çarşamba", saat: "Okul Çıkışı", kurum: "İLKADIM AKADEMİ" },
-      { ad: "ALİ ÖZ", sinif: "9/A", gun: "Her Salı", saat: "09:00 - 12:00 Arası", kurum: "GÜLŞAH" },
-      { ad: "OKTAY TALHA BORAN", sinif: "11/B", gun: "Her Çarşamba", saat: "09:00 - 12:00 Arası", kurum: "GÜLŞAH" }
-    ];
-
     const SERVIS_LISTESI = [
-      { no: 1, hat: "21. Güzergah (Kılıçaslan-Kurtuluş-Laleli-Bahçeli-Pınar)", plaka: "68 S 0857", sofor: "Ahmet YAMAN", rehber: "Şeyda Nur ÇELİK", firma: "Hasan AKBULUT" },
+      { no: 1, hat: "21. Güzergah (Kılıçaslan-Kurtuluş-Laleli-Bahçeli-Pınar Mah.)", plaka: "68 S 0857", sofor: "Ahmet YAMAN", rehber: "Şeyda Nur ÇELİK", firma: "Hasan AKBULUT" },
       { no: 2, hat: "23. Güzergah (Yenimahalle-Sanayi-Tacin-K. Bölcek-B.Bölcek)", plaka: "68 S 0110", sofor: "Hasan AKBULUT", rehber: "İmren BAYRAKDAR ALTIN", firma: "Hasan AKBULUT" },
       { no: 3, hat: "24. Güzergah (Pamucak-Taşpazar-Paşacık)", plaka: "68 S 0624", sofor: "İbrahim BARIŞ", rehber: "Songül BORAN", firma: "Hasan AKBULUT" },
-      { no: 4, hat: "22. Güzergah (Y.Emre-Cumhuriyet-Hasas-Nakkaş-Coğlaki)", plaka: "68 S 0413", sofor: "Şaban GÜN", rehber: "Döndü TEPE", firma: "68 AKBULUT DAYI TURİZM" },
-      { no: 5, hat: "25. Güzergah (Şifahane-Şamlı-Şeyhhamit-Çerdiğin-Meydan-Dere)", plaka: "68 S 0518", sofor: "Tamer ALTINSOY", rehber: "Hilal ALTINSOY", firma: "68 AKBULUT DAYI TURİZM" },
-      { no: 6, hat: "26. Güzergah (Y.S.Selim-Hürriyet-İstiklal-E.Kapı-Selçuklu)", plaka: "68 S 0797", sofor: "Ersin KAYA", rehber: "Habibe BAYDİLLİ", firma: "68 AKBULUT DAYI TURİZM" },
-      { no: 7, hat: "48. Hat (Helvadere-Elmacık-Kargın-Yuva-Karaören)", plaka: "68 S 0635", sofor: "Celal DURMUŞ", rehber: "Derya BAYDAR", firma: "Eren ÖZTÜRK" },
-      { no: 8, hat: "49. Hat (Akhisar-Sağlık Köyü)", plaka: "68 S 0128", sofor: "Şevket SALCIOĞLU", rehber: "Ayşe Nur ŞENER", firma: "Eren ÖZTÜRK" },
-      { no: 9, hat: "50. Güzergah (İncesu-Armutlu-Kutlu-Aratol)", plaka: "68 S 0557", sofor: "Uğur BİLEN", rehber: "Gülendam ERTUĞRUL", firma: "BURAK TOUR" },
+      { no: 4, hat: "22. Güzergah (Y.Emre-Cumhuriyet-Hasas-Nakkaş-Coğlaki Mah.)", plaka: "68 S 0413", sofor: "Şaban GÜN", rehber: "Döndü TEPE", firma: "68 AKBULUT DAYI TURİZM" },
+      { no: 5, hat: "25. Güzergah (Şifahane-Şamlı-Şeyhhamit-Çerdiğin-Meydan-Dere Mah.)", plaka: "68 S 0518", sofor: "Tamer ALTINSOY", rehber: "Hilal ALTINSOY", firma: "68 AKBULUT DAYI TURİZM" },
+      { no: 6, hat: "26. Güzergah (Y. S. Selim-Hürriyet-İstiklal-E. Kapı-M.A. Ersoy-Selçuklu)", plaka: "68 S 0797", sofor: "Ersin KAYA", rehber: "Habibe BAYDİLLİ", firma: "68 AKBULUT DAYI TURİZM" },
+      { no: 7, hat: "48. HAT (Helvadere-Elmacık-Kargın-Yuva-Karaöran)", plaka: "68 S 0635", sofor: "Celal DURMUŞ", rehber: "Derya BAYDAR", firma: "Eren ÖZTÜRK" },
+      { no: 8, hat: "49. HAT (Akhisar-Sağlık Köyü)", plaka: "68 S 0128", sofor: "Şevket SALCIOĞLU", rehber: "Ayşe Nur ŞENER", firma: "Eren ÖZTÜRK" },
+      { no: 9, hat: "50. Güzergah (İncesu-Armutlu-Kutlu-Aratol (İstiklal Mah.))", plaka: "68 S 0557", sofor: "Uğur BİLEN", rehber: "Gülendam ERTUĞRUL", firma: "BURAK TOUR" },
       { no: 10, hat: "51. Güzergah (Akçakent-Karacaören-Dikmen-Taşpınar)", plaka: "68 S 0628", sofor: "Mustafa SEVİNDİ", rehber: "Döndü ÖZTÜRK", firma: "Emrah ŞAHAN" },
-      { no: 11, hat: "52. Güzergah (Gözlükuyu-Hamidiye-Bahçesaray)", plaka: "68 S 0295", sofor: "İbrahim Ethem ÜSTÜN", rehber: "Zeliha KOCAGÖL", firma: "Emrah ŞAHAN" },
+      { no: 11, hat: "52. Güzergah (Gözlükuyu-Hamidiye (Bahçesaray Mah.))", plaka: "68 S 0295", sofor: "İbrahim Ethem ÜSTÜN", rehber: "Zeliha KOCAGÖL", firma: "Emrah ŞAHAN" },
       { no: 12, hat: "53. Güzergah (Doğantarla-Gücünkaya-Sevinçli)", plaka: "68 S 0631", sofor: "Ayhan ALTINKAYA", rehber: "Navruz ALTINSOY", firma: "Sabri ÖZCAN" },
-      { no: 13, hat: "54. Hat (Çekiçler-Salmanlı-E.Yeniköy-Ekeciktolu)", plaka: "68 AGE 873", sofor: "Muhterem COŞKUN", rehber: "Özgül YUMUŞAK", firma: "AKTUR" },
+      { no: 13, hat: "54. HAT (Çekiçler-Salmanlı-E.Yeniköy-Ekeciktolu)", plaka: "68 AGE 873", sofor: "Muhterem COŞKUN", rehber: "Özgül YUMUŞAK", firma: "AKTUR" },
       { no: 14, hat: "55. Güzergah (Yeşiltepe-Yeşilova-Hırkatol-Selecikösetolu)", plaka: "68 S 0510", sofor: "Akın BİLDİRİCİ", rehber: "Songül ALTIN", firma: "68 AKBULUT DAYI TURİZM" },
       { no: 15, hat: "57. Güzergah (Kalebalta-Göksügüzel-Gençosman)", plaka: "68 S 0269", sofor: "Mehmet GÖÇ", rehber: "Birsen TEKE", firma: "İNCİ MERT TURİZM" },
-      { no: 16, hat: "58. Güzergah (Yenikent-H.Hasanlı Yaylası-Ataköy-Aratol)", plaka: "68 AFV 103", sofor: "Mehmet AYGÜNER", rehber: "Buse AYGÜNER", firma: "Mehmet AYGÜNER" },
-      { no: 17, hat: "56. Güzergah (Y.Cerit-Bağlıkaya-Çimeliyeniköy-Topakkaya)", plaka: "68 AGG 807", sofor: "Bilal ÇAKIR", rehber: "Hacıgül GÜZYURDU", firma: "Hasan AKBULUT" }
+      { no: 16, hat: "58. Güzergah (Yenikent-H. Hasanlı Yay.-Ataköy-Aratol)", plaka: "68 AFV 103", sofor: "Mehmet AYGÜNER", rehber: "Buse AYGÜNER", firma: "Mehmet AYGÜNER" },
+      { no: 17, hat: "56. Güzergah (Y. Cerit-Bağlıkaya-Çimeliyeniköy-Topakkaya)", plaka: "68 AGG 807", sofor: "Bilal ÇAKIR", rehber: "Hacıgül GÜZYURDU", firma: "Hasan AKBULUT" }
     ];
 
-    function toggleServisListesi() {
-      const el = document.getElementById('servis-listesi-alani');
-      el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
+    const varsayilanRehabListesi = [
+      { ad: "HÜSEYİN DOĞAN", sinif: "11/A", gun: "ÇİZELGE", saat: "Çizelgede Belirtilen Gün ve Saatler", kurum: "İLK DENGE" },
+      { ad: "UMUT EFE KÜRKCÜ", sinif: "9/B", gun: "ÇİZELGE", saat: "Çizelgede Belirtilen Gün ve Saatler", kurum: "İLK DENGE" },
+      { ad: "SELİN SU ATASOY", sinif: "11/A", gun: "HER SALI VE PERŞEMBE", saat: "OKUL ÇIKIŞI", kurum: "GÜLŞAH" },
+      { ad: "YEMEN ACAR", sinif: "10/B", gun: "HER SALI", saat: "OKUL ÇIKIŞI", kurum: "GÜLŞAH" },
+      { ad: "MUHAMMET ABDURRAHİM ŞİMŞEK", sinif: "11/C", gun: "HER PERŞEMBE", saat: "SAAT 09:00-12:00 ARASI", kurum: "GÜLŞAH" },
+      { ad: "MUHAMMET ADNAN ÇİÇEK", sinif: "10/ OTZ", gun: "ÇİZELGE", saat: "Çizelgede Belirtilen Gün ve Saatler", kurum: "İLK DENGE" },
+      { ad: "ŞENOL EFE KÜRKLÜ", sinif: "12/A", gun: "ÇİZELGE", saat: "Çizelgede Belirtilen Gün ve Saatler", kurum: "İLK DENGE" },
+      { ad: "FADİMANA NUR GÖKTAŞ", sinif: "10/B", gun: "HER SALI VE PERŞEMBE", saat: "OKUL ÇIKIŞI", kurum: "GÜLŞAH" },
+      { ad: "ESİN SULTAN ÇAĞLAYAN", sinif: "10/B", gun: "HER ÇARŞAMBA", saat: "SAAT 09:00-12:00 ARASI", kurum: "GÜLŞAH" },
+      { ad: "FURKAN ÇAĞLAYAN FİDAN", sinif: "12/A", gun: "HER ÇARŞAMBA", saat: "OKUL ÇIKIŞI", kurum: "İLKADIM AKADEMİ" },
+      { ad: "ALİ ÖZ", sinif: "9/A", gun: "HER SALI", saat: "SAAT 09:00-12:00 ARASI", kurum: "GÜLŞAH" },
+      { ad: "OKTAY TALHA BORAN", sinif: "11/B", gun: "HER ÇARŞAMBA", saat: "SAAT 09:00-12:00 ARASI", kurum: "GÜLŞAH" }
+    ];
+
+    let rehabListesi = JSON.parse(localStorage.getItem('okul_rehab_listesi')) || varsayilanRehabListesi;
+    let aktifKullanici = null;
+    let aktifServisTarihi = "";
+
+    const nobetVeritabani = {
+      "2026-11-02": { my: "RESUL ŞAHİNER", s1: "ABDULKADİR KAPLAN", s2: "FURKAN EROĞLU", s3: "SERDAR SAÇLI", z: "TUĞBA ESKİN / NURAY AKKAN", k1: "SULTAN BARUT" },
+      "2026-11-03": { my: "ŞEVKİ BARAN", s1: "İSA BAYAR", s2: "SEDA KIZMAZ", s3: "SERAP YILMAZ", z: "RESUL DEMİR", k1: "DİLEK EROĞLU" },
+      "2026-11-04": { my: "İBRAHİM İPEK", s1: "GÜLÇİN GÜLER GÜR", s2: "SELMANİ FAHRİSİ AKMAN", s3: "BÜŞRA TEMEL TURHAN", z: "GÜLAY ULUDAĞ", k1: "AYTEN GÖKTAŞ" },
+      "2026-11-05": { my: "METİN YONCALIK", s1: "BANU ÜNLÜ", s2: "YUSUF ERTUĞRUL DURU", s3: "ŞEHNAZ AKTAŞ", z: "MUSTAFA AKBAL", k1: "MERVE UĞUR" },
+      "2026-11-06": { my: "RESUL ŞAHİNER", s1: "HİLAL EŞ DEMİR", s2: "SULTAN ERMİŞ", s3: "BELKIZ ÖLMEZ", z: "SEVİLAY ELMAS / RAYİHA SANCAR", k1: "BETÜL ORUÇ" },
+      "2026-11-09": { my: "ŞEVKİ BARAN", s1: "SULTAN BARUT", s2: "ABDULKADİR KAPLAN", s3: "FURKAN EROĞLU", z: "TUĞBA ESKİN / SERDAR SAÇLI", k1: "NURAY AKKAN" },
+      "2026-11-10": { my: "RESUL ŞAHİNER", s1: "DİLEK EROĞLU", s2: "İSA BAYAR", s3: "SEDA KIZMAZ", z: "SERAP YILMAZ", k1: "RESUL DEMİR" },
+      "2026-11-11": { my: "METİN YONCALIK", s1: "AYTEN GÖKTAŞ", s2: "GÜLÇİN GÜLER GÜR", s3: "SELMANİ FAHRİSİ AKMAN", z: "BÜŞRA TEMEL TURHAN", k1: "GÜLAY ULUDAĞ" },
+      "2026-11-12": { my: "İBRAHİM İPEK", s1: "MERVE UĞUR", s2: "BANU ÜNLÜ", s3: "YUSUF ERTUĞRUL DURU", z: "ŞEHNAZ AKTAŞ", k1: "MUSTAFA AKBAL" },
+      "2026-11-13": { my: "ŞEVKİ BARAN", s1: "BETÜL ORUÇ", s2: "HİLAL EŞ DEMİR", s3: "SULTAN ERMİŞ", z: "BELKIZ ÖLMEZ / RAYİHA SANCAR", k1: "SEVİLAY ELMAS" },
+      "2026-11-23": { my: "İBRAHİM İPEK", s1: "NURAY AKKAN", s2: "SULTAN BARUT", s3: "ABDULKADİR KAPLAN", z: "FURKAN EROĞLU / SERDAR SAÇLI", k1: "TUĞBA ESKİN" },
+      "2026-11-24": { my: "ŞEVKİ BARAN", s1: "RESUL DEMİR", s2: "DİLEK EROĞLU", s3: "İSA BAYAR", z: "SEDA KIZMAZ", k1: "SERAP YILMAZ" },
+      "2026-11-25": { my: "RESUL ŞAHİNER", s1: "GÜLAY ULUDAĞ", s2: "AYTEN GÖKTAŞ", s3: "GÜLÇİN GÜLER GÜR", z: "SELMANİ FAHRİSİ AKMAN", k1: "BÜŞRA TEMEL TURHAN" },
+      "2026-11-26": { my: "METİN YONCALIK", s1: "MUSTAFA AKBAL", s2: "MERVE UĞUR", s3: "BANU ÜNLÜ", z: "YUSUF ERTUĞRUL DURU", k1: "ŞEHNAZ AKTAŞ" },
+      "2026-11-27": { my: "İBRAHİM İPEK", s1: "SEVİLAY ELMAS", s2: "BETÜL ORUÇ", s3: "HİLAL EŞ DEMİR", z: "SULTAN ERMİŞ / BELKIZ ÖLMEZ", k1: "RAYİHA SANCAR" },
+      "2026-11-30": { my: "METİN YONCALIK", s1: "TUĞBA ESKİN", s2: "NURAY AKKAN", s3: "SULTAN BARUT", z: "ABDULKADİR KAPLAN / FURKAN EROĞLU", k1: "SERDAR SAÇLI" },
+      "2026-12-01": { my: "İBRAHİM İPEK", s1: "SERAP YILMAZ", s2: "RESUL DEMİR", s3: "DİLEK EROĞLU", z: "İSA BAYAR", k1: "SEDA KIZMAZ" },
+      "2026-12-02": { my: "ŞEVKİ BARAN", s1: "BÜŞRA TEMEL TURHAN", s2: "GÜLAY ULUDAĞ", s3: "AYTEN GÖKTAŞ", z: "GÜLÇİN GÜLER GÜR", k1: "SELMANİ FAHRİSİ AKMAN" },
+      "2026-12-03": { my: "RESUL ŞAHİNER", s1: "ŞEHNAZ AKTAŞ", s2: "MUSTAFA AKBAL", s3: "MERVE UĞUR", z: "BANU ÜNLÜ", k1: "YUSUF ERTUĞRUL DURU" },
+      "2026-12-04": { my: "METİN YONCALIK", s1: "RAYİHA SANCAR", s2: "SEVİLAY ELMAS", s3: "BETÜL ORUÇ", z: "HİLAL EŞ DEMİR / SULTAN ERMİŞ", k1: "BELKIZ ÖLMEZ" }
+    };
+
+    let izinler = JSON.parse(localStorage.getItem('okul_izinler') || '[]');
+    let servisYoklamaKayitlari = JSON.parse(localStorage.getItem('okul_servis_yoklamalar') || '{}');
+    let servisYedekAtamalar = JSON.parse(localStorage.getItem('okul_servis_atamalar') || '{}');
+
+    function isimIzinliMi(adSoyad, tarihStr) {
+      if (!adSoyad || !tarihStr) return false;
+      const t = new Date(tarihStr).getTime();
+      return izinler.some(izin => {
+        const bas = new Date(izin.baslangic).getTime();
+        const bit = new Date(izin.bitis).getTime();
+        const isimEslesiyor = adSoyad.toLocaleLowerCase('tr-TR').includes(izin.ad.toLocaleLowerCase('tr-TR'));
+        return isimEslesiyor && (t >= bas && t <= bit);
+      });
     }
 
-    function servisTablosunuDoldur() {
-      const tbody = document.getElementById('servis-tablo-body');
-      if (!tbody) return;
+    function gununServisYetkilisiniBul(tarihStr) {
+      if (servisYedekAtamalar[tarihStr]) {
+        return {
+          hocaUsername: servisYedekAtamalar[tarihStr].username,
+          hocaAd: servisYedekAtamalar[tarihStr].ad,
+          tip: "Yedek Görevlendirme (İdarece Atandı)"
+        };
+      }
+
+      const nobetData = nobetVeritabani[tarihStr];
+      if (!nobetData || !nobetData.s1) {
+        return { hocaUsername: "", hocaAd: "Belirlenmedi", tip: "Nöbet Kaydı Yok" };
+      }
+
+      const hocaAd = nobetData.s1;
+      let matchedUsername = "";
+      for (const [u, val] of Object.entries(KULLANICILAR)) {
+        if (hocaAd.toLocaleLowerCase('tr-TR').includes(val.ad.toLocaleLowerCase('tr-TR')) ||
+            val.ad.toLocaleLowerCase('tr-TR').includes(hocaAd.toLocaleLowerCase('tr-TR'))) {
+          matchedUsername = u;
+          break;
+        }
+      }
+
+      const izinli = isimIzinliMi(hocaAd, tarihStr);
+      return {
+        hocaUsername: matchedUsername,
+        hocaAd: hocaAd,
+        izinliMi: izinli,
+        tip: izinli ? "Asıl Nöbetçi İzinli / Raporlu!" : "Asıl Servis Nöbetçisi"
+      };
+    }
+
+    function servisTarihDegistir(tarihStr) {
+      aktifServisTarihi = tarihStr;
+      servisModulunuGuncelle();
+    }
+
+    function servisModulunuGuncelle() {
+      const tarihStr = aktifServisTarihi;
+      const yetkili = gununServisYetkilisiniBul(tarihStr);
+      const isIdareci = aktifKullanici && IDARECILER.includes(aktifKullanici.user);
+      const isServisNobetcisi = aktifKullanici && (aktifKullanici.user === yetkili.hocaUsername);
+      const yoklamaGirebilir = isIdareci || isServisNobetcisi;
+
+      const rozet = document.getElementById('servis-yetki-rozet');
+      const detay = document.getElementById('servis-yetki-detay');
+      
+      if (yetkili.izinliMi && !servisYedekAtamalar[tarihStr]) {
+        rozet.className = "badge badge-red";
+        rozet.innerText = "Nöbetçi İzinli/Raporlu";
+        detay.innerHTML = `
+          <strong>Tarih:</strong> ${tarihStr} <br>
+          <strong>Asıl Görevli:</strong> ${yetkili.hocaAd} <span class="badge-alert">⚠️ İZİNLİ/RAPORLU</span><br>
+          <span style="color:#b91c1c; font-weight:700;">Günün servis nöbetçisi izinli olduğu için idare tarafından yedek görevlendirme yapılması bekleniyor.</span>
+        `;
+      } else {
+        rozet.className = "badge badge-green";
+        rozet.innerText = yetkili.tip;
+        detay.innerHTML = `
+          <strong>Tarih:</strong> ${tarihStr} <br>
+          <strong>Yetkili Servis Nöbetçisi:</strong> <span style="font-size:0.95rem; font-weight:700; color:var(--primary);">${yetkili.hocaAd}</span><br>
+          <strong>Giriş Yetkiniz:</strong> ${yoklamaGirebilir ? '<span style="color:var(--success); font-weight:700;">✔️ Yetkilisiniz (Yoklama Alabilirsiniz)</span>' : '<span style="color:var(--text-muted);">🔒 Sadece Okuma Modu (Yoklama Girişi Kapalı)</span>'}
+        `;
+      }
+
+      const tbody = document.getElementById('servis-yoklama-tbody');
       tbody.innerHTML = '';
+
+      if (!servisYoklamaKayitlari[tarihStr]) {
+        servisYoklamaKayitlari[tarihStr] = {};
+      }
+
       SERVIS_LISTESI.forEach(s => {
+        const kayit = servisYoklamaKayitlari[tarihStr][s.no] || { durum: "", aciklama: "" };
         const tr = document.createElement('tr');
+
+        let yoklamaHucresi = "";
+        let aciklamaHucresi = "";
+
+        if (yoklamaGirebilir) {
+          yoklamaHucresi = `
+            <div class="status-btns" style="justify-content:center;">
+              <button class="btn-status ${kayit.durum === 'Geldi' ? 'active-geldi' : ''}" onclick="servisDurumAyarla(${s.no}, 'Geldi')">Geldi</button>
+              <button class="btn-status ${kayit.durum === 'Gelmedi' ? 'active-yok' : ''}" onclick="servisDurumAyarla(${s.no}, 'Gelmedi')">Gelmedi</button>
+            </div>
+          `;
+          aciklamaHucresi = `
+            <input type="text" value="${kayit.aciklama || ''}" placeholder="Not ekle..." onchange="servisAciklamaKaydet(${s.no}, this.value)">
+          `;
+        } else {
+          const badgeClass = kayit.durum === 'Geldi' ? 'badge-green' : (kayit.durum === 'Gelmedi' ? 'badge-red' : 'badge-amber');
+          yoklamaHucresi = `
+            <div style="text-align:center;">
+              <span class="badge ${badgeClass}">${kayit.durum || 'Alınmadı'}</span>
+            </div>
+          `;
+          aciklamaHucresi = `<span style="font-size:0.75rem; color:#475569;">${kayit.aciklama || '-'}</span>`;
+        }
+
         tr.innerHTML = `
           <td><strong>${s.no}</strong></td>
-          <td>${s.hat}</td>
+          <td><div style="font-weight:600; font-size:0.8rem;">${s.hat}</div><div style="font-size:0.7rem; color:var(--text-muted);">${s.firma}</div></td>
           <td><span class="badge badge-blue">${s.plaka}</span></td>
           <td>${s.sofor}</td>
           <td>${s.rehber}</td>
-          <td style="font-size:0.72rem; color:var(--text-muted);">${s.firma}</td>
+          <td>${yoklamaHucresi}</td>
+          <td>${aciklamaHucresi}</td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    function rehabilitasyonListesiniDoldur() {
-      const container = document.getElementById('rehab-listesi-alani');
-      if (!container) return;
-      container.innerHTML = '';
-      REHABILITASYON_LISTESI.forEach(item => {
-        const row = document.createElement('div');
-        row.className = 'list-item';
-        row.innerHTML = `
-          <div>
-            <div class="list-title">🏥 ${item.ad} <span style="font-size:0.75rem; color:var(--text-muted);">(${item.sinif})</span></div>
-            <div class="list-subtitle">🗓️ ${item.gun} • ⏰ ${item.saat}</div>
-          </div>
-          <span class="badge badge-green">${item.kurum}</span>
+    function servisDurumAyarla(servisNo, durum) {
+      const tarihStr = aktifServisTarihi;
+      if (!servisYoklamaKayitlari[tarihStr]) servisYoklamaKayitlari[tarihStr] = {};
+      if (!servisYoklamaKayitlari[tarihStr][servisNo]) servisYoklamaKayitlari[tarihStr][servisNo] = { durum: "", aciklama: "" };
+
+      if (servisYoklamaKayitlari[tarihStr][servisNo].durum === durum) {
+        servisYoklamaKayitlari[tarihStr][servisNo].durum = "";
+      } else {
+        servisYoklamaKayitlari[tarihStr][servisNo].durum = durum;
+      }
+
+      localStorage.setItem('okul_servis_yoklamalar', JSON.stringify(servisYoklamaKayitlari));
+      servisModulunuGuncelle();
+    }
+
+    function servisAciklamaKaydet(servisNo, metin) {
+      const tarihStr = aktifServisTarihi;
+      if (!servisYoklamaKayitlari[tarihStr]) servisYoklamaKayitlari[tarihStr] = {};
+      if (!servisYoklamaKayitlari[tarihStr][servisNo]) servisYoklamaKayitlari[tarihStr][servisNo] = { durum: "", aciklama: "" };
+
+      servisYoklamaKayitlari[tarihStr][servisNo].aciklama = metin;
+      localStorage.setItem('okul_servis_yoklamalar', JSON.stringify(servisYoklamaKayitlari));
+    }
+
+    function yedekServisHocaSecicisiniDoldur() {
+      const select = document.getElementById('yedek-servis-hoca-sec');
+      if (!select) return;
+      select.innerHTML = '<option value="">-- Öğretmen Seçiniz --</option>';
+      for (const [u, val] of Object.entries(KULLANICILAR)) {
+        const opt = document.createElement('option');
+        opt.value = u;
+        opt.innerText = val.ad;
+        select.appendChild(opt);
+      }
+    }
+
+    function yedekServisNobetcisiAta() {
+      const select = document.getElementById('yedek-servis-hoca-sec');
+      const u = select.value;
+      if (!u) return alert("Lütfen görevlendirilecek öğretmeni seçin.");
+
+      const hoca = KULLANICILAR[u];
+      servisYedekAtamalar[aktifServisTarihi] = {
+        username: u,
+        ad: hoca.ad
+      };
+      localStorage.setItem('okul_servis_atamalar', JSON.stringify(servisYedekAtamalar));
+      alert(`${hoca.ad} öğretmeni ${aktifServisTarihi} tarihi için yedek servis nöbetçisi olarak görevlendirildi ve yoklama yetkisi açıldı.`);
+      servisModulunuGuncelle();
+    }
+
+    function yedekServisNobetcisiSifirla() {
+      if (servisYedekAtamalar[aktifServisTarihi]) {
+        if (confirm("Bu tarih için yapılan yedek görevlendirmeyi iptal etmek istiyor musunuz?")) {
+          delete servisYedekAtamalar[aktifServisTarihi];
+          localStorage.setItem('okul_servis_atamalar', JSON.stringify(servisYedekAtamalar));
+          servisModulunuGuncelle();
+        }
+      }
+    }
+
+    // REHABİLİTASYON LİSTESİ VE İDARE ÖĞRENCİ EKLEME/SİLME İŞLEMLERİ
+    function rehabilitasyonTablosunuDoldur() {
+      const tbody = document.getElementById('rehab-tablo-body');
+      const rozet = document.getElementById('rehab-toplam-sayi');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (rozet) rozet.innerText = `${rehabListesi.length} Öğrenci`;
+
+      const isIdareci = aktifKullanici && IDARECILER.includes(aktifKullanici.user);
+
+      rehabListesi.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${item.ad}</strong></td>
+          <td><span class="badge badge-blue">${item.sinif}</span></td>
+          <td>${item.gun}</td>
+          <td>${item.saat}</td>
+          <td><span class="badge badge-green">${item.kurum}</span></td>
+          <td class="admin-only" style="text-align:center;">
+            ${isIdareci ? `<button class="btn-delete" style="margin:0; padding:2px 6px;" onclick="rehabOgrenciSil(${index})">✕ Sil</button>` : ''}
+          </td>
         `;
-        container.appendChild(row);
+        tbody.appendChild(tr);
       });
     }
 
-    let aktifKullanici = null;
+    function yeniRehabOgrenciEkle() {
+      const ad = document.getElementById('yeni-rehab-ad').value.trim();
+      const sinif = document.getElementById('yeni-rehab-sinif').value.trim();
+      const gun = document.getElementById('yeni-rehab-gun').value.trim();
+      const saat = document.getElementById('yeni-rehab-saat').value.trim();
+      const kurum = document.getElementById('yeni-rehab-kurum').value.trim();
+
+      if (!ad || !sinif || !gun || !saat || !kurum) {
+        return alert("Lütfen rehabilitasyon öğrencisinin tüm bilgilerini (Ad Soyad, Sınıf, İzin Günü, İzin Saati ve Kurum) eksiksiz doldurun.");
+      }
+
+      rehabListesi.push({
+        ad: ad.toLocaleUpperCase('tr-TR'),
+        sinif: sinif.toLocaleUpperCase('tr-TR'),
+        gun: gun,
+        saat: saat,
+        kurum: kurum.toLocaleUpperCase('tr-TR')
+      });
+
+      localStorage.setItem('okul_rehab_listesi', JSON.stringify(rehabListesi));
+      rehabilitasyonTablosunuDoldur();
+
+      document.getElementById('yeni-rehab-ad').value = '';
+      document.getElementById('yeni-rehab-sinif').value = '';
+      document.getElementById('yeni-rehab-gun').value = '';
+      document.getElementById('yeni-rehab-saat').value = '';
+      document.getElementById('yeni-rehab-kurum').value = '';
+
+      alert(`${ad} isimli öğrenci rehabilitasyon takip çizelgesine başarıyla eklendi.`);
+    }
+
+    function rehabOgrenciSil(index) {
+      const ogr = rehabListesi[index];
+      if (confirm(`${ogr.ad} isimli öğrenciyi rehabilitasyon çizelgesinden silmek istediğinize emin misiniz?`)) {
+        rehabListesi.splice(index, 1);
+        localStorage.setItem('okul_rehab_listesi', JSON.stringify(rehabListesi));
+        rehabilitasyonTablosunuDoldur();
+      }
+    }
 
     function yetkiliSiniflariGetir() {
       if (!aktifKullanici) return [];
@@ -1414,6 +1519,9 @@
 
       sinifSecicisiniDoldur();
       detayOgrenciSecicisiniDoldur();
+      yedekServisHocaSecicisiniDoldur();
+      rehabilitasyonTablosunuDoldur();
+      servisModulunuGuncelle();
     }
 
     function girisYap() {
@@ -1473,6 +1581,10 @@
 
       if (hedefId === 'dogumgunu') dogumGunleriniHesapla();
       if (hedefId === 'devamsizlik') kritikRiskliOgrencileriGoster();
+      if (hedefId === 'servis-rehab') {
+        servisModulunuGuncelle();
+        rehabilitasyonTablosunuDoldur();
+      }
     }
 
     document.querySelectorAll('.nav-item').forEach(btn => {
@@ -1482,42 +1594,6 @@
         sekmeDegistir(hedef);
       });
     });
-
-    const nobetVeritabani = {
-      "2026-11-02": { my: "RESUL ŞAHİNER", s1: "ABDULKADİR KAPLAN", s2: "FURKAN EROĞLU", s3: "SERDAR SAÇLI", z: "TUĞBA ESKİN / NURAY AKKAN", k1: "SULTAN BARUT" },
-      "2026-11-03": { my: "ŞEVKİ BARAN", s1: "İSA BAYAR", s2: "SEDA KIZMAZ", s3: "SERAP YILMAZ", z: "RESUL DEMİR", k1: "DİLEK EROĞLU" },
-      "2026-11-04": { my: "İBRAHİM İPEK", s1: "GÜLÇİN GÜLER GÜR", s2: "SELMANİ FAHRİSİ AKMAN", s3: "BÜŞRA TEMEL TURHAN", z: "GÜLAY ULUDAĞ", k1: "AYTEN GÖKTAŞ" },
-      "2026-11-05": { my: "METİN YONCALIK", s1: "BANU ÜNLÜ", s2: "YUSUF ERTUĞRUL DURU", s3: "ŞEHNAZ AKTAŞ", z: "MUSTAFA AKBAL", k1: "MERVE UĞUR" },
-      "2026-11-06": { my: "RESUL ŞAHİNER", s1: "HİLAL EŞ DEMİR", s2: "SULTAN ERMİŞ", s3: "BELKIZ ÖLMEZ", z: "SEVİLAY ELMAS / RAYİHA SANCAR", k1: "BETÜL ORUÇ" },
-      "2026-11-09": { my: "ŞEVKİ BARAN", s1: "SULTAN BARUT", s2: "ABDULKADİR KAPLAN", s3: "FURKAN EROĞLU", z: "TUĞBA ESKİN / SERDAR SAÇLI", k1: "NURAY AKKAN" },
-      "2026-11-10": { my: "RESUL ŞAHİNER", s1: "DİLEK EROĞLU", s2: "İSA BAYAR", s3: "SEDA KIZMAZ", z: "SERAP YILMAZ", k1: "RESUL DEMİR" },
-      "2026-11-11": { my: "METİN YONCALIK", s1: "AYTEN GÖKTAŞ", s2: "GÜLÇİN GÜLER GÜR", s3: "SELMANİ FAHRİSİ AKMAN", z: "BÜŞRA TEMEL TURHAN", k1: "GÜLAY ULUDAĞ" },
-      "2026-11-12": { my: "İBRAHİM İPEK", s1: "MERVE UĞUR", s2: "BANU ÜNLÜ", s3: "YUSUF ERTUĞRUL DURU", z: "ŞEHNAZ AKTAŞ", k1: "MUSTAFA AKBAL" },
-      "2026-11-13": { my: "ŞEVKİ BARAN", s1: "BETÜL ORUÇ", s2: "HİLAL EŞ DEMİR", s3: "SULTAN ERMİŞ", z: "BELKIZ ÖLMEZ / RAYİHA SANCAR", k1: "SEVİLAY ELMAS" },
-      "2026-11-23": { my: "İBRAHİM İPEK", s1: "NURAY AKKAN", s2: "SULTAN BARUT", s3: "ABDULKADİR KAPLAN", z: "FURKAN EROĞLU / SERDAR SAÇLI", k1: "TUĞBA ESKİN" },
-      "2026-11-24": { my: "ŞEVKİ BARAN", s1: "RESUL DEMİR", s2: "DİLEK EROĞLU", s3: "İSA BAYAR", z: "SEDA KIZMAZ", k1: "SERAP YILMAZ" },
-      "2026-11-25": { my: "RESUL ŞAHİNER", s1: "GÜLAY ULUDAĞ", s2: "AYTEN GÖKTAŞ", s3: "GÜLÇİN GÜLER GÜR", z: "SELMANİ FAHRİSİ AKMAN", k1: "BÜŞRA TEMEL TURHAN" },
-      "2026-11-26": { my: "METİN YONCALIK", s1: "MUSTAFA AKBAL", s2: "MERVE UĞUR", s3: "BANU ÜNLÜ", z: "YUSUF ERTUĞRUL DURU", k1: "ŞEHNAZ AKTAŞ" },
-      "2026-11-27": { my: "İBRAHİM İPEK", s1: "SEVİLAY ELMAS", s2: "BETÜL ORUÇ", s3: "HİLAL EŞ DEMİR", z: "SULTAN ERMİŞ / BELKIZ ÖLMEZ", k1: "RAYİHA SANCAR" },
-      "2026-11-30": { my: "METİN YONCALIK", s1: "TUĞBA ESKİN", s2: "NURAY AKKAN", s3: "SULTAN BARUT", z: "ABDULKADİR KAPLAN / FURKAN EROĞLU", k1: "SERDAR SAÇLI" },
-      "2026-12-01": { my: "İBRAHİM İPEK", s1: "SERAP YILMAZ", s2: "RESUL DEMİR", s3: "DİLEK EROĞLU", z: "İSA BAYAR", k1: "SEDA KIZMAZ" },
-      "2026-12-02": { my: "ŞEVKİ BARAN", s1: "BÜŞRA TEMEL TURHAN", s2: "GÜLAY ULUDAĞ", s3: "AYTEN GÖKTAŞ", z: "GÜLÇİN GÜLER GÜR", k1: "SELMANİ FAHRİSİ AKMAN" },
-      "2026-12-03": { my: "RESUL ŞAHİNER", s1: "ŞEHNAZ AKTAŞ", s2: "MUSTAFA AKBAL", s3: "MERVE UĞUR", z: "BANU ÜNLÜ", k1: "YUSUF ERTUĞRUL DURU" },
-      "2026-12-04": { my: "METİN YONCALIK", s1: "RAYİHA SANCAR", s2: "SEVİLAY ELMAS", s3: "BETÜL ORUÇ", z: "HİLAL EŞ DEMİR / SULTAN ERMİŞ", k1: "BELKIZ ÖLMEZ" }
-    };
-
-    let izinler = JSON.parse(localStorage.getItem('okul_izinler') || '[]');
-
-    function isimIzinliMi(adSoyad, tarihStr) {
-      if (!adSoyad || !tarihStr) return false;
-      const t = new Date(tarihStr).getTime();
-      return izinler.some(izin => {
-        const bas = new Date(izin.baslangic).getTime();
-        const bit = new Date(izin.bitis).getTime();
-        const isimEslesiyor = adSoyad.toLocaleLowerCase('tr-TR').includes(izin.ad.toLocaleLowerCase('tr-TR'));
-        return isimEslesiyor && (t >= bas && t <= bit);
-      });
-    }
 
     function nobetBadgeHazirla(isimMetni, tarihStr) {
       const parcalar = isimMetni.split('/').map(p => p.trim());
@@ -1594,6 +1670,7 @@
 
       const seciliTarih = document.getElementById('nobet-tarih-secici').value;
       if (seciliTarih) tariheGoreNobetYukle(seciliTarih);
+      servisModulunuGuncelle();
 
       document.getElementById('izin-ad').value = '';
     }
@@ -1606,6 +1683,7 @@
 
         const seciliTarih = document.getElementById('nobet-tarih-secici').value;
         if (seciliTarih) tariheGoreNobetYukle(seciliTarih);
+        servisModulunuGuncelle();
       }
     }
 
@@ -1742,7 +1820,7 @@
       ]
     };
 
-    const VERI_VERSIYONU = "v19_yazdir_pdf_word_entegre";
+    const VERI_VERSIYONU = "v21_rehab_idare_ogrenci_ekleme";
     let kayitliVersiyon = localStorage.getItem('okul_ogrenciler_versiyon');
     
     if (kayitliVersiyon !== VERI_VERSIYONU) {
@@ -2191,11 +2269,17 @@
         const ay = String(bugun.getMonth() + 1).padStart(2, '0');
         const gun = String(bugun.getDate()).padStart(2, '0');
         const bugunStr = `${yil}-${ay}-${gun}`;
+        aktifServisTarihi = bugunStr;
 
-        const secici = document.getElementById('nobet-tarih-secici');
-        if (secici) {
-          secici.value = bugunStr;
+        const seciciNobet = document.getElementById('nobet-tarih-secici');
+        if (seciciNobet) {
+          seciciNobet.value = bugunStr;
           tariheGoreNobetYukle(bugunStr);
+        }
+
+        const seciciServis = document.getElementById('servis-tarih-secici');
+        if (seciciServis) {
+          seciciServis.value = bugunStr;
         }
 
         const izinBas = document.getElementById('izin-baslangic');
@@ -2205,13 +2289,13 @@
           izinBit.value = bugunStr;
         }
 
-        servisTablosunuDoldur();
-        rehabilitasyonListesiniDoldur();
+        rehabilitasyonTablosunuDoldur();
         izinleriGoster();
         ogrencileriYukle();
         devamsizlariGuncelle();
         dogumGunleriniHesapla();
         kritikRiskliOgrencileriGoster();
+        servisModulunuGuncelle();
 
         setTimeout(() => {
           pwaModalGoster();
